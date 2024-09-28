@@ -1,0 +1,143 @@
+{% load static %}
+
+<div id="foundRoutes">
+  <span id="loader"></span>
+</div>
+<div id="departureHours">
+
+</div>
+
+<script>
+
+  function getCookie(name) {
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+          const cookies = document.cookie.split(';');
+          for (let i = 0; i < cookies.length; i++) {
+              const cookie = cookies[i].trim();
+              // Does this cookie string begin with the name we want?
+              if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                  cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                  break;
+              }
+          }
+      }
+      return cookieValue;
+  }
+  document.addEventListener('DOMContentLoaded', () => {
+    document.body.addEventListener('click', function(event) {
+      if (event.target.classList.contains('solution')) {
+        handle_route_click(event.target.id)
+      }
+    });
+  });
+
+
+
+  const handle_route_click = (solution_id) => {
+    console.log(solution_id);
+    var coords, departures, buses;
+    const csrftoken = getCookie('csrftoken');
+
+    const fetchCoords = fetch('/get-stops-coords/', {
+        method: 'POST',
+        body: JSON.stringify({ 'solution_id': solution_id }),
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrftoken,
+        },
+    }).then(response => response.json())
+      .then(response => {
+          coords = response;
+          drawRoute(coords);
+      });
+
+    //const fetchDepartures = fetch('/get-departure-hours/', {
+    //    method: 'POST',
+    //    body: JSON.stringify({ 'solution_id': solution_id }),
+    //    headers: {
+   //         'Content-Type': 'application/json',
+    //        'X-CSRFToken': csrftoken,
+   //     },
+   // }).then(response => response.json())
+   //   .then(response => {
+  //        departures = response;
+  //    });
+
+ //   const fetchBuses = fetch('/get-buses/', {
+ //       method: 'POST',
+ //       body: JSON.stringify({ 'solution_id': solution_id }),
+   //     headers: {
+ //           'Content-Type': 'application/json',
+  //          'X-CSRFToken': csrftoken,
+  //      },
+  //  }).then(response => response.json())
+  //    .then(response => {
+  //        buses = response;
+  //    });
+
+    Promise.all([fetchCoords])//, fetchDepartures, fetchBuses])
+        .then(() => {
+            //show_departure_hours(departures, buses);
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+    };
+
+    const createDiv = (divClass, divId, divContent) => {
+        let div = document.createElement('div');
+        div.id = divId;
+        div.classList.add(divClass);
+        div.innerHTML = divContent;
+        return div;
+    }
+
+    const appendToDivElem = (div, element) => {
+        div.insertAdjacentElement('beforeend', element);
+    }
+
+    const show_departure_hours = (departures, buses) => {
+        console.log(departures, buses)
+        const departureHours = document.getElementById('departureHours');
+        departureHours.innerHTML = '<img id="arrow-icon-hours" class="arrow-icon" src="{% static 'base_view/img/arrow-icon.svg' %}"/>';
+
+        const first_bus_container = createDiv('firstBusContainer', 'firstBusContainer', '')
+
+        const first_bus = createDiv('busDetails', 'firstBus', ('<div class="busImgAndNumberSelectedRoute"><img id="id1" src="{% static 'base_view/img/bus.svg' %}" /><p class="busesP"> ' +
+        buses[0]['bus_name'] + ' ' + buses[0]['direction'] + '</p></div>'));
+
+
+        var stops = createDiv('busStations', '', '')
+        var ul = document.createElement('ul')
+        ul.classList.add('bus_stops')
+
+        for(var bus in departures){
+            var departure = departures[bus]
+            for(var stop in departure){
+                var bus_stop = departure[stop]
+                console.log(stop)
+                let li = document.createElement('li')
+                li.classList.add('bus_stop')
+                li.innerHTML = bus_stop['time'] + bus_stop['stop_name']
+                appendToDivElem(ul, li)
+            }
+        }
+        appendToDivElem(stops, ul)
+
+
+        appendToDivElem(first_bus_container, first_bus)
+        appendToDivElem(first_bus_container, stops)
+
+
+        {#const second_bus_container = createDiv('secondBusContainer', 'secondBusContainer', '')#}
+
+        appendToDivElem(departureHours, first_bus_container)
+        departureHours.style.display = "flex";
+
+        document.getElementById("arrow-icon-hours").addEventListener("click", function () {
+            departureHours.style.display = "none";
+          });
+    }
+
+</script>

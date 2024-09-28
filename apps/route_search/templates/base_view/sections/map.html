@@ -1,0 +1,109 @@
+{% load static %}
+<style>
+  #map {
+    position: relative;
+    z-index: 0;
+    bottom: 0px;
+    width: 100vw;
+    height: 100%;
+    overflow: hidden;
+  }
+</style>
+
+<div id="map"></div>
+
+
+<script>
+    let map;
+    let icon;
+    let locationIcon;
+    let options = {
+      maxZoom: 18,
+      showZoom: false, // Hide the default zoom buttons
+      showCompass: false // Hide the default compass con
+    };
+
+    icon = L.icon({
+      iconUrl: '{% static 'base_view/img/bus-stop-map.png' %}',
+      iconSize: [15, 15],
+    });
+
+    locationIcon = L.icon({
+      iconUrl: '{% static 'base_view/img/location-black.png' %}',
+      iconSize: [25, 25],
+    })
+    
+
+     let routingControls = [];
+    
+      // Function to remove all routing controls from the map
+      const removeRoutingControl = () => {
+        routingControls.forEach((control) => {
+          map.removeControl(control);
+        });
+        routingControls = [];
+      };
+
+    function drawRoute(array) {
+        removeRoutingControl();
+
+
+        for (let key in array) {
+            if (array.hasOwnProperty(key)) {
+                const coords = array[key]
+
+
+                const routingControl = L.Routing.control({
+                    waypoints: coords,
+                    router: L.Routing.mapbox(MAP_ACCESS_TOKEN),
+                    lineOptions: {
+                        styles: [{color: getColor(key), opacity: 0.7, weight: 2}],
+                    },
+                    fitSelectedRoutes: false,
+                    show: false,
+                    createMarker: function (i, wp, nWps) {
+                        if (i === 0 || i === nWps - 1) {
+                            return L.marker(wp.latLng, {
+                                icon: locationIcon,
+                                draggable: false,
+                            });
+                        } else {
+                            return L.marker(wp.latLng, {
+                            draggable: false,
+                            icon,
+                          });
+                        }
+                        return null; // No marker for other waypoints
+                    },
+                }).addTo(map);
+
+
+                routingControl.on('routingerror', function (e) {
+                    console.error('Routing error:', e);
+                });
+
+                routingControls.push(routingControl);
+            }
+        }
+    }
+
+    function getColor(key) {
+        const colors = ["purple", "green", "blue", "orange", "red", "yellow"];
+        return colors[key % colors.length];
+    }
+
+    const MAP_ACCESS_TOKEN = 'pk.eyJ1IjoiZHVkdXMxMDExIiwiYSI6ImNtMWtxdjkydTAwc3Mya3NsbGlpbjFiM2YifQ.w-uW_GSRBAHTlunGVNt6LQ' //TODO REMOVE IT FROM HERE!
+
+    map = L.map("map", options).setView([52.381538, 16.931992], 13);
+    L.tileLayer(
+      'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}',
+      {
+        attribution:
+        '© <a href="https://www.mapbox.com/contribute/">Mapbox</a> © <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+         maxZoom: 19,
+         id: 'mapbox/streets-v11', // You can choose different Mapbox styles, e.g., 'mapbox/satellite-v9' for satellite imagery.
+         accessToken: MAP_ACCESS_TOKEN
+      }
+    ).addTo(map);
+    removeRoutingControl();
+</script>

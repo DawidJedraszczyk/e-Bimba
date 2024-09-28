@@ -1,0 +1,77 @@
+{% load static %}
+<div id="back-btn">
+  <img id="back-icon" src="{% static 'base_view/img/arrow_icon.svg' %}"/>
+  cofnij
+</div>
+<form action="{% url 'route_search:BaseView' %}" method="post" id="routeForm" class="routeContainer">
+  {% csrf_token %}
+  <div class="form__group field">
+    <input
+      type="text"
+      class="form__field"
+      name="start_location"
+      id="firstStation"
+      required
+    />
+    <label for="firstStation" class="form__label">Przystanek początkowy</label>
+    <span class="suggestion" id="suggestionFirstStation"></span>
+  </div>
+  <div class="form__group field">
+    <input
+      type="text"
+      class="form__field"
+      name="goal_location"
+      id="goalStation"
+      required
+    />
+    <label for="goalStation" class="form__label">Przystanek docelowy</label>
+    <span class="suggestion" id="suggestionSecondStation"></span>
+  </div>
+  <div class="form__group field">
+    <input
+      type="time"
+      class="form__field"
+      name="time"
+      id="hour"
+      required
+    />
+    <label for="hour" class="form__label">Godzina i dzień wyjazdu</label>
+  </div>
+  <button type="submit" id="search-btn" class="search-btn">Szukaj</button>
+</form>
+
+<script>
+
+  document.addEventListener("DOMContentLoaded", function() {
+      const form = document.getElementById('routeForm');
+
+      form.addEventListener('submit', function(e) {
+          e.preventDefault();
+
+          const formData = new FormData(form);
+
+          fetch('/find-route/', {
+              method: 'POST',
+              body: formData,
+              headers: {
+                  'X-CSRFToken': formData.get('csrfmiddlewaretoken'),
+              },
+          })
+          .then(response => response.json()) // Parse the JSON from the response
+          .then(data => {
+
+             document.getElementById('foundRoutes').innerHTML = '<span id="loader"></span >'
+              // To access a specific solution based on its index/key
+              Object.keys(data).forEach(key => {
+                  const solution = data[key];
+                  document.getElementById('foundRoutes').innerHTML += solution['div']
+
+              });
+          })
+          .catch((error) => {
+              console.error('Error:', error);
+          });
+      });
+  });
+
+</script>
