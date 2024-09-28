@@ -7,14 +7,10 @@ services:
       - .env
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
     restart: always
 
   redis:
     image: redis:alpine
-    ports:
-      - "6380:6379"
     restart: always
 
   django:
