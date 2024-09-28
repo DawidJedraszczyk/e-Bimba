@@ -16,3 +16,6 @@ soupsieve==2.5
 sqlparse==0.4.4
 urljoin==1.0.0
 urllib3==2.2.1
+pandas==2.2.3
+haversine==2.8.1
+django-redis==5.4.0

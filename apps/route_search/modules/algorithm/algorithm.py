@@ -582,9 +582,9 @@ class AStarPlanner():
 
 import redis
 import pickle
-import os
+from ebus.settings import REDIS_HOST, REDIS_PORT
 
-r = redis.Redis(host='localhost', port=6379, db=0)
+r = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, db=0)
 
 CACHE_KEY = 'processed_data'
 def load_data_from_cache():
