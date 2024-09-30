@@ -65,12 +65,11 @@ class GetCoordsView(View):
 
         if serialized_planner:
             data = json.loads(request.body)
-            solution_id = data['solution_id']
+            solution_id = int(data['solution_id'])
 
             planner_straight = pickle.loads(serialized_planner)
-            solution = planner_straight.found_plans[int(solution_id)]
 
-            return JsonResponse(prepare_coords(solution))
+            return JsonResponse(prepare_coords(planner_straight, solution_id))
         else:
             return HttpResponse("Dane nie zostały znalezione w pamięci podręcznej.")
 

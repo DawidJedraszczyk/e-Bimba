@@ -1,4 +1,5 @@
 {% load static %}
+
 <style>
   #map {
     position: relative;
@@ -13,76 +14,88 @@
 <div id="map"></div>
 
 
+
 <script>
     let map;
     let icon;
     let locationIcon;
     let options = {
-      maxZoom: 18,
-      showZoom: false, // Hide the default zoom buttons
-      showCompass: false // Hide the default compass con
+        maxZoom: 18,
+        showZoom: false, // Hide the default zoom buttons
+        showCompass: false // Hide the default compass con
     };
 
     icon = L.icon({
-      iconUrl: '{% static 'base_view/img/bus-stop-map.png' %}',
-      iconSize: [15, 15],
+        iconUrl: '{% static 'base_view/img/bus-stop-map.png' %}',
+        iconSize: [15, 15],
     });
 
     locationIcon = L.icon({
-      iconUrl: '{% static 'base_view/img/location-black.png' %}',
-      iconSize: [25, 25],
-    })
-    
+        iconUrl: '{% static 'base_view/img/location-black.png' %}',
+        iconSize: [25, 25],
+    });
 
-     let routingControls = [];
-    
-      // Function to remove all routing controls from the map
-      const removeRoutingControl = () => {
+    let routingControls = [];
+    let polylines = [];
+
+    // Function to remove all routing controls and polylines from the map
+    const removeRoutingControl = () => {
         routingControls.forEach((control) => {
-          map.removeControl(control);
+            map.removeControl(control);
         });
         routingControls = [];
-      };
+
+        polylines.forEach((polyline) => {
+            map.removeLayer(polyline);
+        });
+        polylines = [];
+    };
 
     function drawRoute(array) {
         removeRoutingControl();
-
+        const keys = Object.keys(array);
 
         for (let key in array) {
             if (array.hasOwnProperty(key)) {
-                const coords = array[key]
+                const coords = array[key].map(coord => L.latLng(coord[0], coord[1]));
 
+                if (coords.length === 2) {
+                    const routingControl = L.Routing.control({
+                        waypoints: coords,
+                        router: L.Routing.mapbox(MAP_ACCESS_TOKEN, {
+                            profile: 'mapbox/walking'
+                        }),
+                        lineOptions: {
+                            styles: [{ color: getColor(key), opacity: 0.7, weight: 2 }],
+                        },
+                        fitSelectedRoutes: false,
+                        show: false,
+                        createMarker: function (i, wp, nWps) {
+                            if ((key == 0 && i === 0 ) || (key == keys.length - 1 && i === nWps - 1)) {
+                                return L.marker(wp.latLng, {
+                                    icon: locationIcon,
+                                    draggable: false,
+                                });
+                            }
+                            return null;
+                        },
+                    }).addTo(map);
 
-                const routingControl = L.Routing.control({
-                    waypoints: coords,
-                    router: L.Routing.mapbox(MAP_ACCESS_TOKEN),
-                    lineOptions: {
-                        styles: [{color: getColor(key), opacity: 0.7, weight: 2}],
-                    },
-                    fitSelectedRoutes: false,
-                    show: false,
-                    createMarker: function (i, wp, nWps) {
-                        if (i === 0 || i === nWps - 1) {
-                            return L.marker(wp.latLng, {
-                                icon: locationIcon,
-                                draggable: false,
-                            });
-                        } else {
-                            return L.marker(wp.latLng, {
-                            draggable: false,
-                            icon,
-                          });
-                        }
-                        return null; // No marker for other waypoints
-                    },
-                }).addTo(map);
+                    routingControl.on('routingerror', function (e) {
+                        console.error('Routing error:', e);
+                    });
 
+                    routingControls.push(routingControl);
+                } else if (coords.length > 2) {
+                    // Use polyline for more than two coordinates
+                    const polyline = L.polyline(coords, {
+                        color: getColor(key),
+                        weight: 2,
+                        opacity: 0.7,
+                    }).addTo(map);
 
-                routingControl.on('routingerror', function (e) {
-                    console.error('Routing error:', e);
-                });
-
-                routingControls.push(routingControl);
+                    polylines.push(polyline);
+                }
             }
         }
     }
@@ -96,14 +109,14 @@
 
     map = L.map("map", options).setView([52.381538, 16.931992], 13);
     L.tileLayer(
-      'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}',
-      {
-        attribution:
-        '© <a href="https://www.mapbox.com/contribute/">Mapbox</a> © <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-         maxZoom: 19,
-         id: 'mapbox/streets-v11', // You can choose different Mapbox styles, e.g., 'mapbox/satellite-v9' for satellite imagery.
-         accessToken: MAP_ACCESS_TOKEN
-      }
+        'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}',
+        {
+            attribution:
+            '© <a href="https://www.mapbox.com/contribute/">Mapbox</a> © <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+            maxZoom: 25.5,
+            id: 'mapbox/streets-v11',
+            accessToken: MAP_ACCESS_TOKEN
+        }
     ).addTo(map);
     removeRoutingControl();
 </script>

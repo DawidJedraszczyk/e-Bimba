@@ -45,6 +45,7 @@ class Trip:
                                      'stop_id'])  # simplicity, assume in order (stop_sequence) WHICH IS THE CASE (but implement check in app?)
         self.arrival_times_s = np.array(trip_group['arrival_time_s'])
         self.departure_times_s = np.array(trip_group['departure_time_s'])
+
         # route_id not needed for algo; can be done in "mapping to app needs"
 
     def __str__(self):
@@ -347,21 +348,7 @@ def plans_to_html(found_plans):
         response[str(index)] = prepared_solution
     return response
 
-def prepare_coords(plan):
-    response = {}
-    counter = 0
-    for plan_trip in plan.plan_trips:
-        if plan_trip.trip_id:
-            response[counter] = []
-            trip = trips[plan_trip.trip_id]
-            trip_stops = [stops[stop_id] for stop_id in trip.stop_ids]
 
-            for stop in trip_stops:
-                response[counter].append((stop.stop_lat, stop.stop_lon))
-
-            counter += 1
-    print(response)
-    return response
 
 class PlanTrip:
     def __init__(
@@ -477,6 +464,8 @@ class AStarPlanner():
         # FIXME - plan for "just walk" (special case Plan-like object with sufficient methods? interface?)
         # would prefer ugly if statement at each recursion
         self.start_time = start_time
+        self.start = START
+        self.destination = DESTINATION
         self.waiting_time_constant = waiting_time_constant
         self.start_walking_times = get_start_walking_times(distance_metric, START)
         self.destination_walking_times = get_destination_walking_times(distance_metric, DESTINATION)
@@ -579,6 +568,93 @@ class AStarPlanner():
                 heapq.heappush(self.plans_queue, extended_plan)
 
 
+def get_lat_lon_sets(shape_id):
+    shapes = dataframes['shapes'][dataframes['shapes']['shape_id'] == shape_id]
+
+    lat_lon_sets = [(row['shape_pt_lat'], row['shape_pt_lon']) for _, row in shapes.iterrows()]
+
+    return lat_lon_sets
+
+
+def find_closest_shape_point(stop_lat, stop_lon, shape_points):
+    closest_point = None
+    closest_distance = float('inf')
+
+    for shape_point in shape_points:
+        point_lat, point_lon = shape_point
+        distance = haversine((stop_lat, stop_lon), (point_lat, point_lon), Unit.METERS)
+
+        if distance < closest_distance:
+            closest_distance = distance
+            closest_point = shape_point
+
+    return closest_point
+
+
+def prepare_coords(astarplaner: AStarPlanner, plan_num: int):
+    response = {}
+
+    plan = astarplaner.found_plans[plan_num]
+
+
+    for index, plan_trip in enumerate(plan.plan_trips):
+        if index == 0:
+            start_stop = dataframes['stops'][dataframes['stops']['stop_id'] == plan_trip.start_from_stop_id].iloc[0]
+            response[0] = [astarplaner.start, (start_stop.stop_lat, start_stop.stop_lon)]
+
+        if index == len(plan.plan_trips) - 1:
+            goal_stop = dataframes['stops'][dataframes['stops']['stop_id'] == plan_trip.leave_at_stop_id].iloc[0]
+            response[len(plan.plan_trips)+1] = [(goal_stop.stop_lat, goal_stop.stop_lon), astarplaner.destination]
+
+
+        response[index+1] = []
+        sequence_numbers = []
+
+        if plan_trip.trip_id:
+            trip = trips[plan_trip.trip_id]
+            shape_id = int(dataframes['trips'][dataframes['trips']['trip_id'] == plan_trip.trip_id].iloc[0].shape_id)
+            lat_lon_sets = get_lat_lon_sets(shape_id)
+            trip_stops = [stops[stop_id] for stop_id in trip.stop_ids]
+
+
+            for stop in trip_stops:
+                if stop.stop_id == plan_trip.start_from_stop_id or stop.stop_id == plan_trip.leave_at_stop_id:
+
+                    closest_point = find_closest_shape_point(stop.stop_lat, stop.stop_lon, lat_lon_sets)
+
+                    closest_lat, closest_lon = closest_point  # Tuple unpacking should match the lat-lon order
+
+                    filtered_shape = dataframes['shapes'][
+                        (dataframes['shapes']['shape_id'] == shape_id) &
+                        (dataframes['shapes']['shape_pt_lat'] == closest_lat) &
+                        (dataframes['shapes']['shape_pt_lon'] == closest_lon)
+                    ]
+
+                    if not filtered_shape.empty:
+                        seq_num = int(filtered_shape['shape_pt_sequence'].iloc[0])
+                        sequence_numbers.append(seq_num)
+
+            if sequence_numbers:
+                min_seq_num = min(sequence_numbers)
+                max_seq_num = max(sequence_numbers)
+
+                matching_shapes = dataframes['shapes'][
+                    (dataframes['shapes']['shape_id'] == shape_id) &
+                    (dataframes['shapes']['shape_pt_sequence'] >= min_seq_num) &
+                    (dataframes['shapes']['shape_pt_sequence'] <= max_seq_num)
+                ]
+
+                lat_lon_pairs = list(zip(matching_shapes['shape_pt_lat'], matching_shapes['shape_pt_lon']))
+
+                response[index+1] = lat_lon_pairs
+
+        else:
+            start_stop = dataframes['stops'][dataframes['stops']['stop_id'] == plan_trip.start_from_stop_id].iloc[0]
+            goal_stop = dataframes['stops'][dataframes['stops']['stop_id'] == plan_trip.leave_at_stop_id].iloc[0]
+
+            response[index+1] = [(start_stop.stop_lat, start_stop.stop_lon), (goal_stop.stop_lat, goal_stop.stop_lon)]
+
+    return response
 
 import redis
 import pickle

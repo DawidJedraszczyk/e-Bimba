@@ -35,7 +35,6 @@
 
 
   const handle_route_click = (solution_id) => {
-    console.log(solution_id);
     var coords, departures, buses;
     const csrftoken = getCookie('csrftoken');
 
@@ -98,7 +97,6 @@
     }
 
     const show_departure_hours = (departures, buses) => {
-        console.log(departures, buses)
         const departureHours = document.getElementById('departureHours');
         departureHours.innerHTML = '<img id="arrow-icon-hours" class="arrow-icon" src="{% static 'base_view/img/arrow-icon.svg' %}"/>';
 
@@ -116,7 +114,6 @@
             var departure = departures[bus]
             for(var stop in departure){
                 var bus_stop = departure[stop]
-                console.log(stop)
                 let li = document.createElement('li')
                 li.classList.add('bus_stop')
                 li.innerHTML = bus_stop['time'] + bus_stop['stop_name']
