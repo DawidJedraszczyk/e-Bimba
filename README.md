@@ -1,6 +1,6 @@
 # JakDojadeClone
 
-This is a project that aims to reproduce the jakdojade.pl website with AI support. Ultimately, we want to serve large cities, e.g. Tokyo
+This is a project that aims to reproduce the [jakdojade](https://jakdojade.pl) website with AI support. Ultimately, we want to serve large cities, e.g. Tokyo
 
 ## Installation
 
