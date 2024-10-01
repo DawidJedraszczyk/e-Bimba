@@ -30,6 +30,7 @@ function backFunctionRoutes() {
   elementsToDelete2.forEach((element) => {
     element.remove();
   });
+  removeRoutingControl()
   document.getElementById("back-btn").style.display = "none";
   document
     .getElementById("back-btn")

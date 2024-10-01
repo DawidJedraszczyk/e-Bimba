@@ -50,6 +50,7 @@
 
           const formData = new FormData(form);
 
+          document.getElementById('foundRoutes').innerHTML = '<span id="loader" class="show"></span>'
           fetch('/find-route/', {
               method: 'POST',
               body: formData,
@@ -59,8 +60,8 @@
           })
           .then(response => response.json()) // Parse the JSON from the response
           .then(data => {
-
-             document.getElementById('foundRoutes').innerHTML = '<span id="loader"></span >'
+              
+              document.getElementById('foundRoutes').innerHTML = '<span id="loader"></span>'
               // To access a specific solution based on its index/key
               Object.keys(data).forEach(key => {
                   const solution = data[key];

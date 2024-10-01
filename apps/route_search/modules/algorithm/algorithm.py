@@ -334,7 +334,7 @@ def plans_to_html(found_plans):
 
         communication_content = ''
         for travel_option in communication:
-            communication_content += f'''<div style="padding: 5px;"><img src="{static('base_view/img/BUS.svg')}">{str(travel_option)}</div>'''
+            communication_content += f'''<div style="padding: 5px; display: flex; flex-direction: column; justify-content: center; align-items: center;"><img style="height: 23px; width: 23px; margin-bottom: 5px;" src="{static('base_view/img/BUS.svg')}">{str(travel_option)}</div>'''
 
         prepared_solution = {
             'div': f'''<div style="display:none"></div>

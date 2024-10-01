@@ -105,12 +105,12 @@
         return colors[key % colors.length];
     }
 
-    const MAP_ACCESS_TOKEN = 'pk.eyJ1IjoiZHVkdXMxMDExIiwiYSI6ImNtMWtxdjkydTAwc3Mya3NsbGlpbjFiM2YifQ.w-uW_GSRBAHTlunGVNt6LQ' //TODO REMOVE IT FROM HERE!
+    const MAP_ACCESS_TOKEN = 'pk.eyJ1IjoiZHVkdXMxMDExIiwiYSI6ImNtMWtxdjkydTAwc3Mya3NsbGlpbjFiM2YifQ.w-uW_GSRBAHTlunGVNt6LQ'
 
-    map = L.map("map", options).setView([52.381538, 16.931992], 13);
+    map = L.map("map", options).setView([52.403499, 16.923179], 16.44);
     L.tileLayer(
         'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}',
-        {
+         {
             attribution:
             '© <a href="https://www.mapbox.com/contribute/">Mapbox</a> © <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
             maxZoom: 25.5,
