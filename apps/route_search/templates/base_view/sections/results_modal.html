@@ -3,8 +3,9 @@
 <div id="foundRoutes">
   <span id="loader"></span>
 </div>
-<div id="departureHours">
-
+<div id="departureDetails">
+    <img id="arrow-icon-hours" class="arrow-icon" src="{% static 'base_view/img/arrow-icon.svg' %}"/>
+    <div class="content" id="departureDetailsContent" style="display: flex; max-width: 100%;"></div>
 </div>
 
 <script>
@@ -35,19 +36,47 @@
 
 
   const handle_route_click = (solution_id) => {
-    let coords, departures, buses;
+    let coords, details;
 
-    const storedStopsData = sessionStorage.getItem('stopsData');
+    const departureCoordinatesSessionStorage = sessionStorage.getItem('departureCoordinates');
 
     // Check if data exists
-    if (storedStopsData) {
-        const stopsData = JSON.parse(storedStopsData);
+    if (departureCoordinatesSessionStorage) {
+        const departureCoordinates = JSON.parse(departureCoordinatesSessionStorage);
 
-        coords = stopsData[solution_id];
-        drawRoute(coords);
+        coords = departureCoordinates[solution_id];
+        draw_route(coords);
+    }
+
+    const departureDetailsSessionStorage = sessionStorage.getItem('departuresDetails');
+
+    if (departureDetailsSessionStorage) {
+        const departureDetails = JSON.parse(departureDetailsSessionStorage);
+
+        details = departureDetails[solution_id];
+        show_departure_details(details);
+
     }
   }
 
+  const show_departure_details = (details) => {
+      console.log(details);
+
+      const departureDetailsContainer = document.getElementById('departureDetailsContent');
+      departureDetailsContainer.innerHTML = '';
+
+      // Append all departure details
+      Object.values(details).forEach(departureDiv => {
+          console.log(departureDiv)
+        departureDetailsContainer.innerHTML += departureDiv;
+      });
+
+      document.getElementById('departureDetails').style.display = "flex";
+      document.getElementById("arrow-icon-hours").addEventListener("click", function () {
+        document.getElementById('departureDetails').style.display = "none";
+      });
+
+  }
     //const fetchDepartures = fetch('/get-departure-hours/', {
     //    method: 'POST',
     //    body: JSON.stringify({ 'solution_id': solution_id }),
@@ -94,7 +123,7 @@
     }
 
     const show_departure_hours = (departures, buses) => {
-        const departureHours = document.getElementById('departureHours');
+        const departureHours = document.getElementById('departureDetails');
         departureHours.innerHTML = '<img id="arrow-icon-hours" class="arrow-icon" src="{% static 'base_view/img/arrow-icon.svg' %}"/>';
 
         const first_bus_container = createDiv('firstBusContainer', 'firstBusContainer', '')

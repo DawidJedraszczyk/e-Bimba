@@ -230,7 +230,7 @@ main {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 100%;
+  width: 80%;
   height: 100%;
 }
 
@@ -555,7 +555,7 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator {
         display: none;
     }
 }
-#departureHours {
+#departureDetails {
   font-size: 20px;
   display: none;
   flex-direction: column;
@@ -581,7 +581,7 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator {
     width: 30px;
 }
 
-#departureHours img{
+#departureDetails img{
   height: 25px;
 }
 
@@ -636,7 +636,7 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator {
 }
 
 @media screen and (max-width: 1000px) {
-    #departureHours {
+    #departureDetails {
         display: none;
         width: 100vw;
         height: 80vh;

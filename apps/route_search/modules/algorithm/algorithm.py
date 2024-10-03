@@ -591,6 +591,46 @@ def find_closest_shape_point(stop_lat, stop_lon, shape_points):
     return closest_point
 
 
+def prepare_departure_details(astarplaner: AStarPlanner, plan_num: int):
+    response = {}
+
+    plan = astarplaner.found_plans[plan_num]
+
+    for index, plan_trip in enumerate(plan.plan_trips):
+        if index == 0:
+            start_stop = dataframes['stops'][dataframes['stops']['stop_id'] == plan_trip.start_from_stop_id].iloc[0]
+            response[0] = f'''<div><img src="{static('base_view/img/WALK.png')}>{astarplaner.start} -> {start_stop["stop_name"]}</div>'''
+
+        if index == len(plan.plan_trips) - 1:
+            goal_stop = dataframes['stops'][dataframes['stops']['stop_id'] == plan_trip.leave_at_stop_id].iloc[0]
+            response[len(plan.plan_trips)+1] = f'''<div><img src="{static('base_view/img/WALK.png')}">{goal_stop["stop_name"]} -> {astarplaner.destination}</div>'''
+
+
+        response[index+1] = f'''<div><img src="{static('base_view/img/BUS.svg')}" alt="bus icon"/><div class="stops">'''
+
+        if plan_trip.trip_id:
+            trip = trips[plan_trip.trip_id]
+            trip_stops = [stops[stop_id] for stop_id in trip.stop_ids]
+            in_our_trip_flag = False
+
+            for stop in trip_stops:
+                if stop.stop_id == plan_trip.start_from_stop_id:
+                    in_our_trip_flag = True
+
+                if stop.stop_id == plan_trip.leave_at_stop_id:
+                    in_our_trip_flag = False
+
+                if in_our_trip_flag:
+                    stop_df = dataframes['stops'][dataframes['stops']['stop_id'] == stop.stop_id].iloc[0]
+                    response[index+1] += f'''{stop_df['stop_name']}<br>'''
+
+
+
+        response[index+1] += "</div></div>"
+
+
+    return response
+
 def prepare_coords(astarplaner: AStarPlanner, plan_num: int):
     response = {}
 

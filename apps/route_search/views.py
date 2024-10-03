@@ -75,27 +75,25 @@ class GetCoordsView(View):
             return HttpResponse("Dane nie zostały znalezione w pamięci podręcznej.")
 
 
-class GetDepartureHoursView(View):
-    def post(self, request, *args, **kwargs):
-        data = json.loads(request.body)
-        #solution_id = data.get('solution_id')
-        #algorithm_response = request.session.get('algorithm_response')
+class GetDeparturesDetailsView(View):
+    def get(self, request, *args, **kwargs):
+        if not request.session.session_key:
+            return HttpResponse("Sesja nie została znaleziona.")
 
-        #bus_departures = algorithm_response[solution_id]
+        session_key = request.session.session_key
+        redis_key = f'planner_straight_{session_key}'
+        serialized_planner = r.get(redis_key)
 
-        #response = prepare_departure_hours(bus_departures)
+        if serialized_planner:
+            planner_straight = pickle.loads(serialized_planner)
 
-        return '' #JsonResponse(response)
+            response = {}
+            for solution_id in range(len(planner_straight.found_plans)):
+                response[solution_id] = prepare_departure_details(planner_straight, solution_id)
 
-class GetBusesView(View):
-    def post(self, request, *args, **kwargs):
-        data = json.loads(request.body)
-        solution_id = data.get('solution_id')
-        algorithm_response = request.session.get('algorithm_response')
+            return JsonResponse(response)
+        else:
+            return HttpResponse("Dane nie zostały znalezione w pamięci podręcznej.")
 
-        #bus_departures = algorithm_response[solution_id]
 
-        response = ''# prepare_buses(bus_departures)
-
-        return JsonResponse(response)
 
