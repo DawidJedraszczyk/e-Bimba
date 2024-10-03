@@ -3,7 +3,7 @@
   <img id="back-icon" src="{% static 'base_view/img/arrow_icon.svg' %}"/>
   cofnij
 </div>
-<form action="{% url 'route_search:BaseView' %}" method="post" id="routeForm" class="routeContainer">
+<form action="{% url 'route_search:FindRoute' %}" method="post" id="routeForm" class="routeContainer">
   {% csrf_token %}
   <div class="form__group field">
     <input
@@ -43,36 +43,52 @@
 <script>
 
   document.addEventListener("DOMContentLoaded", function() {
-      const form = document.getElementById('routeForm');
+    const form = document.getElementById('routeForm');
 
-      form.addEventListener('submit', function(e) {
-          e.preventDefault();
+    form.addEventListener('submit', async function (e) {
+        e.preventDefault();
 
-          const formData = new FormData(form);
+        const formData = new FormData(form);
+        document.getElementById('foundRoutes').innerHTML = '<span id="loader" class="show"></span>';
 
-          document.getElementById('foundRoutes').innerHTML = '<span id="loader" class="show"></span>'
-          fetch('/find-route/', {
-              method: 'POST',
-              body: formData,
-              headers: {
-                  'X-CSRFToken': formData.get('csrfmiddlewaretoken'),
-              },
-          })
-          .then(response => response.json()) // Parse the JSON from the response
-          .then(data => {
-              
-              document.getElementById('foundRoutes').innerHTML = '<span id="loader"></span>'
+        try {
+            // First fetch: sending the form data to find-route
+            const routeResponse = await fetch('/find-route/', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': formData.get('csrfmiddlewaretoken'),
+                },
+            });
+
+            const routeData = await routeResponse.json();
+
+            document.getElementById('foundRoutes').innerHTML = ''; // Clear loader
+
+             document.getElementById('foundRoutes').innerHTML = '<span id="loader"></span>'
               // To access a specific solution based on its index/key
-              Object.keys(data).forEach(key => {
-                  const solution = data[key];
+              Object.keys(routeData).forEach(key => {
+                  const solution = routeData[key];
                   document.getElementById('foundRoutes').innerHTML += solution['div']
 
               });
-          })
-          .catch((error) => {
-              console.error('Error:', error);
-          });
-      });
-  });
+            // Second fetch: getting the stops coordinates
+            const stopsResponse = await fetch('/get-stops-coords/', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            const stopsData = await stopsResponse.json();
+            
+            sessionStorage.setItem('stopsData', JSON.stringify(stopsData));
+
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    });
+});
+      
 
 </script>

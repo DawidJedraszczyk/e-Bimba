@@ -338,7 +338,7 @@ def plans_to_html(found_plans):
 
         prepared_solution = {
             'div': f'''<div style="display:none"></div>
-                       <div id="{index}" class="solution" style="width: 99%; border: solid 1px white; padding: 20px 0px; border-radius: 5px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
+                       <div id="{index}" class="solution" style="cursor: pointer; width: 99%; border: solid 1px white; padding: 20px 0px; border-radius: 5px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
                            <div style="font-size: 25px; margin-left: 5px;">{start_time}</div>
                            <div style="display: flex;">{communication_content}</div>
                            <div style="font-size: 25px; margin-right: 5px;">{destination_time}</div>

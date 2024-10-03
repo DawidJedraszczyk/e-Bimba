@@ -35,21 +35,18 @@
 
 
   const handle_route_click = (solution_id) => {
-    var coords, departures, buses;
-    const csrftoken = getCookie('csrftoken');
+    let coords, departures, buses;
 
-    const fetchCoords = fetch('/get-stops-coords/', {
-        method: 'POST',
-        body: JSON.stringify({ 'solution_id': solution_id }),
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': csrftoken,
-        },
-    }).then(response => response.json())
-      .then(response => {
-          coords = response;
-          drawRoute(coords);
-      });
+    const storedStopsData = sessionStorage.getItem('stopsData');
+
+    // Check if data exists
+    if (storedStopsData) {
+        const stopsData = JSON.parse(storedStopsData);
+
+        coords = stopsData[solution_id];
+        drawRoute(coords);
+    }
+  }
 
     //const fetchDepartures = fetch('/get-departure-hours/', {
     //    method: 'POST',
@@ -75,14 +72,14 @@
   //        buses = response;
   //    });
 
-    Promise.all([fetchCoords])//, fetchDepartures, fetchBuses])
-        .then(() => {
+    //Promise.all([fetchCoords])//, fetchDepartures, fetchBuses])
+     //   .then(() => {
             //show_departure_hours(departures, buses);
-        })
-        .catch((error) => {
-            console.error('Error:', error);
-        });
-    };
+     //   })
+      //  .catch((error) => {
+      //      console.error('Error:', error);
+       // });
+    //};
 
     const createDiv = (divClass, divId, divContent) => {
         let div = document.createElement('div');

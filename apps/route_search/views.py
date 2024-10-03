@@ -54,7 +54,7 @@ class FindRouteView(View):
 
 
 class GetCoordsView(View):
-    def post(self, request, *args, **kwargs):
+    def get(self, request, *args, **kwargs):
 
         if not request.session.session_key:
             return HttpResponse("Sesja nie została znaleziona.")
@@ -64,12 +64,13 @@ class GetCoordsView(View):
         serialized_planner = r.get(redis_key)
 
         if serialized_planner:
-            data = json.loads(request.body)
-            solution_id = int(data['solution_id'])
-
             planner_straight = pickle.loads(serialized_planner)
 
-            return JsonResponse(prepare_coords(planner_straight, solution_id))
+            response = {}
+            for solution_id in range(len(planner_straight.found_plans)):
+                response[solution_id] = prepare_coords(planner_straight, solution_id)
+
+            return JsonResponse(response)
         else:
             return HttpResponse("Dane nie zostały znalezione w pamięci podręcznej.")
 
