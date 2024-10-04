@@ -214,7 +214,7 @@ main {
   border: solid 1px var(--cyan);
   border-radius: 30px;
   rotate: 90deg;
-  left: 30px;
+  left: 10px;
   top: calc(50% - 15px);
   z-index: 1;
 }
@@ -230,7 +230,7 @@ main {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 100%;
+  width: 80%;
   height: 100%;
 }
 
@@ -555,7 +555,7 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator {
         display: none;
     }
 }
-#departureHours {
+#departureDetails {
   font-size: 20px;
   display: none;
   flex-direction: column;
@@ -571,6 +571,11 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator {
   text-align: center;
   z-index: 1;
 }
+
+#departureDetails.src-cont-hidden {
+  left: 0 !important;
+}
+
 #selectedRouteData{
   max-width: 360px;
   display: flex;
@@ -581,7 +586,7 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator {
     width: 30px;
 }
 
-#departureHours img{
+#departureDetails img{
   height: 25px;
 }
 
@@ -636,7 +641,7 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator {
 }
 
 @media screen and (max-width: 1000px) {
-    #departureHours {
+    #departureDetails {
         display: none;
         width: 100vw;
         height: 80vh;

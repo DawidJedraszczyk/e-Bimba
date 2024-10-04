@@ -50,6 +50,13 @@ class FindRouteView(View):
         r.set(redis_key, serialized_planner)
         r.expire(redis_key, 3600)
 
+        redis_key = f'start_location_{session_key}'
+        r.set(redis_key, pickle.dumps(request.POST.get('start_location')))
+        r.expire(redis_key, 3600)
+
+        redis_key = f'goal_location_{session_key}'
+        r.set(redis_key, pickle.dumps(request.POST.get('goal_location')))
+        r.expire(redis_key, 3600)
         return JsonResponse(response)
 
 
@@ -75,27 +82,31 @@ class GetCoordsView(View):
             return HttpResponse("Dane nie zostały znalezione w pamięci podręcznej.")
 
 
-class GetDepartureHoursView(View):
-    def post(self, request, *args, **kwargs):
-        data = json.loads(request.body)
-        #solution_id = data.get('solution_id')
-        #algorithm_response = request.session.get('algorithm_response')
+class GetDeparturesDetailsView(View):
+    def get(self, request, *args, **kwargs):
+        if not request.session.session_key:
+            return HttpResponse("Sesja nie została znaleziona.")
 
-        #bus_departures = algorithm_response[solution_id]
+        session_key = request.session.session_key
+        redis_key = f'planner_straight_{session_key}'
+        serialized_planner = r.get(redis_key)
 
-        #response = prepare_departure_hours(bus_departures)
+        serialized_start_location = r.get(f'start_location_{session_key}')
+        serialized_goal_location = r.get(f'goal_location_{session_key}')
 
-        return '' #JsonResponse(response)
 
-class GetBusesView(View):
-    def post(self, request, *args, **kwargs):
-        data = json.loads(request.body)
-        solution_id = data.get('solution_id')
-        algorithm_response = request.session.get('algorithm_response')
+        if serialized_planner:
+            planner_straight = pickle.loads(serialized_planner)
+            start_location = pickle.loads(serialized_start_location)
+            goal_location = pickle.loads(serialized_goal_location)
 
-        #bus_departures = algorithm_response[solution_id]
+            response = {}
+            for solution_id in range(len(planner_straight.found_plans)):
+                response[solution_id] = prepare_departure_details(planner_straight, solution_id, start_location, goal_location)
 
-        response = ''# prepare_buses(bus_departures)
+            return JsonResponse(response)
+        else:
+            return HttpResponse("Dane nie zostały znalezione w pamięci podręcznej.")
 
-        return JsonResponse(response)
+
 

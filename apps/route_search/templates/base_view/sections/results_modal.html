@@ -3,9 +3,6 @@
 <div id="foundRoutes">
   <span id="loader"></span>
 </div>
-<div id="departureHours">
-
-</div>
 
 <script>
 
@@ -35,51 +32,45 @@
 
 
   const handle_route_click = (solution_id) => {
-    let coords, departures, buses;
+    let coords, details;
 
-    const storedStopsData = sessionStorage.getItem('stopsData');
+    const departureCoordinatesSessionStorage = sessionStorage.getItem('departureCoordinates');
 
     // Check if data exists
-    if (storedStopsData) {
-        const stopsData = JSON.parse(storedStopsData);
+    if (departureCoordinatesSessionStorage) {
+        const departureCoordinates = JSON.parse(departureCoordinatesSessionStorage);
 
-        coords = stopsData[solution_id];
-        drawRoute(coords);
+        coords = departureCoordinates[solution_id];
+        draw_route(coords);
+    }
+
+    const departureDetailsSessionStorage = sessionStorage.getItem('departuresDetails');
+
+    if (departureDetailsSessionStorage) {
+        const departureDetails = JSON.parse(departureDetailsSessionStorage);
+
+        details = departureDetails[solution_id];
+        show_departure_details(details);
+
     }
   }
 
-    //const fetchDepartures = fetch('/get-departure-hours/', {
-    //    method: 'POST',
-    //    body: JSON.stringify({ 'solution_id': solution_id }),
-    //    headers: {
-   //         'Content-Type': 'application/json',
-    //        'X-CSRFToken': csrftoken,
-   //     },
-   // }).then(response => response.json())
-   //   .then(response => {
-  //        departures = response;
-  //    });
+  const show_departure_details = (details) => {
 
- //   const fetchBuses = fetch('/get-buses/', {
- //       method: 'POST',
- //       body: JSON.stringify({ 'solution_id': solution_id }),
-   //     headers: {
- //           'Content-Type': 'application/json',
-  //          'X-CSRFToken': csrftoken,
-  //      },
-  //  }).then(response => response.json())
-  //    .then(response => {
-  //        buses = response;
-  //    });
+      const departureDetailsContainer = document.getElementById('departureDetailsContent');
+      departureDetailsContainer.innerHTML = '';
 
-    //Promise.all([fetchCoords])//, fetchDepartures, fetchBuses])
-     //   .then(() => {
-            //show_departure_hours(departures, buses);
-     //   })
-      //  .catch((error) => {
-      //      console.error('Error:', error);
-       // });
-    //};
+      // Append all departure details
+      Object.values(details).forEach(departureDiv => {
+        departureDetailsContainer.innerHTML += departureDiv;
+      });
+
+      document.getElementById('departureDetails').style.display = "flex";
+      document.getElementById("arrow-icon-hours").addEventListener("click", function () {
+        document.getElementById('departureDetails').style.display = "none";
+      });
+
+  }
 
     const createDiv = (divClass, divId, divContent) => {
         let div = document.createElement('div');
@@ -94,7 +85,7 @@
     }
 
     const show_departure_hours = (departures, buses) => {
-        const departureHours = document.getElementById('departureHours');
+        const departureHours = document.getElementById('departureDetails');
         departureHours.innerHTML = '<img id="arrow-icon-hours" class="arrow-icon" src="{% static 'base_view/img/arrow-icon.svg' %}"/>';
 
         const first_bus_container = createDiv('firstBusContainer', 'firstBusContainer', '')
