@@ -214,7 +214,7 @@ main {
   border: solid 1px var(--cyan);
   border-radius: 30px;
   rotate: 90deg;
-  left: 30px;
+  left: 10px;
   top: calc(50% - 15px);
   z-index: 1;
 }
@@ -571,6 +571,11 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator {
   text-align: center;
   z-index: 1;
 }
+
+#departureDetails.src-cont-hidden {
+  left: 0 !important;
+}
+
 #selectedRouteData{
   max-width: 360px;
   display: flex;

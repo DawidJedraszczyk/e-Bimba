@@ -50,6 +50,13 @@ class FindRouteView(View):
         r.set(redis_key, serialized_planner)
         r.expire(redis_key, 3600)
 
+        redis_key = f'start_location_{session_key}'
+        r.set(redis_key, pickle.dumps(request.POST.get('start_location')))
+        r.expire(redis_key, 3600)
+
+        redis_key = f'goal_location_{session_key}'
+        r.set(redis_key, pickle.dumps(request.POST.get('goal_location')))
+        r.expire(redis_key, 3600)
         return JsonResponse(response)
 
 
@@ -84,12 +91,18 @@ class GetDeparturesDetailsView(View):
         redis_key = f'planner_straight_{session_key}'
         serialized_planner = r.get(redis_key)
 
+        serialized_start_location = r.get(f'start_location_{session_key}')
+        serialized_goal_location = r.get(f'goal_location_{session_key}')
+
+
         if serialized_planner:
             planner_straight = pickle.loads(serialized_planner)
+            start_location = pickle.loads(serialized_start_location)
+            goal_location = pickle.loads(serialized_goal_location)
 
             response = {}
             for solution_id in range(len(planner_straight.found_plans)):
-                response[solution_id] = prepare_departure_details(planner_straight, solution_id)
+                response[solution_id] = prepare_departure_details(planner_straight, solution_id, start_location, goal_location)
 
             return JsonResponse(response)
         else:

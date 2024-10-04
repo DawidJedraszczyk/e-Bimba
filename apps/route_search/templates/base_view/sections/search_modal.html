@@ -62,16 +62,7 @@
             });
 
             const routeData = await routeResponse.json();
-
-            document.getElementById('foundRoutes').innerHTML = ''; // Clear loader
-
-             document.getElementById('foundRoutes').innerHTML = '<span id="loader"></span>'
-              // To access a specific solution based on its index/key
-              Object.keys(routeData).forEach(key => {
-                  const solution = routeData[key];
-                  document.getElementById('foundRoutes').innerHTML += solution['div']
-
-              });
+            
             // Second fetch: getting the stops coordinates
             const coordinatesResponse = await fetch('/get-stops-coords/', {
                 method: 'GET',
@@ -81,8 +72,8 @@
             });
 
             const departureCoordinates = await coordinatesResponse.json();
-            
             sessionStorage.setItem('departureCoordinates', JSON.stringify(departureCoordinates));
+            
             
             const departuresDetails = await fetch('/get-departures-details/', {
                 method: 'GET',
@@ -92,10 +83,21 @@
             });
             
             const departuresDetailsData = await departuresDetails.json();
-            
             sessionStorage.setItem('departuresDetails', JSON.stringify(departuresDetailsData))
             
+            
+            
+            document.getElementById('foundRoutes').innerHTML = ''; // Clear loader
+            document.getElementById('foundRoutes').innerHTML = '<span id="loader"></span>'
+            // To access a specific solution based on its index/key
+            Object.keys(routeData).forEach(key => {
+                const solution = routeData[key];
+                document.getElementById('foundRoutes').innerHTML += solution['div']
 
+            });
+            draw_route(departureCoordinates[0])
+            show_departure_details(departuresDetailsData[0])
+            
         } catch (error) {
             console.error('Error:', error);
         }
