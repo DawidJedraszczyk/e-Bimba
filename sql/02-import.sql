@@ -51,7 +51,7 @@ order by route_id;
 
 
 insert into trip select
-  nextval('trip_id'),
+  nextval('seq_trip_id'),
   *,
 from (
   select * from read_csv(
@@ -103,9 +103,17 @@ from read_csv(
 order by num_trip_id, stop_sequence;
 
 
-copy calendar from 'csv/calendar.txt' (format csv, header, dateformat '%Y%m%d');
+copy calendar from 'csv/calendar.txt' (
+    format csv,
+    header,
+    dateformat '%Y%m%d'
+);
 
-copy calendar_date from 'csv/calendar_dates.txt' (format csv, header, dateformat '%Y%m%d');
+copy calendar_date from 'csv/calendar_dates.txt' (
+  format csv,
+  header,
+  dateformat '%Y%m%d'
+);
 
 
 insert into shape_point select
@@ -141,21 +149,3 @@ from read_csv(
   }
 )
 order by feed_publisher_name;
-
-
-insert into connection select
-  f.stop_id as from_stop,
-  f.departure % (24*60*60) as departure,
-  t.stop_id,
-  (t.arrival - f.departure),
-  (select service_id from trip where id = f.trip_id),
-  f.departure >= 24*60*60,
-  f.trip_id,
-from stop_time f
-join stop_time t on (f.trip_id = t.trip_id and t.sequence > f.sequence)
-where
-  f.pickup_type != 1
-  and t.drop_off_type != 1
-order by from_stop, departure;
-
-create index connection_from_stop_departure on connection (from_stop, departure);

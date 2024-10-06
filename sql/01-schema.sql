@@ -1,5 +1,5 @@
 create table agency (
-  id int4 primary key,
+  id int4 not null,
   name text not null,
   url text not null,
   timezone text not null,
@@ -7,8 +7,9 @@ create table agency (
   lang text not null,
 );
 
+
 create table stop (
-  id int4 primary key,
+  id int4 not null,
   code text not null,
   name text not null,
   lat float8 not null,
@@ -16,8 +17,9 @@ create table stop (
   zone text not null,
 );
 
+
 create table route (
-  id int4 primary key,
+  id int4 not null,
   agency_id int4 not null,
   short_name text not null,
   long_name text not null,
@@ -27,8 +29,9 @@ create table route (
   text_color text not null,
 );
 
+
 create table trip (
-  id int4 primary key,
+  id int4 not null,
   route_id int4 not null,
   service_id int2 not null,
   text_id text not null,
@@ -39,7 +42,8 @@ create table trip (
   brigade int4 not null,
 );
 
-create sequence trip_id start 1;
+create sequence seq_trip_id start 1;
+
 
 create table stop_time (
   trip_id int4 not null,
@@ -50,13 +54,11 @@ create table stop_time (
   headsign text not null,
   pickup_type int1 not null,
   drop_off_type int1 not null,
-  primary key (trip_id, sequence),
 );
 
-create index stop_time_stop_id on stop_time (stop_id);
 
 create table calendar (
-  service_id int2 primary key,
+  service_id int2 not null,
   monday bool not null,
   tuesday bool not null,
   wednesday bool not null,
@@ -68,19 +70,21 @@ create table calendar (
   end_date date not null,
 );
 
+
 create table calendar_date (
   service_id int2 not null,
   date date not null,
   exception_type int1 not null,
 );
 
+
 create table shape_point (
   shape_id int4 not null,
   sequence int4 not null,
   lat float8 not null,
   lon float8 not null,
-  primary key (shape_id, sequence),
 );
+
 
 create table feed_info (
   publisher_name text not null,
@@ -90,12 +94,13 @@ create table feed_info (
   end_date date not null,
 );
 
+
 create table walk (
   from_stop int4 not null,
   to_stop int4 not null,
   distance float4 not null,
-  primary key (from_stop, to_stop),
 );
+
 
 create table connection (
   from_stop int4 not null,
