@@ -1,7 +1,7 @@
 insert into agency select
   *,
 from read_csv(
-  'csv/agency.txt',
+  'data/gtfs/agency.txt',
   header = true,
   columns = {
     'agency_id': 'int4',
@@ -17,7 +17,7 @@ from read_csv(
 insert into stop select
   *,
 from read_csv(
-  'csv/stops.txt',
+  'data/gtfs/stops.txt',
   header = true,
   columns = {
     'stop_id': 'int4',
@@ -32,12 +32,13 @@ order by stop_id;
 
 
 insert into route select
+  nextval('seq_route_id'),
   *,
 from read_csv(
-  'csv/routes.txt',
+  'data/gtfs/routes.txt',
   header = true,
   columns = {
-    'route_id': 'int4',
+    'route_id': 'text',
     'agency_id': 'int4',
     'route_short_name': 'text',
     'route_long_name': 'text',
@@ -46,19 +47,25 @@ from read_csv(
     'route_color': 'text',
     'route_text_color': 'text',
   }
-)
-order by route_id;
+);
 
 
 insert into trip select
   nextval('seq_trip_id'),
-  *,
+  (select id from route where text_id = route_id),
+  service_id,
+  trip_id,
+  trip_headsign,
+  direction_id,
+  shape_id,
+  wheelchair_accessible,
+  brigade,
 from (
   select * from read_csv(
-    'csv/trips.txt',
+    'data/gtfs/trips.txt',
     header = true,
     columns = {
-      'route_id': 'int4',
+      'route_id': 'text',
       'service_id': 'int2',
       'trip_id': 'text',
       'trip_headsign': 'text',
@@ -87,7 +94,7 @@ insert into stop_time select
   pickup_type,
   drop_off_type,
 from read_csv(
-  'csv/stop_times.txt',
+  'data/gtfs/stop_times.txt',
   header = true,
   columns = {
     'trip_id': 'text',
@@ -103,13 +110,13 @@ from read_csv(
 order by num_trip_id, stop_sequence;
 
 
-copy calendar from 'csv/calendar.txt' (
+copy calendar from 'data/gtfs/calendar.txt' (
     format csv,
     header,
     dateformat '%Y%m%d'
 );
 
-copy calendar_date from 'csv/calendar_dates.txt' (
+copy calendar_date from 'data/gtfs/calendar_dates.txt' (
   format csv,
   header,
   dateformat '%Y%m%d'
@@ -122,7 +129,7 @@ insert into shape_point select
   shape_pt_lat,
   shape_pt_lon,
 from read_csv(
-  'csv/shapes.txt',
+  'data/gtfs/shapes.txt',
   header = true,
   columns = {
     'shape_id': 'int4',
@@ -137,7 +144,7 @@ order by shape_id, shape_pt_sequence;
 insert into feed_info select
   *,
 from read_csv(
-  'csv/feed_info.txt',
+  'data/gtfs/feed_info.txt',
   header = true,
   dateformat = '%Y%m%d',
   columns = {

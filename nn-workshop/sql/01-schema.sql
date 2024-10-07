@@ -20,6 +20,7 @@ create table stop (
 
 create table route (
   id int4 not null,
+  text_id text not null,
   agency_id int4 not null,
   short_name text not null,
   long_name text not null,
@@ -28,6 +29,8 @@ create table route (
   color text not null,
   text_color text not null,
 );
+
+create sequence seq_route_id start 1;
 
 
 create table trip (
