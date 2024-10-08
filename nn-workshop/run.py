@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+from concurrent.futures import ThreadPoolExecutor
 import contextlib
 import docker
 import duckdb
@@ -32,10 +33,10 @@ def download_if_missing(url, path):
 
     path.parent.mkdir(exist_ok=True)
     print(f"Downloading '{url}' to '{path.relative_to(Path.cwd())}'")
+    content = requests.get(url).content
 
     with open(path, "wb") as file:
-        res = requests.get(url)
-        file.write(res.content)
+        file.write(content)
 
 
 def get_gtfs():
@@ -98,6 +99,8 @@ def gen_db():
     if db_file.exists():
         return
 
+    db_tmp.parent.mkdir(exist_ok=True)
+
     with duckdb.connect(db_tmp) as db:
 
         def scalar(query):
@@ -105,13 +108,14 @@ def gen_db():
 
         try:
             if not scalar("select 'connection' in (show tables)"):
-                print("Creating schema")
-                db.sql(read(sql / "01-schema.sql"))
+                print("Creating tables")
+                db.sql(read(sql / "create-tables.sql"))
 
             if scalar("select count(*) from agency") == 0:
+                get_gtfs()
                 print("Importing GTFS")
                 with working_dir(root):
-                    db.sql(read(sql / "02-import.sql"))
+                    db.sql(read(sql / "import-gtfs.sql"))
         except:
             db.close()
             db_tmp.unlink(missing_ok=True)
@@ -119,21 +123,62 @@ def gen_db():
 
         if scalar("select count(*) from connection") == 0:
             print("Generating connections")
-            db.sql(read(sql / "03-generate.sql"))
+            db.sql(read(sql / "generate-connections.sql"))
 
         if scalar("select count(*) from walk") == 0:
             print("Calculating walking distances")
             with run_osrm():
-                calc_walking(db)
+                walk_calc(db)
 
-        db.sql(read(sql / "04-index.sql"))
+        db.sql(read(sql / "index.sql"))
 
     db_tmp.rename(db_file)
 
 
-def calc_walking(db: duckdb.DuckDBPyConnection):
-    # TODO
-    pass
+def walk_calc(db: duckdb.DuckDBPyConnection):
+    walk_calc_init(db)
+
+    # Repeating in loop to handle intermittent OSRM failures
+    while True:
+        calcs = db.sql(
+            "select id, from_stop, coords from walk_calc where distances is null"
+        ).fetchall()
+
+        if len(calcs) == 0:
+            break
+
+        executor = ThreadPoolExecutor(max_workers=os.cpu_count())
+
+        for id, from_stop, coords in calcs:
+            executor.submit(walk_calc_one, id, from_stop, coords, db.cursor())
+
+        executor.shutdown(wait=True)
+
+    db.sql(read(sql / "walk-calc-finish.sql"))
+
+
+def walk_calc_one(id, from_stop, coords, db):
+    query = f"""
+      update walk_calc set distances = (
+        select distances[1][2:] from read_json(
+          'http://localhost:{osrm_port}/table/v1/foot/{coords}?sources=0&annotations=distance'
+        )
+      ) where id = {id}
+    """
+
+    print(f"Calculating walking distances from {from_stop}")
+    db.sql(query)
+
+
+def walk_calc_init(db: duckdb.DuckDBPyConnection):
+    try:
+        if db.sql("select count(*) from walk_calc").fetchone()[0] > 0:
+            return
+    except:
+        pass
+
+    print("Creating temp table walk_calc")
+    db.sql(read(sql / "walk-calc-init.sql"))
 
 
 def all():

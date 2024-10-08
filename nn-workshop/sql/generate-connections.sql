@@ -1,10 +1,10 @@
 insert into connection select
   f.stop_id as from_stop,
   f.departure % (24*60*60) as departure,
-  t.stop_id,
-  (t.arrival - f.departure),
-  (select service_id from trip where id = f.trip_id),
-  f.departure >= 24*60*60,
+  t.stop_id as to_stop,
+  t.arrival - f.departure as travel_time,
+  (select service_id from trip where id = f.trip_id) as service_id,
+  f.departure >= 24*60*60 as date_overflow,
   f.trip_id,
 from stop_time f
 join stop_time t on (f.trip_id = t.trip_id and t.sequence > f.sequence)

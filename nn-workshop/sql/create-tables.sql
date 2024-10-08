@@ -52,8 +52,8 @@ create table stop_time (
   trip_id int4 not null,
   sequence int2 not null,
   stop_id int4 not null,
-  arrival int4 not null,
-  departure int4 not null,
+  arrival int4 not null, -- in seconds after midnight (can be over 86400)
+  departure int4 not null, -- also
   headsign text not null,
   pickup_type int1 not null,
   drop_off_type int1 not null,
@@ -101,16 +101,16 @@ create table feed_info (
 create table walk (
   from_stop int4 not null,
   to_stop int4 not null,
-  distance float4 not null,
+  distance int4 not null, -- in meters
 );
 
 
 create table connection (
   from_stop int4 not null,
-  departure int4 not null,
+  departure int4 not null, -- in seconds after midnight (0 - 86399)
   to_stop int4 not null,
   travel_time int4 not null,
   service_id int2 not null,
-  date_overflow bool not null,
+  date_overflow bool not null, -- true if original departure time was over 24:00:00
   trip_id int4 not null,
 );

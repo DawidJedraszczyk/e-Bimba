@@ -8,3 +8,4 @@ create index if not exists idx_calendar_service_id on calendar (service_id);
 create index if not exists idx_shape_point_shape_id_sequence on shape_point (shape_id, sequence);
 create index if not exists idx_walk_from_stop_to_stop on walk (from_stop, to_stop);
 create index if not exists idx_connection_from_stop_departure on connection (from_stop, departure);
+analyze;
