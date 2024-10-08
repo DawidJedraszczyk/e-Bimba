@@ -137,11 +137,12 @@ def gen_db():
 
 def walk_calc(db: duckdb.DuckDBPyConnection):
     walk_calc_init(db)
+    print("Calculating walking distances")
 
     # Repeating in loop to handle intermittent OSRM failures
     while True:
         calcs = db.sql(
-            "select id, from_stop, coords from walk_calc where distances is null"
+            "select id, coords from walk_calc where distances is null"
         ).fetchall()
 
         if len(calcs) == 0:
@@ -149,15 +150,15 @@ def walk_calc(db: duckdb.DuckDBPyConnection):
 
         executor = ThreadPoolExecutor(max_workers=os.cpu_count())
 
-        for id, from_stop, coords in calcs:
-            executor.submit(walk_calc_one, id, from_stop, coords, db.cursor())
+        for id, coords in calcs:
+            executor.submit(walk_calc_one, id, coords, db.cursor())
 
         executor.shutdown(wait=True)
 
     db.sql(read(sql / "walk-calc-finish.sql"))
 
 
-def walk_calc_one(id, from_stop, coords, db):
+def walk_calc_one(id, coords, db):
     query = f"""
       update walk_calc set distances = (
         select distances[1][2:] from read_json(
@@ -166,7 +167,6 @@ def walk_calc_one(id, from_stop, coords, db):
       ) where id = {id}
     """
 
-    print(f"Calculating walking distances from {from_stop}")
     db.sql(query)
 
 
