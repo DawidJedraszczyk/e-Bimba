@@ -6,6 +6,6 @@ create index if not exists idx_stop_time_trip_id_sequence on stop_time (trip_id,
 create index if not exists idx_stop_time_stop_id on stop_time (stop_id);
 create index if not exists idx_calendar_service_id on calendar (service_id);
 create index if not exists idx_shape_point_shape_id_sequence on shape_point (shape_id, sequence);
-create index if not exists idx_walk_from_stop_to_stop on walk (from_stop, to_stop);
+create index if not exists idx_stop_walk_from_stop_to_stop on stop_walk (from_stop, to_stop);
 create index if not exists idx_connection_from_stop_departure on connection (from_stop, departure);
 analyze;

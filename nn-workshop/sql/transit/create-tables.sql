@@ -98,7 +98,7 @@ create table feed_info (
 );
 
 
-create table walk (
+create table stop_walk (
   from_stop int4 not null,
   to_stop int4 not null,
   distance int4 not null, -- in meters

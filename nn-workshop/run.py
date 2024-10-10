@@ -41,6 +41,7 @@ OSRM_TABLE_BATCH = 100
 OSRM_TABLE_OUTPUT = OSRM_TABLE_BATCH * (OSRM_TABLE_BATCH - 1) / 2
 
 osrm_container = None
+threadpool_handle: ThreadPoolExecutor = None
 
 
 def download_if_missing(url, path):
@@ -109,6 +110,7 @@ def start_osrm():
     )
 
     atexit.register(stop_osrm)
+    time.sleep(1)
 
 
 def stop_osrm():
@@ -120,6 +122,24 @@ def stop_osrm():
         osrm_container = None
 
 
+def osrm_table(coords, sources=None):
+    srcs = f"&sources={sources}" if sources else ""
+    url = f"http://localhost:{OSRM_PORT}/table/v1/foot/{coords}?annotations=distance{srcs}"
+
+    while True:
+        try:
+            response = requests.get(url).text
+
+            if response.find('"code":"Ok"') != -1:
+                return response
+
+        except Exception as e:
+            response = str(e)
+
+        print(f"OSRM error: {response}")
+        time.sleep(3)
+
+
 def make_transit_db():
     if TRANSIT_DB.exists():
         return
@@ -127,7 +147,6 @@ def make_transit_db():
     TMP_DB.parent.mkdir(exist_ok=True)
 
     with duckdb.connect(TMP_DB) as db:
-
         def scalar(query):
             return db.sql(query).fetchone()[0]
 
@@ -150,60 +169,28 @@ def make_transit_db():
             print("Generating connections")
             db.sql(read(SQL / "transit" / "generate-connections.sql"))
 
-        if scalar("select count(*) from walk") == 0:
-            print("Calculating walking distances")
-            walk_calc(db)
+        if scalar("select count(*) from stop_walk") == 0:
+            calc_stop_walks(db)
 
         db.sql(read(SQL / "transit" / "index.sql"))
 
     TMP_DB.rename(TRANSIT_DB)
 
 
-def walk_calc(db: duckdb.DuckDBPyConnection):
-    walk_calc_init(db)
-    print("Calculating walking distances")
+def calc_stop_walks(db):
+    print("Calculating walking distances between stops")
     start_osrm()
+    tp = threadpool()
 
-    # Repeating in loop to handle intermittent OSRM failures
-    while True:
-        calcs = db.sql(
-            "select id, coords from walk_calc where distances is null"
-        ).fetchall()
+    missing = db.sql(read(SQL / "transit" / "stop-walk" / "get-missing.sql")).fetchnumpy()
+    futures = [tp.submit(osrm_table, c, "0") for c in missing["coords"]]
+    insert = read(SQL / "transit" / "stop-walk" / "insert.sql")
 
-        if len(calcs) == 0:
-            break
-
-        executor = ThreadPoolExecutor(max_workers=os.cpu_count())
-
-        for id, coords in calcs:
-            executor.submit(walk_calc_one, id, coords, db.cursor())
-
-        executor.shutdown(wait=True)
-
-    db.sql(read(SQL / "transit" / "walk-calc-finish.sql"))
-
-
-def walk_calc_one(id, coords, db):
-    query = f"""
-      update walk_calc set distances = (
-        select distances[1][2:] from read_json(
-          'http://localhost:{OSRM_PORT}/table/v1/foot/{coords}?sources=0&annotations=distance'
-        )
-      ) where id = {id}
-    """
-
-    db.sql(query)
-
-
-def walk_calc_init(db: duckdb.DuckDBPyConnection):
-    try:
-        if db.sql("select count(*) from walk_calc").fetchone()[0] > 0:
-            return
-    except:
-        pass
-
-    print("Creating temp table walk_calc")
-    db.sql(read(SQL / "transit" / "walk-calc-init.sql"))
+    for from_stop, to_stops, future in zip(missing["from_stop"], missing["to_stops"], futures):
+        from_stop = np.array([from_stop])
+        to_stop = pd.DataFrame({'i': np.arange(1, len(to_stops)+1), 'id': to_stops})
+        osrm_response = np.array([future.result()])
+        db.sql(insert)
 
 
 def get_dataset_metadata():
@@ -225,16 +212,16 @@ def make_walks_db(path, size):
 
         print(f"Generating {path.relative_to(Path.cwd())} ({size} rows)")
         start_osrm()
+        tp = threadpool()
 
-        with ThreadPoolExecutor(max_workers=os.cpu_count()) as tp:
-            batches = math.ceil((size-cur_size)/OSRM_TABLE_OUTPUT)
-            futures = [tp.submit(gen_walks_batch, meta) for _ in range(0, batches)]
-            insert = read(SQL / "walks" / "insert.sql")
+        batches = math.ceil((size-cur_size)/OSRM_TABLE_OUTPUT)
+        futures = [tp.submit(gen_walks_batch, meta) for _ in range(0, batches)]
+        insert = read(SQL / "walks" / "insert.sql")
 
-            for f in futures:
-                # SQL inputs
-                coords, osrm_response = f.result()
-                db.sql(insert)
+        for f in futures:
+            # SQL inputs
+            coords, osrm_response = f.result()
+            db.sql(insert)
 
 
 def gen_walks_batch(meta):
@@ -251,20 +238,6 @@ def gen_walks_batch(meta):
     return (coords, osrm_response)
 
 
-def osrm_table(coords, sources=None):
-    srcs = f"&sources={sources}" if sources else ""
-    url = f"http://localhost:{OSRM_PORT}/table/v1/foot/{coords}?annotations=distance{srcs}"
-
-    while True:
-        response = requests.get(url).text
-
-        if response.find('"code":"Ok"') == -1:
-            print(f"OSRM error: {res}")
-            time.sleep(3)
-        else:
-            return response
-
-
 def read(path):
     with open(path, "r") as file:
         return file.read()
@@ -278,6 +251,23 @@ def working_dir(path):
         yield
     finally:
         os.chdir(current)
+
+
+def threadpool() -> ThreadPoolExecutor:
+    global threadpool_handle
+
+    if threadpool_handle is None:
+        threadpool_handle = ThreadPoolExecutor(max_workers=os.cpu_count())
+        atexit.register(shutdown_threadpool)
+    
+    return threadpool_handle
+
+
+def shutdown_threadpool():
+    global threadpool_handle
+
+    if threadpool_handle is not None:
+        threadpool_handle.shutdown()
 
 
 if __name__ == "__main__":

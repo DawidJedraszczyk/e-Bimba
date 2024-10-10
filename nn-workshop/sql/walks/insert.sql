@@ -5,7 +5,7 @@ with
     select
       cast(osrm->'distances' as float[][]) as distances,
       cast(osrm->'$.sources[*].distance' as float[]) as snap_distances,
-      from (select column0::json as osrm from osrm_response)
+    from (select column0::json as osrm from osrm_response)
   ),
 
   unnested as materialized (
