@@ -1,5 +1,6 @@
 create table agency (
   id int4 not null,
+  src_id text not null, -- dropped after import
   name text not null,
   url text not null,
   timezone text not null,
@@ -7,9 +8,12 @@ create table agency (
   lang text not null,
 );
 
+create sequence seq_agency_id;
+
 
 create table stop (
   id int4 not null,
+  src_id text not null, -- dropped after import
   code text not null,
   name text not null,
   lat float8 not null,
@@ -17,10 +21,12 @@ create table stop (
   zone text not null,
 );
 
+create sequence seq_stop_id;
+
 
 create table route (
   id int4 not null,
-  text_id text not null,
+  src_id text not null, -- dropped after import
   agency_id int4 not null,
   short_name text not null,
   long_name text not null,
@@ -30,22 +36,21 @@ create table route (
   text_color text not null,
 );
 
-create sequence seq_route_id start 1;
+create sequence seq_route_id;
 
 
 create table trip (
   id int4 not null,
+  src_id text not null, -- dropped after import
   route_id int4 not null,
-  service_id int2 not null,
-  text_id text not null,
+  service_id int4 not null,
   headsign text not null,
   direction_id int1 not null,
   shape_id int4 not null,
   wheelchair_accessible bool not null,
-  brigade int4 not null,
 );
 
-create sequence seq_trip_id start 1;
+create sequence seq_trip_id;
 
 
 create table stop_time (
@@ -60,25 +65,35 @@ create table stop_time (
 );
 
 
-create table calendar (
-  service_id int2 not null,
-  monday bool not null,
-  tuesday bool not null,
-  wednesday bool not null,
-  thursday bool not null,
-  friday bool not null,
-  saturday bool not null,
-  sunday bool not null,
+create table service (
+  id int4 not null,
+  src_id text not null, -- dropped after import
+);
+
+create sequence seq_service_id;
+
+
+create table regular_service (
+  id int4 not null,
+  weekday bool[7] not null, -- weekdays during which this service is operating (mon - sun)
   start_date date not null,
   end_date date not null,
 );
 
 
-create table calendar_date (
-  service_id int2 not null,
+create table exceptional_service (
+  id int4 not null,
   date date not null,
-  exception_type int1 not null,
+  available bool not null,
 );
+
+
+create table shape (
+  id int4 not null,
+  src_id text not null, -- dropped after import
+);
+
+create sequence seq_shape_id;
 
 
 create table shape_point (
@@ -110,7 +125,7 @@ create table connection (
   departure int4 not null, -- in seconds after midnight (0 - 86399)
   to_stop int4 not null,
   travel_time int4 not null,
-  service_id int2 not null,
+  service_id int4 not null,
   date_overflow bool not null, -- true if original departure time was over 24:00:00
   trip_id int4 not null,
 );

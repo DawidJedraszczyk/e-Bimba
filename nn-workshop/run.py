@@ -152,8 +152,8 @@ def make_transit_db():
 
         try:
             if not scalar("select 'connection' in (show tables)"):
-                print("Creating tables")
-                db.sql(read(SQL / "transit" / "create-tables.sql"))
+                print("Initializing transit DB")
+                db.sql(read(SQL / "transit" / "init.sql"))
 
             if scalar("select count(*) from agency") == 0:
                 get_gtfs()
@@ -271,5 +271,4 @@ def shutdown_threadpool():
 
 
 if __name__ == "__main__":
-    make_walks_db(WALKD_TRAIN_DB, DATASET_SIZE_TRAIN)
-    make_walks_db(WALKD_VALID_DB, DATASET_SIZE_VALID)
+    make_transit_db()
