@@ -1,3 +1,10 @@
+create type services as struct (
+  yesterday int4[],
+  today int4[],
+  tomorrow int4[]
+);
+
+
 create table agency (
   id int4 not null,
   src_id text not null, -- dropped after import
@@ -129,3 +136,33 @@ create table connection (
   date_overflow bool not null, -- true if original departure time was over 24:00:00
   trip_id int4 not null,
 );
+
+
+create macro get_services(date) as table
+  select id
+  from regular_service
+  where date >= start_date
+    and date <= end_date
+    and weekday[(dayofweek(date::date) + 6) % 7 + 1]
+    and not exists (
+      select * from exceptional_service e
+      where e.date = date
+        and not available
+    )
+  union
+  select id
+  from exceptional_service e
+  where e.date = date
+    and available;
+
+
+create macro get_service_list(day) as (
+  select coalesce(list(id), []) from get_services(day::date)
+);
+
+
+create macro get_service_lists(middle) as {
+  'yesterday': get_service_list(middle::date - 1),
+  'today': get_service_list(middle),
+  'tomorrow': get_service_list(middle::date + 1),
+};
