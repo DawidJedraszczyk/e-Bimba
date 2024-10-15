@@ -120,22 +120,39 @@ create table feed_info (
 );
 
 
-create table stop_walk (
+create table connections (
   from_stop int4 not null,
-  to_stop int4 not null,
-  distance int4 not null, -- in meters
+  to_stops struct (
+    to_stop int4,
+    walk_distance int2, -- 0 if too far to walk
+    departures struct (
+      departure int4,
+      arrival int4,
+      service_id int4,
+      trip_id int4
+    )[]
+  )[] not null,
 );
 
+create view connection as
+  select
+    from_stop,
+    to_stop,
+    unnest(departures, recursive := true),
+  from (
+    select
+      from_stop,
+      unnest(to_stops, max_depth := 2)
+    from connections
+  );
 
-create table connection (
-  from_stop int4 not null,
-  departure int4 not null, -- in seconds after midnight (0 - 86399)
-  to_stop int4 not null,
-  travel_time int4 not null,
-  service_id int4 not null,
-  date_overflow bool not null, -- true if original departure time was over 24:00:00
-  trip_id int4 not null,
-);
+
+create macro parse_time(str) as
+  60*60*cast(str[1:2] as int4)
+  + 60*cast(str[4:5] as int4);
+
+create macro fmt_time(s) as
+  format('{:02d}:{:02d}', s // (60*60), (s // 60) % 60);
 
 
 create macro get_services(date) as table

@@ -17,8 +17,9 @@ with
 insert into stop_walk select
   f.column0 as from_stop,
   t.id as to_stop,
-  u.distance,
+  greatest(u.distance, 1), -- 0 is used as "too far to walk" so min distance is 1
 from from_stop f
 cross join to_stop t
 join unnested u on (u.i = t.i)
+where u.distance <= 2000
 order by to_stop

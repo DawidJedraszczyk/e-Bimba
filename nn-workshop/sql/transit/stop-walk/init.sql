@@ -1,6 +1,14 @@
 install spatial;
 load spatial;
 
+
+create temp table stop_walk (
+  from_stop int4 not null,
+  to_stop int4 not null,
+  distance int2 not null, -- in meters, always >= 1
+);
+
+
 with
   stop_coords as materialized (
     select
@@ -16,8 +24,7 @@ with
       t.stop as t,
     from stop_coords f
     join stop_coords t on (t.stop.id > f.stop.id)
-    where not exists (select * from stop_walk where from_stop = f.stop.id)
-      and ST_Distance_Sphere(f.point, t.point) <= 2000
+    where ST_Distance_Sphere(f.point, t.point) <= 2000
   )
 
 select

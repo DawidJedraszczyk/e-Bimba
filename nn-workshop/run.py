@@ -145,34 +145,23 @@ def make_transit_db():
         return
 
     TMP_DB.parent.mkdir(exist_ok=True)
+    TMP_DB.unlink(missing_ok=True)
 
     with duckdb.connect(TMP_DB) as db:
-        def scalar(query):
-            return db.sql(query).fetchone()[0]
+        print("Initializing transit DB")
+        db.sql(read(SQL / "transit" / "init.sql"))
 
-        try:
-            if not scalar("select 'connection' in (show tables)"):
-                print("Initializing transit DB")
-                db.sql(read(SQL / "transit" / "init.sql"))
+        get_gtfs()
+        print("Importing GTFS")
+        with working_dir(ROOT):
+            db.sql(read(SQL / "transit" / "import-gtfs.sql"))
 
-            if scalar("select count(*) from agency") == 0:
-                get_gtfs()
-                print("Importing GTFS")
-                with working_dir(ROOT):
-                    db.sql(read(SQL / "transit" / "import-gtfs.sql"))
-        except:
-            db.close()
-            TMP_DB.unlink(missing_ok=True)
-            raise
+        calc_stop_walks(db)
 
-        if scalar("select count(*) from connection") == 0:
-            print("Generating connections")
-            db.sql(read(SQL / "transit" / "generate-connections.sql"))
+        print("Generating connections")
+        db.sql(read(SQL / "transit" / "generate-connections.sql"))
 
-        if scalar("select count(*) from stop_walk") == 0:
-            calc_stop_walks(db)
-
-        db.sql(read(SQL / "transit" / "index.sql"))
+        db.sql("analyze")
 
     TMP_DB.rename(TRANSIT_DB)
 
@@ -182,11 +171,11 @@ def calc_stop_walks(db):
     start_osrm()
     tp = threadpool()
 
-    missing = db.sql(read(SQL / "transit" / "stop-walk" / "get-missing.sql")).fetchnumpy()
-    futures = [tp.submit(osrm_table, c, "0") for c in missing["coords"]]
+    input = db.sql(read(SQL / "transit" / "stop-walk" / "init.sql")).fetchnumpy()
+    futures = [tp.submit(osrm_table, c, "0") for c in input["coords"]]
     insert = read(SQL / "transit" / "stop-walk" / "insert.sql")
 
-    for from_stop, to_stops, future in zip(missing["from_stop"], missing["to_stops"], futures):
+    for from_stop, to_stops, future in zip(input["from_stop"], input["to_stops"], futures):
         from_stop = np.array([from_stop])
         to_stop = pd.DataFrame({'i': np.arange(1, len(to_stops)+1), 'id': to_stops})
         osrm_response = np.array([future.result()])
