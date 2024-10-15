@@ -3,8 +3,6 @@ import functools
 from pathlib import Path
 import pyarrow
 
-from lib.common import *
-
 
 class TransitDb:
   def __init__(self, path: Path):
