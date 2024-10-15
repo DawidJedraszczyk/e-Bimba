@@ -3,7 +3,7 @@
 import atexit
 from concurrent.futures import ThreadPoolExecutor
 import contextlib
-import docker
+import docker # type: ignore
 import duckdb
 import os
 import numpy as np
@@ -13,6 +13,7 @@ from pathlib import Path
 import requests
 import threading
 import time
+from typing import Optional
 import zipfile
 
 
@@ -41,7 +42,7 @@ OSRM_TABLE_BATCH = 100
 OSRM_TABLE_OUTPUT = OSRM_TABLE_BATCH * (OSRM_TABLE_BATCH - 1) / 2
 
 osrm_container = None
-threadpool_handle: ThreadPoolExecutor = None
+threadpool_handle: Optional[ThreadPoolExecutor] = None
 
 
 def download_if_missing(url, path):

@@ -1,2 +1,5 @@
 /data/
+/q.ipynb
+/q.py
+.mypy_cache
 __pycache__
