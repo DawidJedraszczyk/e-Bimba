@@ -1,21 +1,45 @@
 with
-  agg_departures as (
+  gathered as materialized (
     select
       f.stop_id as from_stop,
       t.stop_id as to_stop,
-      list(
-        struct_pack(
-          f.departure,
-          t.arrival,
-          service_id := (select service_id from trip where id = f.trip_id),
-          f.trip_id 
-        ) order by f.departure
-      ) as departures,
+      f.departure,
+      t.arrival,
+      (select service_id from trip where id = f.trip_id) as service_id,
+      f.trip_id,
     from stop_time f
     join stop_time t on (f.trip_id = t.trip_id and t.sequence > f.sequence)
     where
       f.pickup_type != 1
       and t.drop_off_type != 1
+  ),
+
+  only_best as (
+    select *
+    from gathered g
+    where not exists (
+      from gathered b
+      where b.from_stop = g.from_stop
+        and b.to_stop = g.to_stop
+        and b.service_id = g.service_id
+        and b.departure >= g.departure
+        and b.arrival < g.arrival
+    )
+  ),
+
+  agg_departures as (
+    select
+      from_stop,
+      to_stop,
+      list(
+        struct_pack(
+          departure,
+          arrival,
+          service_id,
+          trip_id 
+        ) order by departure
+      ) as departures,
+    from only_best
     group by from_stop, to_stop
   ),
 
