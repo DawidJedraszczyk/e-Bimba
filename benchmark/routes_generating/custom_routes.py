@@ -1,4 +1,6 @@
-from benchmark.components import SampleRoute, ComparisonPlan, ComparisonTrip
+from benchmark.components.ComparisonPlan import ComparisonPlan
+from benchmark.components.ComparisonTrip import ComparisonTrip
+from benchmark.components.SampleRoute import SampleRoute
 
 # All the routes here are for the timatable for 5.09.2024 - 30.09.2024
 # Thursday = 2024-09-05

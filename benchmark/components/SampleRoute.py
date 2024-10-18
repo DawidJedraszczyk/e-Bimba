@@ -1,5 +1,5 @@
 from datetime import datetime
-from benchmark.routes.resources import locations_dict
+from benchmark.routes_generating.resources import locations_dict
 
 class SampleRoute:
     def __init__(self,

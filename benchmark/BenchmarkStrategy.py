@@ -12,7 +12,7 @@ from algorithm_parts.AStarPlanner import AStarPlanner
 class BenchmarkStrategy():
     benchmark_type = None
     alternative_routes = 3
-    planner_metric = 'straight' # at the end when we will use neural network this will be removed or serve other purpose
+    planner_metric = 'manhattan' # at the end when we will use neural network this will be removed or serve other purpose
     total_times = []
     planners = []
     sample_routes = None
@@ -34,8 +34,8 @@ class BenchmarkStrategy():
             total_time = 0
 
             custom_print(
-                f'Searching for route from: {route.start_name} '
-                f'to: {route.destination_name} '
+                f'Searching for route from: {route.start_name} {start} '
+                f'to: {route.destination_name} {destination} '
                 f'at time: {route.start_time} {route.date} '
                 f'({weekday})', 'BENCHMARK')
             

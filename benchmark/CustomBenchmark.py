@@ -28,19 +28,20 @@ class CustomBenchmark(BenchmarkStrategy):
                             'google route duration'
                             ])
             for i, route in enumerate(self.sample_routes):
-                writer.writerow([round(self.total_times[i], 3),
-                                route.start_name, 
-                                route.destination_name, 
-                                route.start_time,
-                                route.week_day,
-                                #plans_to_string(planners[i].found_plans), TODO: look at the comment in BenchmarkStrategy
-                                str(route.jakdojade_plan),
-                                str(route.google_plan),
-                                self.compute_travel_duration(
-                                    route.start_time,
-                                    seconds_to_time(self.planners[i].found_plans[0].time_at_destination)),
-                                self.compute_travel_duration(
-                                    route.start_time, 
-                                    route.jakdojade_plan.arrival_time),
-                                self.compute_travel_duration(route.start_time, route.google_plan.arrival_time)
-                                ])
+                writer.writerow([
+                    round(self.total_times[i], 3),
+                    route.start_name, 
+                    route.destination_name, 
+                    route.start_time,
+                    route.week_day,
+                    #plans_to_string(planners[i].found_plans), TODO: look at the comment in BenchmarkStrategy
+                    str(route.jakdojade_plan),
+                    str(route.google_plan),
+                    self.compute_travel_duration(
+                        route.start_time,
+                        seconds_to_time(self.planners[i].found_plans[0].time_at_destination)),
+                    self.compute_travel_duration(
+                        route.start_time, 
+                        route.jakdojade_plan.arrival_time),
+                    self.compute_travel_duration(route.start_time, route.google_plan.arrival_time)
+                    ])
