@@ -3,7 +3,7 @@ import os
 
 from benchmark.BenchmarkStrategy import BenchmarkStrategy
 from benchmark.routes_generating.custom_routes import get_custom_sample_routes
-from algorithm_parts.utils import seconds_to_time
+from algorithm_parts.utils import seconds_to_time, plans_to_string
 
 class CustomBenchmark(BenchmarkStrategy):
     def __init__(self):
@@ -20,7 +20,7 @@ class CustomBenchmark(BenchmarkStrategy):
                             'Destination Name',
                             'Start Time',
                             'Day of week',
-                            #'found route',
+                            'found route',
                             'jak dojade route',
                             'google route',
                             'found route duration',
@@ -34,14 +34,17 @@ class CustomBenchmark(BenchmarkStrategy):
                     route.destination_name, 
                     route.start_time,
                     route.week_day,
+                    plans_to_string(self.planners[i].found_plans),
                     #plans_to_string(planners[i].found_plans), TODO: look at the comment in BenchmarkStrategy
                     str(route.jakdojade_plan),
                     str(route.google_plan),
                     self.compute_travel_duration(
                         route.start_time,
-                        seconds_to_time(self.planners[i].found_plans[0].time_at_destination)),
+                        seconds_to_time(self.planners[i].found_plans[0].time_at_destination)) if self.planners[i].found_plans else 'NA',
                     self.compute_travel_duration(
                         route.start_time, 
                         route.jakdojade_plan.arrival_time),
-                    self.compute_travel_duration(route.start_time, route.google_plan.arrival_time)
+                    self.compute_travel_duration(
+                        route.start_time, 
+                        route.google_plan.arrival_time)
                     ])

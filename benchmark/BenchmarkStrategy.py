@@ -3,7 +3,7 @@ from datetime import datetime
 from time import time
 import os
 
-from algorithm_parts.utils import time_to_seconds, seconds_to_time, custom_print
+from algorithm_parts.utils import time_to_seconds, seconds_to_time, custom_print, plans_to_string
 from algorithm_parts.AStarPlanner import AStarPlanner
 
 class BenchmarkStrategy():
@@ -50,8 +50,7 @@ class BenchmarkStrategy():
             print('##################################################')
             print('Route from: ', route.start_name, 'to: ', route.destination_name, 'at time: ', route.start_time, ' on: ', route.week_day)
             print('##################################################')
-            #TODO: print plans as a method in AStarPlanner and implement Plan.__to_string__ method
-            #print_plans(self.planners[i].found_plans)
+            print(plans_to_string(self.planners[i].found_plans))
             route.print_comparison_plans()
 
     @abstractmethod
