@@ -7,7 +7,7 @@ class ComparisonTrip():
         self.bus = bus
 
     def print_plan(self):
-        print(f"\t\t{self.start_location}({self.start_time})---{self.bus}--->{self.end_location}({self.end_time})")
+        print(f"\t\t{str(self)}")
 
     def __str__(self):
         return f"{self.start_location}({self.start_time})---{self.bus}--->{self.end_location}({self.end_time})"

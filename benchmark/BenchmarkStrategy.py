@@ -6,9 +6,6 @@ import os
 from algorithm_parts.utils import time_to_seconds, seconds_to_time, custom_print
 from algorithm_parts.AStarPlanner import AStarPlanner
 
-#from benchmark.routes.automatic_routes import get_all_automatic_sample_routes
-#from benchmark.routes.automatic_routes import get_small_instance_automatic_sample_routes
-
 class BenchmarkStrategy():
     benchmark_type = None
     alternative_routes = 3

@@ -5,14 +5,6 @@ class ComparisonPlan():
 
     def print_plans(self):
         print(str(self))
-        """
-        if self.trips is not None:
-            for trip in self.trips:
-                trip.print_plan()
-        else:
-            print("No bus information entered for this plan")
-        print(f"Arrival time: {self.arrival_time}")
-        """
 
     def __str__(self):
         plan_str = ""
