@@ -62,7 +62,7 @@ class BenchmarkStrategy():
         pass
 
     #private methods:
-    def compute_travel_duration(start_time, end_time):
+    def compute_travel_duration(self, start_time, end_time):
         start_time_in_seconds = time_to_seconds(start_time)
         end_time_in_seconds = time_to_seconds(end_time)
         if end_time_in_seconds < start_time_in_seconds:
@@ -71,7 +71,7 @@ class BenchmarkStrategy():
         return seconds_to_time(duration)
     
     def get_csv_filename(self):
-        current_time = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+        current_time = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
         directory = f"benchmark_results/{current_time}"
         os.makedirs(directory, exist_ok=True)
         filename = os.path.join(directory, f"{self.benchmark_type}_results{current_time}.csv")
