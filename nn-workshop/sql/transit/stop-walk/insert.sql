@@ -4,20 +4,24 @@ with
   parsed as (
     select
       cast(osrm->'$.distances[0]' as float[])[2:] as distances,
+      cast(osrm->'$.sources[0].distance' as float) as from_snap,
+      cast(osrm->'$.destinations[*].distance' as float[])[2:] as to_snaps,
     from (select column0::json as osrm from osrm_response)
   ),
 
   unnested as (
     select
+      from_snap,
       generate_subscripts(distances, 1) as i,
       unnest(distances) as distance,
+      unnest(to_snaps) as to_snap,
     from parsed
   )
 
 insert into stop_walk select
   f.column0 as from_stop,
   t.id as to_stop,
-  greatest(u.distance, 1), -- 0 is used as "too far to walk" so min distance is 1
+  greatest(from_snap + u.distance + to_snap, 1), -- 0 is used as "too far to walk" so min distance is 1
 from from_stop f
 cross join to_stop t
 join unnested u on (u.i = t.i)

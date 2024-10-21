@@ -54,21 +54,17 @@ with
   )
 
 insert into connections select
-  idx as from_stop,
-  coalesce(
-    list(
-      struct_pack(
-        to_stop,
-        walk_distance,
-        departures
-      ) order by to_stop
-    ) filter (to_stop is not null),
-    []
-  ) as to_stops,
-from range(0, (select max(id) from stop) + 1) r(idx)
-left join with_walk on (from_stop = idx)
-group by idx
-order by idx;
+  from_stop,
+  list(
+    struct_pack(
+      to_stop,
+      walk_distance,
+      departures
+    ) order by to_stop
+  ),
+from with_walk
+group by from_stop
+order by from_stop;
 
 
 drop table stop_walk;

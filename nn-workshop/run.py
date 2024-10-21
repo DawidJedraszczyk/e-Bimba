@@ -33,7 +33,7 @@ OSRM_FOLDER = DATA / "osrm"
 MAP_NAME = "map"
 OSM_FILE = OSRM_FOLDER / f"{MAP_NAME}.osm.pbf"
 
-GTFS_URL = "https://www.ztm.poznan.pl/pl/dla-deweloperow/getGTFSFile"
+GTFS_URL = "https://www.ztm.poznan.pl/pl/dla-deweloperow/getGTFSFile/?file=20240905_20240930.zip"
 OSM_URL = "http://download.geofabrik.de/europe/poland/wielkopolskie-latest.osm.pbf"
 
 OSRM_IMAGE = "ghcr.io/project-osrm/osrm-backend"
