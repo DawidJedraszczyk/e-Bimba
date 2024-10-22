@@ -61,22 +61,31 @@ class TargetNode(Node):
 
 
 @dataclass
+class Departures:
+  departures: NDArray
+  arrivals: NDArray
+  trip_ids: NDArray
+
+  @staticmethod
+  def empty():
+    a = np.array([], dtype=int)
+    return Departures(a, a, a)
+
+@dataclass
 class Connection:
   to_stop: int
   walk_distance: int
   walk_time: int
-  first_tomorrow: int
-  last_yesterday: int
-  departures: NDArray
-  arrivals: NDArray
-  service_ids: NDArray
-  trip_ids: NDArray
+  first_arrival_tomorrow: int
+  last_departure_yesterday: int
+  services: list[Departures]
 
 
 class Router:
   tdb: TransitDb
   osrm: OsrmClient
   debug: bool
+  max_service_id: int
   max_stop_id: int
   stop_coords: NDArray
   connections: list[list[Connection]]
@@ -85,9 +94,10 @@ class Router:
     self.tdb = tdb
     self.osrm = osrm
     self.debug = debug
+    self.max_service_id = tdb.sql("select max(id) from service").scalar()
     self.max_stop_id = tdb.sql("select max(id) from stop").scalar()
     self.stop_coords = get_stop_coords(self.max_stop_id, tdb)
-    self.connections = get_connections(self.max_stop_id, tdb)
+    self.connections = get_connections(self.max_stop_id, self.max_service_id, tdb)
 
   async def find_route(
       self,
@@ -158,6 +168,7 @@ class RouterTask:
   candidate_improved: bool = False
   new_candidates: list[Node] = []
   arrival_to_beat: int = INT32_MAX
+  iteration: int = 0
 
 
   def __init__(
@@ -246,6 +257,7 @@ class RouterTask:
 
   def solve(self):
     while len(self.candidates) > 0:
+      self.iteration += 1
       candidate = heapq.heappop(self.candidates)
       self.candidate_improved = False
 
@@ -267,41 +279,43 @@ class RouterTask:
           self.arrival_to_beat = candidate.arrival + conn.walk_time
           self.update_node(node, WalkFromStop(candidate.stop_id, conn.walk_distance))
 
-        if len(conn.departures) == 0:
-          continue
-
         self.find_departure(node, candidate, conn, 0, self.srv_today)
 
-        if self.arrival_to_beat > conn.first_tomorrow:
+        if self.arrival_to_beat > conn.first_arrival_tomorrow:
           self.find_departure(node, candidate, conn, DAY, self.srv_tomorrow)
 
-        if self.arrival_to_beat < conn.last_yesterday:
+        if candidate.arrival < conn.last_departure_yesterday:
           self.find_departure(node, candidate, conn, -DAY, self.srv_yesterday)
 
       candidate.is_candidate = False
       self.add_candidates()
 
-    print(f"{self.arrival=} {self.came_from=}")
+    print(f"{self.arrival=} {self.came_from=} {self.iteration=}")
 
     if self.came_from is not None:
       self.print_path(self.came_from)
 
 
   def find_departure(self, node, candidate, conn, time_offset, services):
-    departures = conn.departures
-    start_index = departures.searchsorted(candidate.arrival + TRANSFER_TIME - time_offset)
+    for srv in services:
+      service = conn.services[srv]
+      departures = service.departures
+      count = len(departures)
 
-    for i in range(start_index, len(departures)):
-      if conn.service_ids[i] not in services:
+      if count == 0:
         continue
 
-      arrival = conn.arrivals[i] + time_offset
+      i = departures.searchsorted(candidate.arrival + TRANSFER_TIME - time_offset)
+
+      if i == count:
+        continue
+
+      arrival = service.arrivals[i] + time_offset
 
       if arrival < self.arrival_to_beat:
         self.arrival_to_beat = arrival
-        self.update_node(node, TakeTrip(candidate.stop_id, conn.trip_ids[i], departures[i]))
-
-      break
+        path = TakeTrip(candidate.stop_id, service.trip_ids[i], departures[i] + time_offset)
+        self.update_node(node, path)
 
 
   def add_candidates(self):
@@ -349,7 +363,12 @@ def get_stop_coords(max_stop_id: int, tdb: TransitDb) -> NDArray:
   return np.array(res)
 
 
-def get_connections(max_stop_id: int, tdb: TransitDb) -> list[list[Connection]]:
+def get_connections(
+  max_stop_id: int,
+  max_service_id: int,
+  tdb: TransitDb,
+) -> list[list[Connection]]:
+  empty_services = [Departures.empty()] * (max_service_id+1)
   result: list[list[Connection]] = [[]] * (max_stop_id+1)
 
   for connection in tdb.get_connections():
@@ -364,32 +383,47 @@ def get_connections(max_stop_id: int, tdb: TransitDb) -> list[list[Connection]]:
       else:
         walk_time = INT32_MAX
 
-      deps = ts[2].values
-      arrivals = deps.field(1).to_numpy()
+      srv = ts[2].values
+      first_arr_tomorrow = INT32_MAX
+      last_dep_yesterday = 0
 
-      if len(arrivals) == 0:
-        first_tomorrow = INT32_MAX
-        last_yesterday = INT32_MAX
+      if len(srv) > 0:
+        services = empty_services.copy()
       else:
-        first_tomorrow = arrivals[0] + DAY
-        last_yesterday = arrivals[-1] - DAY
+        services = empty_services
+
+      for s in srv:
+        deps = s[1].values
+
+        if len(deps) == 0:
+          continue
+
+        service_id = s[0].as_py()
+        departures = deps.field(0).to_numpy()
+        arrivals = deps.field(1).to_numpy()
+
+        first_arr_tomorrow = min(first_arr_tomorrow, arrivals[0] + DAY)
+        last_dep_yesterday = max(last_dep_yesterday, departures[-1] - DAY)
+
+        services[service_id] = Departures(
+          departures,
+          arrivals,
+          deps.field(2).to_numpy(),
+        )
 
       to_stops.append(
         Connection(
           ts[0].as_py(),
           walk_distance,
           walk_time,
-          first_tomorrow,
-          last_yesterday,
-          deps.field(0).to_numpy(),
-          arrivals,
-          deps.field(2).to_numpy(),
-          deps.field(3).to_numpy(),
+          first_arr_tomorrow,
+          last_dep_yesterday,
+          services,
         )
       )
 
     result[from_stop] = to_stops
-  
+
   return result
 
 

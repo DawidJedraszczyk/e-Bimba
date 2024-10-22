@@ -15,7 +15,7 @@ create table agency (
   lang text not null,
 );
 
-create sequence seq_agency_id;
+create sequence seq_agency_id minvalue 0 start 0;
 
 
 create table stop (
@@ -28,7 +28,7 @@ create table stop (
   zone text not null,
 );
 
-create sequence seq_stop_id;
+create sequence seq_stop_id minvalue 0 start 0;
 
 
 create table route (
@@ -43,7 +43,7 @@ create table route (
   text_color text not null,
 );
 
-create sequence seq_route_id;
+create sequence seq_route_id minvalue 0 start 0;
 
 
 create table trip (
@@ -57,7 +57,7 @@ create table trip (
   wheelchair_accessible bool not null,
 );
 
-create sequence seq_trip_id;
+create sequence seq_trip_id minvalue 0 start 0;
 
 
 create table stop_time (
@@ -77,7 +77,7 @@ create table service (
   src_id text not null, -- dropped after import
 );
 
-create sequence seq_service_id;
+create sequence seq_service_id minvalue 0 start 0;
 
 
 create table regular_service (
@@ -100,7 +100,7 @@ create table shape (
   src_id text not null, -- dropped after import
 );
 
-create sequence seq_shape_id;
+create sequence seq_shape_id minvalue 0 start 0;
 
 
 create table shape_point (
@@ -125,26 +125,40 @@ create table connections (
   to_stops struct (
     to_stop int4,
     walk_distance int2, -- 0 if too far to walk
-    departures struct (
-      departure int4,
-      arrival int4,
+    services struct (
       service_id int4,
-      trip_id int4
+      departures struct (
+        departure int4,
+        arrival int4,
+        trip_id int4
+      )[]
     )[]
   )[] not null,
 );
 
 create view connection as
+  with
+    to_stops as (
+      select
+        from_stop,
+        unnest(to_stops, max_depth := 2),
+      from connections
+    ),
+    services as (
+      select
+        from_stop,
+        to_stop,
+        walk_distance,
+        unnest(services, max_depth := 2),
+      from to_stops
+    )
   select
     from_stop,
     to_stop,
+    walk_distance,
+    service_id,
     unnest(departures, recursive := true),
-  from (
-    select
-      from_stop,
-      unnest(to_stops, max_depth := 2)
-    from connections
-  );
+  from services;
 
 
 create macro parse_time(str) as

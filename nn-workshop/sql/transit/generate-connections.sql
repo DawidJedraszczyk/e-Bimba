@@ -31,15 +31,29 @@ with
     select
       from_stop,
       to_stop,
+      service_id,
       list(
         struct_pack(
           departure,
           arrival,
-          service_id,
           trip_id 
         ) order by departure
       ) as departures,
     from only_best
+    group by from_stop, to_stop, service_id
+  ),
+
+  agg_services as (
+    select
+      from_stop,
+      to_stop,
+      list(
+        struct_pack(
+          service_id,
+          departures
+        ) order by service_id
+      ) as services,
+    from agg_departures
     group by from_stop, to_stop
   ),
 
@@ -48,8 +62,8 @@ with
       coalesce(a.from_stop, w.from_stop) as from_stop,
       coalesce(a.to_stop, w.to_stop) as to_stop,
       coalesce(distance, 0) as walk_distance,
-      coalesce(departures, []) as departures,
-    from agg_departures a
+      coalesce(services, []) as services,
+    from agg_services a
     full join stop_walk w on (w.from_stop = a.from_stop and w.to_stop = a.to_stop)
   )
 
@@ -59,7 +73,7 @@ insert into connections select
     struct_pack(
       to_stop,
       walk_distance,
-      departures
+      services
     ) order by to_stop
   ),
 from with_walk
