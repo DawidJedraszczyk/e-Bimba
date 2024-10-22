@@ -54,7 +54,6 @@ class Node:
   def __lt__(self, other):
     return self.estimate < other.estimate
 
-
 @dataclass
 class TargetNode(Node):
   walk_distance: int = INT32_MAX
@@ -378,7 +377,7 @@ def get_connections(
     for ts in connection[1].values: # type: ignore
       walk_distance = ts[1].as_py()
 
-      if walk_distance > 0 and walk_distance <= MAX_STOP_WALK:
+      if walk_distance is not None and walk_distance <= MAX_STOP_WALK:
         walk_time = int(walk_distance / WALK_SPEED)
       else:
         walk_time = INT32_MAX

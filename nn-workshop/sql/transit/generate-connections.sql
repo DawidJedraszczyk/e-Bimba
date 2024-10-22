@@ -59,12 +59,24 @@ with
 
   with_walk as (
     select
-      coalesce(a.from_stop, w.from_stop) as from_stop,
-      coalesce(a.to_stop, w.to_stop) as to_stop,
-      coalesce(distance, 0) as walk_distance,
-      coalesce(services, []) as services,
-    from agg_services a
-    full join stop_walk w on (w.from_stop = a.from_stop and w.to_stop = a.to_stop)
+      f.id as from_stop,
+      t.id as to_stop,
+      distance as walk_distance,
+      services,
+    from stop f
+    cross join stop t
+    left join stop_walk w on (
+      w.from_stop = least(f.id, t.id)
+      and
+      w.to_stop = greatest(f.id, t.id)
+    )
+    left join agg_services a on (
+      a.from_stop = f.id
+      and
+      a.to_stop = t.id
+    )
+    where walk_distance is not null
+      or services is not null
   )
 
 insert into connections select
@@ -73,7 +85,7 @@ insert into connections select
     struct_pack(
       to_stop,
       walk_distance,
-      services
+      services := coalesce(services, [])
     ) order by to_stop
   ),
 from with_walk

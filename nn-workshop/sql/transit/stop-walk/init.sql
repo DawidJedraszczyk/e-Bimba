@@ -5,7 +5,7 @@ load spatial;
 create temp table stop_walk (
   from_stop int4 not null,
   to_stop int4 not null,
-  distance int2 not null, -- in meters, always >= 1
+  distance int2 not null, -- in meters
 );
 
 

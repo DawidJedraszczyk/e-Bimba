@@ -124,7 +124,7 @@ create table connections (
   from_stop int4 not null,
   to_stops struct (
     to_stop int4,
-    walk_distance int2, -- 0 if too far to walk
+    walk_distance int2, -- null if too far to walk
     services struct (
       service_id int4,
       departures struct (
@@ -148,14 +148,12 @@ create view connection as
       select
         from_stop,
         to_stop,
-        walk_distance,
         unnest(services, max_depth := 2),
       from to_stops
     )
   select
     from_stop,
     to_stop,
-    walk_distance,
     service_id,
     unnest(departures, recursive := true),
   from services;

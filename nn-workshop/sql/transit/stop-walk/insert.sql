@@ -18,10 +18,10 @@ with
     from parsed
   )
 
-insert into stop_walk select
+insert into stop_walk by name select
   f.column0 as from_stop,
   t.id as to_stop,
-  greatest(from_snap + u.distance + to_snap, 1), -- 0 is used as "too far to walk" so min distance is 1
+  from_snap + u.distance + to_snap as distance,
 from from_stop f
 cross join to_stop t
 join unnested u on (u.i = t.i)
