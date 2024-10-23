@@ -46,13 +46,14 @@ PathSegment = WalkFromBeg | WalkFromStop | TakeTrip
 @dataclass
 class Node:
   stop_id: int
+  estimate: int
   arrival: Optional[int] = None
-  estimate: Optional[int] = None
+  destination_arrival: Optional[int] = None
   came_from: Optional[PathSegment] = None
   is_candidate: bool = False
 
   def __lt__(self, other):
-    return self.estimate < other.estimate
+    return self.destination_arrival < other.destination_arrival
 
 @dataclass
 class TargetNode(Node):
@@ -137,14 +138,17 @@ class Router:
 
     RouterTask(
       to_lat, to_lon, self, walk_distance,
-      zip(stop_ids(from_stops), walks_from), zip(stop_ids(to_stops), walks_to),
+      Stops(stop_ids(from_stops), stop_coords(from_stops), walks_from[:-1]),
+      Stops(stop_ids(to_stops), stop_coords(to_stops), walks_to),
       services, start_time,
     ).solve()
 
-  def estimate(self, stop_id: int, lat: float, lon: float) -> int:
-    s_lat, s_lon = self.stop_coords[stop_id]
-    distance = haversine((s_lat, s_lon), (lat, lon), Unit.METERS)
-    return int(distance / TRAM_SPEED)
+
+@dataclass
+class Stops:
+  ids: NDArray
+  coords: NDArray
+  distances: NDArray
 
 
 class RouterTask:
@@ -156,6 +160,7 @@ class RouterTask:
   srv_today: list[int]
   srv_yesterday: list[int]
   srv_tomorrow: list[int]
+  to_stops: Stops
 
   arrival: int = INT32_MAX
   came_from: Optional[PathSegment] = None
@@ -176,8 +181,8 @@ class RouterTask:
     lon: float,
     router: Router,
     walk_distance: float,
-    from_stops: Iterable[tuple[int, float]],
-    to_stops: Iterable[tuple[int, float]],
+    from_stops: Stops,
+    to_stops: Stops,
     services: Services,
     start_time: int,
   ):
@@ -188,17 +193,18 @@ class RouterTask:
     self.srv_today = services["today"]
     self.srv_yesterday = services["yesterday"]
     self.srv_tomorrow = services["tomorrow"]
+    self.to_stops = to_stops
     self.nodes = [None] * (router.max_stop_id + 1)
     self.candidates = []
 
-    for id, dst in to_stops:
-      self.nodes[id] = TargetNode(id, walk_distance=int(dst))
+    for id, dst in zip(to_stops.ids, to_stops.distances):
+      self.nodes[id] = TargetNode(id, int(dst / WALK_SPEED), walk_distance=int(dst))
 
-    for id, dst in from_stops:
+    for id, dst in zip(from_stops.ids, from_stops.distances):
       n = self.get_node(id)
       arrival = start_time + int(dst / WALK_SPEED)
       n.arrival = arrival
-      n.estimate = arrival + router.estimate(id, lat, lon)
+      n.destination_arrival = arrival + n.estimate
       n.came_from = WalkFromBeg(int(dst))
       n.is_candidate = True
       self.candidates.append(n)
@@ -210,11 +216,22 @@ class RouterTask:
     heapq.heapify(self.candidates)
 
 
+  def estimate(self, stop_id: int) -> int:
+    coords = self.router.stop_coords[stop_id]
+    result = INT32_MAX
+
+    for target_coords, target_walk in zip(self.to_stops.coords, self.to_stops.distances):
+      distance = haversine(coords, target_coords, Unit.METERS)
+      result = min(result, int(distance / TRAM_SPEED + target_walk / WALK_SPEED))
+
+    return result
+
+
   def get_node(self, stop_id: int) -> Node:
     node = self.nodes[stop_id]
 
     if node is None:
-      node = Node(stop_id)
+      node = Node(stop_id, self.estimate(stop_id))
       self.nodes[stop_id] = node
 
     return node
@@ -222,14 +239,14 @@ class RouterTask:
 
   def update_node(self, node: Node, came_from: PathSegment):
     arrival = self.arrival_to_beat
-    estimate = arrival + self.router.estimate(node.stop_id, self.lat, self.lon)
+    destination_arrival = arrival + node.estimate
 
-    if estimate >= self.arrival:
+    if destination_arrival >= self.arrival:
       return
 
     node.arrival = arrival
     node.came_from = came_from
-    node.estimate = estimate
+    node.destination_arrival = destination_arrival
 
     if node.is_candidate:
       self.candidate_improved = True
@@ -242,16 +259,14 @@ class RouterTask:
 
     node.is_candidate = True
 
+    # Earlier arrival check ensures this solution is better than the last one
     if isinstance(node, TargetNode):
-      new_arrival = arrival + int(node.walk_distance / WALK_SPEED)
+      if self.debug:
+        print(f"      Solution improved by {arrival - destination_arrival} seconds")
 
-      if new_arrival < self.arrival:
-        if self.debug:
-          print(f"      Solution improved by {arrival - new_arrival} seconds")
-
-        self.improved = True
-        self.arrival = new_arrival
-        self.came_from = WalkFromStop(node.stop_id, node.walk_distance)
+      self.improved = True
+      self.arrival = destination_arrival
+      self.came_from = WalkFromStop(node.stop_id, node.walk_distance)
 
 
   def solve(self):
@@ -260,7 +275,7 @@ class RouterTask:
       candidate = heapq.heappop(self.candidates)
       self.candidate_improved = False
 
-      if candidate.estimate >= self.arrival: # type: ignore
+      if candidate.destination_arrival >= self.arrival: # type: ignore
         break
 
       if self.debug:
@@ -325,7 +340,7 @@ class RouterTask:
         self.candidates = []
 
         for c in chain(old, self.new_candidates):
-          if c.estimate < self.arrival:
+          if c.destination_arrival < self.arrival:
             self.candidates.append(c)
           else:
             c.is_candidate = False
@@ -354,12 +369,8 @@ class RouterTask:
 
 
 def get_stop_coords(max_stop_id: int, tdb: TransitDb) -> NDArray:
-  res = [(0.0, 0.0)] * (max_stop_id + 1)
-
-  for row in tdb.sql("select id, lat, lon from stop").arrow():
-    res[row["id"].as_py()] = (row["lat"].as_py(), row["lon"].as_py())
-
-  return np.array(res)
+  res = tdb.sql("select lat, lon from stop order by id").arrow()
+  return np.stack([res.field(0), res.field(1)], axis=-1)
 
 
 def get_connections(
@@ -426,10 +437,10 @@ def get_connections(
   return result
 
 
-def stop_ids(arr: pyarrow.StructArray) -> Iterable[int]:
-  for row in arr:
-    yield row["id"].as_py()
+def stop_ids(arr: pyarrow.StructArray) -> NDArray:
+  return arr.field("id").to_numpy()
 
-def stop_coords(arr: pyarrow.StructArray) -> Iterable[tuple[float, float]]:
-  for row in arr:
-    yield row["lat"].as_py(), row["lon"].as_py()
+def stop_coords(arr: pyarrow.StructArray) -> NDArray:
+  lat = arr.field("lat").to_numpy()
+  lon = arr.field("lon").to_numpy()
+  return np.stack([lat, lon], axis=-1)
