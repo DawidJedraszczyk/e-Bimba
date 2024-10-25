@@ -24,7 +24,7 @@ with
       t.stop as t,
     from stop_coords f
     join stop_coords t on (t.stop.id > f.stop.id)
-    where ST_Distance_Sphere(f.point, t.point) <= 2000
+    where ST_Distance_Sphere(f.point, t.point) <= getvariable('MAX_STOP_WALK')
   )
 
 select

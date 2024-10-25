@@ -16,6 +16,8 @@ import time
 from typing import Optional
 import zipfile
 
+from lib.transitdb import *
+
 
 DATASET_SIZE_TRAIN = int(1e7)
 DATASET_SIZE_VALID = int(5e5)
@@ -111,7 +113,7 @@ def start_osrm():
     )
 
     atexit.register(stop_osrm)
-    time.sleep(1)
+    time.sleep(0.2)
 
 
 def stop_osrm():
@@ -148,21 +150,40 @@ def make_transit_db():
     TMP_DB.parent.mkdir(exist_ok=True)
     TMP_DB.unlink(missing_ok=True)
 
-    with duckdb.connect(TMP_DB) as db:
+    with TransitDb(TMP_DB) as db:
         print("Initializing transit DB")
-        db.sql(read(SQL / "transit" / "init.sql"))
+        db.script("init")
 
         get_gtfs()
+
+        t0 = time.time()
         print("Importing GTFS")
         with working_dir(ROOT):
-            db.sql(read(SQL / "transit" / "import-gtfs.sql"))
+            db.script("import-gtfs")
 
+        t1 = time.time()
         calc_stop_walks(db)
 
+        t2 = time.time()
         print("Generating connections")
-        db.sql(read(SQL / "transit" / "generate-connections.sql"))
+        db.script("generate-connections")
 
+        t3 = time.time()
         db.sql("analyze")
+
+    t4 = time.time()
+
+    def t(t_to, t_from):
+        return f"{round(t_to - t_from, 3)}s"
+
+    print(
+        "\nExecution times:\n"
+        f"  import: {t(t1, t0)}\n"
+        f"  walks: {t(t2, t1)}\n"
+        f"  connections: {t(t3, t2)}\n"
+        f"  analyze: {t(t4, t3)}\n"
+        f"  total: {t(t4, t0)}\n"
+    )
 
     TMP_DB.rename(TRANSIT_DB)
 
@@ -172,15 +193,18 @@ def calc_stop_walks(db):
     start_osrm()
     tp = threadpool()
 
-    input = db.sql(read(SQL / "transit" / "stop-walk" / "init.sql")).fetchnumpy()
+    input = db.script("stop-walk/init").rel.fetchnumpy()
     futures = [tp.submit(osrm_table, c, "0") for c in input["coords"]]
-    insert = read(SQL / "transit" / "stop-walk" / "insert.sql")
 
     for from_stop, to_stops, future in zip(input["from_stop"], input["to_stops"], futures):
-        from_stop = np.array([from_stop])
-        to_stop = pd.DataFrame({'i': np.arange(1, len(to_stops)+1), 'id': to_stops})
-        osrm_response = np.array([future.result()])
-        db.sql(insert)
+        db.script(
+            "stop-walk/insert",
+            views = {
+                "from_stop": np.array([from_stop]),
+                "to_stop": pd.DataFrame({'i': np.arange(1, len(to_stops)+1), 'id': to_stops}),
+                "osrm_response": np.array([future.result()]),
+            },
+        )
 
 
 def get_dataset_metadata():

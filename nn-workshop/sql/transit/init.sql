@@ -124,15 +124,14 @@ create table connections (
   from_stop int4 not null,
   to_stops struct (
     to_stop int4,
-    walk_distance int2, -- null if too far to walk
+    walk_time int2, -- 0 if too far to walk
+    first_arrival int4, -- 0 if no services
+    last_departure int4, -- 0 if no services
     services struct (
-      service_id int4,
-      departures struct (
-        departure int4,
-        arrival int4,
-        trip_id int4
-      )[]
-    )[]
+      departure int4,
+      arrival int4,
+      trip_id int4
+    )[][]
   )[] not null,
 );
 
@@ -148,14 +147,15 @@ create view connection as
       select
         from_stop,
         to_stop,
-        unnest(services, max_depth := 2),
+        generate_subscripts(services, 1) - 1 as service_id,
+        unnest(services) as times,
       from to_stops
     )
   select
     from_stop,
     to_stop,
     service_id,
-    unnest(departures, recursive := true),
+    unnest(times, max_depth := 2),
   from services;
 
 

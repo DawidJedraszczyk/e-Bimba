@@ -1,67 +1,58 @@
 with
-  gathered as materialized (
+  gathered as (
     select
       f.stop_id as from_stop,
       t.stop_id as to_stop,
-      f.departure,
-      t.arrival,
       (select service_id from trip where id = f.trip_id) as service_id,
-      f.trip_id,
+      list(
+        struct_pack(
+          f.departure,
+          t.arrival,
+          f.trip_id
+        ) order by f.departure
+      ) as times,
     from stop_time f
     join stop_time t on (f.trip_id = t.trip_id and t.sequence > f.sequence)
     where
       f.pickup_type != 1
       and t.drop_off_type != 1
+    group by from_stop, to_stop, service_id
   ),
 
   only_best as (
-    select *
-    from gathered g
-    where not exists (
-      from gathered b
-      where b.from_stop = g.from_stop
-        and b.to_stop = g.to_stop
-        and b.service_id = g.service_id
-        and b.departure >= g.departure
-        and b.arrival < g.arrival
-    )
-  ),
-
-  agg_departures as (
     select
       from_stop,
       to_stop,
       service_id,
-      list(
-        struct_pack(
-          departure,
-          arrival,
-          trip_id 
-        ) order by departure
-      ) as departures,
-    from only_best
-    group by from_stop, to_stop, service_id
+      [
+        x for x, i in times
+        if coalesce(x.arrival < list_min([y.arrival for y in times[i+1:]]), true)
+      ] as times,
+    from gathered
   ),
 
   agg_services as (
     select
       from_stop,
       to_stop,
-      list(
-        struct_pack(
-          service_id,
-          departures
-        ) order by service_id
-      ) as services,
-    from agg_departures
+      map_from_entries(list(
+        struct_pack(k := service_id, v:= times)
+      )) as s_map,
+      [
+        flatten(s_map[i])
+        for i in range((select max(id) from service) + 1)
+      ] as services,
+    from only_best b
     group by from_stop, to_stop
   ),
 
-  with_walk as (
+  with_stop_info as (
     select
       f.id as from_stop,
       t.id as to_stop,
-      distance as walk_distance,
+      (w.distance / getvariable('WALK_SPEED')) :: int2 as walk_time,
+      list_min([s[1].arrival for s in services]) as first_arrival,
+      list_max([s[-1].departure for s in services]) as last_departure,
       services,
     from stop f
     cross join stop t
@@ -75,20 +66,23 @@ with
       and
       a.to_stop = t.id
     )
-    where walk_distance is not null
+    where w.distance is not null
       or services is not null
   )
 
 insert into connections select
   from_stop,
-  list(
+  coalesce(list(
     struct_pack(
       to_stop,
-      walk_distance,
+      walk_time := greatest(walk_time, -1) + 1,
+      first_arrival := coalesce(first_arrival, 0),
+      last_departure := coalesce(last_departure, 0),
       services := coalesce(services, [])
     ) order by to_stop
-  ),
-from with_walk
+  ), []),
+from stop f
+left join with_stop_info on (from_stop = f.id)
 group by from_stop
 order by from_stop;
 

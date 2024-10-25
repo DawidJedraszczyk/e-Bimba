@@ -25,5 +25,5 @@ insert into stop_walk by name select
 from from_stop f
 cross join to_stop t
 join unnested u on (u.i = t.i)
-where u.distance <= 2000
+where u.distance <= getvariable('MAX_STOP_WALK')
 order by to_stop
