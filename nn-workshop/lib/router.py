@@ -2,10 +2,10 @@ import asyncio
 import cProfile
 from dataclasses import dataclass
 import datetime
-from haversine import haversine, haversine_vector, Unit # type: ignore
+from haversine.haversine import get_avg_earth_radius, _haversine_kernel, Unit # type: ignore
 import heapq
 from itertools import chain
-from numba import int32, njit # type: ignore
+import numba as nb # type: ignore
 from numba.experimental import jitclass # type: ignore
 import pyarrow
 import time as timer
@@ -17,8 +17,15 @@ from lib.params import *
 from lib.transitdb import *
 
 
-INT32_MAX = 2**32-1
+INT32_MAX = 0x7FFFFFFF
+
 DAY = 24*60*60
+EARTH_RADIUS = get_avg_earth_radius(Unit.METERS)
+
+
+@nb.jit
+def nb_haversine(a_lat, a_lon, b_lat, b_lon):
+  return EARTH_RADIUS * _haversine_kernel(a_lat, a_lon, b_lat, b_lon)
 
 
 @dataclass
@@ -110,114 +117,180 @@ class Router:
       print(f"  to: {list(zip(stop_ids(to_stops), walks_to))}")
 
     RouterTask(
-      to_lat, to_lon, self, walk_distance,
+      self.debug,
+      self.stop_coords.astype(np.float32),
+      self.connections,
+      Services(
+        np.array(services["yesterday"], dtype=np.int32),
+        np.array(services["today"], dtype=np.int32),
+        np.array(services["tomorrow"], dtype=np.int32),
+      ),
       Stops(stop_ids(from_stops), stop_coords(from_stops), walks_from[:-1]),
       Stops(stop_ids(to_stops), stop_coords(to_stops), walks_to),
-      services, start_time,
+      walk_distance,
+      start_time,
     ).solve()
 
 
-@dataclass
-class Stops:
-  ids: NDArray
-  coords: NDArray
-  distances: NDArray
+@jitclass([
+  ("from_stop", nb.int32),
+  ("trip_id", nb.int32),
+  ("details", nb.int32), # departure if trip_id != -1, walk distance otherwise
+])
+class PathSegment:
+  def __init__(self, from_stop, trip_id, details):
+    self.from_stop = from_stop
+    self.trip_id = trip_id
+    self.details = details
+
+  def __str__(self):
+    return f"({self.from_stop}, {self.trip_id}, {self.details})"
 
 
-class RouterTask:
-  lat: float
-  lon: float
-  router: Router
-  debug: bool
-
-  srv_today: list[int]
-  srv_yesterday: list[int]
-  srv_tomorrow: list[int]
-  to_stops: Stops
-
-  arrival: int = INT32_MAX
-  came_from: Optional[PathSegment] = None
-  improved: bool = False
-
-  nodes: list[Optional[Node]]
-  candidates: list[Node] = []
-
-  candidate_improved: bool = False
-  new_candidates: list[Node] = []
-  arrival_to_beat: int = INT32_MAX
-  iteration: int = 0
-
-
+@jitclass([
+  ("stop_id", nb.int32),
+  ("estimate", nb.int32),
+  ("arrival", nb.int32),
+  ("destination_arrival", nb.int32),
+  ("walk_distance", nb.int32), # to destination, -1 if too far
+  ("came_from", nb.optional(PathSegment.class_type.instance_type)),
+  ("is_candidate", nb.boolean),
+])
+class Node:
   def __init__(
     self,
-    lat: float,
-    lon: float,
-    router: Router,
-    walk_distance: float,
+    stop_id: int,
+    estimate: int,
+    walk_distance: int,
+  ):
+    self.stop_id = stop_id
+    self.estimate = estimate
+    self.arrival = INT32_MAX
+    self.destination_arrival = INT32_MAX
+    self.walk_distance = walk_distance
+    self.came_from = None
+    self.is_candidate = False
+
+  def __lt__(self, other):
+    return self.destination_arrival < other.destination_arrival
+
+
+@jitclass([
+  ("ids", nb.int32[:]),
+  ("coords", nb.float32[:, :]),
+  ("distances", nb.float32[:]),
+])
+class Stops:
+  def __init__(self, ids, coords, distances):
+    self.ids = ids
+    self.coords = coords.astype(np.float32)
+    self.distances = distances.astype(np.float32)
+
+
+@jitclass([
+  ("yesterday", nb.int32[:]),
+  ("today", nb.int32[:]),
+  ("tomorrow", nb.int32[:]),
+])
+class Services:
+  def __init__(self, yesterday, today, tomorrow):
+    self.yesterday = yesterday
+    self.today = today
+    self.tomorrow = tomorrow
+
+
+node_type = Node.class_type.instance_type
+
+@jitclass([
+  ("debug", nb.boolean),
+  ("stop_coords", nb.float32[:, :]),
+  ("connections", Connections.class_type.instance_type),
+  ("services", Services.class_type.instance_type),
+  ("to_stops", Stops.class_type.instance_type),
+
+  ("arrival", nb.int32),
+  ("came_from", nb.optional(PathSegment.class_type.instance_type)),
+  ("improved", nb.boolean),
+
+  ("nodes", nb.types.ListType(node_type)),
+  ("candidates", nb.types.ListType(node_type)),
+
+  ("candidate_improved", nb.boolean),
+  ("new_candidates", nb.types.ListType(node_type)),
+  ("arrival_to_beat", nb.int32),
+  ("iteration", nb.int32),
+])
+class RouterTask:
+  def __init__(
+    self,
+    debug: bool,
+    stop_coords: NDArray,
+    connections: Connections,
+    services: Services,
     from_stops: Stops,
     to_stops: Stops,
-    services: Services,
+    walk_distance: float,
     start_time: int,
   ):
-    self.lat = lat
-    self.lon = lon
-    self.router = router
-    self.debug = router.debug
-    self.srv_today = services["today"]
-    self.srv_yesterday = services["yesterday"]
-    self.srv_tomorrow = services["tomorrow"]
+    self.debug = debug
+    self.stop_coords = stop_coords
+    self.connections = connections
+    self.services = services
     self.to_stops = to_stops
-    self.nodes = [None] * (router.max_stop_id + 1)
-    self.candidates = []
+
+    self.arrival = INT32_MAX
+    self.came_from = None
+    self.improved = False
+
+    self.nodes = nb.typed.List.empty_list(node_type)
+
+    for _ in range(0, len(stop_coords)):
+      self.nodes.append(Node(-1, -1, -1))
+
+    self.candidates = nb.typed.List.empty_list(node_type)
+    self.candidate_improved = False
+    self.new_candidates = nb.typed.List.empty_list(node_type)
+    self.arrival_to_beat = INT32_MAX
+    self.iteration = 0
 
     for id, dst in zip(to_stops.ids, to_stops.distances):
-      self.nodes[id] = TargetNode(id, int(dst / WALK_SPEED), walk_distance=int(dst))
+      self.nodes[id] = Node(id, int(dst / WALK_SPEED), int(dst))
 
     for id, dst in zip(from_stops.ids, from_stops.distances):
       n = self.get_node(id)
       arrival = start_time + int(dst / WALK_SPEED)
       n.arrival = arrival
       n.destination_arrival = arrival + n.estimate
-      n.came_from = WalkFromBeg(int(dst))
+      n.came_from = PathSegment(-1, -1, int(dst))
       n.is_candidate = True
       self.candidates.append(n)
 
     if walk_distance <= MAX_DESTINATION_WALK:
       self.arrival = start_time + int(walk_distance / WALK_SPEED)
-      self.came_from = WalkFromBeg(int(walk_distance))
+      self.came_from = PathSegment(-1, -1, int(walk_distance))
 
     heapq.heapify(self.candidates)
-
-
-  # def estimate(self, stop_id: int) -> int:
-  #   coords = np.array([self.router.stop_coords[stop_id]] * len(self.to_stops.coords))
-  #   distances = haversine_vector(coords, self.to_stops.coords, Unit.METERS)
-  #   return int(np.min(distances / TRAM_SPEED + self.to_stops.distances / WALK_SPEED))
-
-  def estimate(self, stop_id: int) -> int:
-    coords = self.router.stop_coords[stop_id]
-    result = INT32_MAX
-
-    for target_coords, target_walk in zip(self.to_stops.coords, self.to_stops.distances):
-      distance = haversine(coords, target_coords, Unit.METERS)
-      result = min(result, int(distance / TRAM_SPEED + target_walk / WALK_SPEED))
-
-    return result
-
-  # def estimate(self, stop_id) -> int:
-  #   coords = self.router.stop_coords[stop_id]
-  #   distance = haversine(coords, (self.lat, self.lon), Unit.METERS)
-  #   return int(distance / TRAM_SPEED)
 
 
   def get_node(self, stop_id: int) -> Node:
     node = self.nodes[stop_id]
 
-    if node is None:
-      node = Node(stop_id, self.estimate(stop_id))
-      self.nodes[stop_id] = node
+    if node.stop_id == -1:
+      node.stop_id = stop_id
+      node.estimate = self.estimate(stop_id)
 
     return node
+
+
+  def estimate(self, stop_id: int) -> int:
+    coords = self.stop_coords[stop_id]
+    result = INT32_MAX
+
+    for target_coords, target_walk in zip(self.to_stops.coords, self.to_stops.distances):
+      distance = nb_haversine(coords[0], coords[1], target_coords[0], target_coords[1])
+      result = min(result, int(distance / TRAM_SPEED + target_walk / WALK_SPEED))
+
+    return result
 
 
   def update_node(self, node: Node, came_from: PathSegment):
@@ -233,23 +306,16 @@ class RouterTask:
 
     if node.is_candidate:
       self.candidate_improved = True
-      if self.debug:
-        print(f"    Improved candidate {node}")
     else:
       self.new_candidates.append(node)
-      if self.debug:
-        print(f"    New candidate {node}")
 
     node.is_candidate = True
 
     # Earlier arrival check ensures this solution is better than the last one
-    if isinstance(node, TargetNode):
-      if self.debug:
-        print(f"      Solution improved by {arrival - destination_arrival} seconds")
-
+    if node.walk_distance != -1:
       self.improved = True
       self.arrival = destination_arrival
-      self.came_from = WalkFromStop(node.stop_id, node.walk_distance)
+      self.came_from = PathSegment(node.stop_id, -1, node.walk_distance)
 
 
   def solve(self):
@@ -261,10 +327,7 @@ class RouterTask:
       if candidate.destination_arrival >= self.arrival: # type: ignore
         break
 
-      if self.debug:
-        print(f"  Considering candidate {candidate} [{len(self.candidates)} other]")
-
-      for conn in self.router.connections.from_stop(candidate.stop_id):
+      for conn in self.connections.from_stop(candidate.stop_id):
         node = self.get_node(conn.to_stop)
 
         if node.arrival is None or node.arrival > self.arrival:
@@ -274,23 +337,24 @@ class RouterTask:
 
         if conn.walk_time > 0 and candidate.arrival + conn.walk_time < self.arrival_to_beat:
           self.arrival_to_beat = candidate.arrival + conn.walk_time
-          self.update_node(node, WalkFromStop(candidate.stop_id, int(conn.walk_time * WALK_SPEED)))
+          came_from = PathSegment(candidate.stop_id, -1, int(conn.walk_time * WALK_SPEED))
+          self.update_node(node, came_from)
 
         if conn.services.len() == 0:
           continue
 
-        self.find_departure(node, candidate, conn, 0, self.srv_today)
+        self.find_departure(node, candidate, conn, 0, self.services.today)
 
         if self.arrival_to_beat > conn.first_arrival + DAY:
-          self.find_departure(node, candidate, conn, DAY, self.srv_tomorrow)
+          self.find_departure(node, candidate, conn, DAY, self.services.tomorrow)
 
         if candidate.arrival < conn.last_departure - DAY:
-          self.find_departure(node, candidate, conn, -DAY, self.srv_yesterday)
+          self.find_departure(node, candidate, conn, -DAY, self.services.yesterday)
 
       candidate.is_candidate = False
       self.add_candidates()
 
-    print(f"{self.arrival=} {self.came_from=} {self.iteration=}")
+    print(f"arrival: {self.arrival}, iterations: {self.iteration}")
 
     if self.came_from is not None:
       self.print_path(self.came_from)
@@ -299,7 +363,7 @@ class RouterTask:
   def find_departure(self, node, candidate, conn, time_offset, services):
     for srv in services:
       after = candidate.arrival + TRANSFER_TIME - time_offset
-      trip = self.router.connections.find_trip(conn.services[srv], after)
+      trip = self.connections.find_trip(conn.services[srv], after)
 
       if trip is None:
         continue
@@ -308,7 +372,7 @@ class RouterTask:
 
       if arrival < self.arrival_to_beat:
         self.arrival_to_beat = arrival
-        path = TakeTrip(candidate.stop_id, trip.id, trip.departure + time_offset)
+        path = PathSegment(candidate.stop_id, trip.id, trip.departure + time_offset)
         self.update_node(node, path)
 
 
@@ -317,9 +381,15 @@ class RouterTask:
       if self.improved:
         self.improved = False
         old = self.candidates
-        self.candidates = []
+        self.candidates = nb.typed.List.empty_list(node_type)
 
-        for c in chain(old, self.new_candidates):
+        for c in old:
+          if c.destination_arrival < self.arrival:
+            self.candidates.append(c)
+          else:
+            c.is_candidate = False
+
+        for c in self.new_candidates:
           if c.destination_arrival < self.arrival:
             self.candidates.append(c)
           else:
@@ -338,14 +408,15 @@ class RouterTask:
 
   def print_path(self, came_from: PathSegment):
     while True:
-      print(came_from)
-      match came_from:
-        case WalkFromBeg(_):
-          return
-        case WalkFromStop(s, _):
-          came_from = self.nodes[s].came_from # type: ignore
-        case TakeTrip(s, _, _):
-          came_from = self.nodes[s].came_from # type: ignore
+      if came_from.from_stop == -1:
+        print(f"Walk from start ({came_from.details}m)")
+        return
+      elif came_from.trip_id == -1:
+        print(f"Walk from stop {came_from.from_stop} ({came_from.details}m)")
+        came_from = self.nodes[came_from.from_stop].came_from
+      else:
+        print(f"Take trip {came_from.details} from stop {came_from.from_stop}")
+        came_from = self.nodes[came_from.from_stop].came_from
 
 
 def get_stop_coords(max_stop_id: int, tdb: TransitDb) -> NDArray:
