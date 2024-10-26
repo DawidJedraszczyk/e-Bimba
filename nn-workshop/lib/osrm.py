@@ -8,23 +8,11 @@ from typing import Iterable
 
 class OsrmClient:
   base_url: str
-  sessions: list[aiohttp.ClientSession]
   profile: str
 
   def __init__(self, url, profile = "foot"):
     self.base_url = url
-    self.sessions = []
     self.profile = profile
-
-  async def __aenter__(self):
-    return self
-
-  async def __aexit__(self, exc_type, exc, tb):
-    await self.close()
-
-  async def close(self):
-    for s in self.sessions:
-      await s.close()
 
   async def distance_to_many(
       self,
@@ -45,7 +33,7 @@ class OsrmClient:
       coords_parts(),
     ))
 
-    with self.__get_session() as session:
+    async with aiohttp.ClientSession(self.base_url) as session:
       async with session.get(url, params=params) as res:
         data = await res.json()
 
@@ -56,18 +44,6 @@ class OsrmClient:
 
     return np.fromiter(
       (from_snap + dst[i] + destinations[i]["distance"] for i in range(0, count)),
-      float,
+      np.float32,
       count,
     )
-
-  @contextlib.contextmanager
-  def __get_session(self):
-    if len(self.sessions) == 0:
-      session = aiohttp.ClientSession(self.base_url)
-    else:
-      session = self.sessions.pop()
-    
-    try:
-      yield session
-    finally:
-      self.sessions.append(session)
