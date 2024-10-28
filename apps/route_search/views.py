@@ -1,11 +1,10 @@
 from django.views.generic import TemplateView
 from django.http import JsonResponse
 from geopy.geocoders import Nominatim
-from .modules.views.functions import *
-from .modules.algorithm.algorithm import *
+from .modules.algorithm_parts.utils import *
+from .modules.algorithm_parts.AstarPlanner import *
 from django.http import HttpResponse
 from django.views import View
-import json
 import redis
 import pickle
 from ebus.settings import REDIS_HOST, REDIS_PORT
@@ -34,13 +33,12 @@ class FindRouteView(View):
         start = geolocator.geocode(request.POST.get('start_location') + ', Poznań, województwo wielkopolskie, Polska')
         destination = geolocator.geocode(request.POST.get('goal_location') + ', Poznań, województwo wielkopolskie, Polska')
 
-        planner_straight = AStarPlanner(start_time, (start.latitude, start.longitude), (destination.latitude, destination.longitude), 'manhattan')
+        planner_straight = AStarPlanner(start_time, (start.latitude, start.longitude), (destination.latitude, destination.longitude), 'manhattan', '2024-10-21')
 
         for _ in range(20):
             planner_straight.find_next_plan()
 
-        response = plans_to_html(planner_straight.found_plans)  # prepare_response(algorithm_results)
-
+        response = planner_straight.plans_to_html()
 
         if not request.session.session_key:
             request.session.save()
@@ -75,7 +73,7 @@ class GetCoordsView(View):
 
             response = {}
             for solution_id in range(len(planner_straight.found_plans)):
-                response[solution_id] = prepare_coords(planner_straight, solution_id)
+                response[solution_id] = planner_straight.prepare_coords(solution_id)
 
             return JsonResponse(response)
         else:
@@ -102,7 +100,7 @@ class GetDeparturesDetailsView(View):
 
             response = {}
             for solution_id in range(len(planner_straight.found_plans)):
-                response[solution_id] = prepare_departure_details(planner_straight, solution_id, start_location, goal_location)
+                response[solution_id] = planner_straight.prepare_departure_details(solution_id, start_location, goal_location)
 
             return JsonResponse(response)
         else:
