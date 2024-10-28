@@ -1,11 +1,10 @@
 from django.views.generic import TemplateView
 from django.http import JsonResponse
 from geopy.geocoders import Nominatim
-from .modules.views.functions import *
-from .modules.algorithm.algorithm import *
+from .modules.algorithm_parts.utils import *
+from .modules.algorithm_parts.AstarPlanner import *
 from django.http import HttpResponse
 from django.views import View
-import json
 import redis
 import pickle
 from ebus.settings import REDIS_HOST, REDIS_PORT
@@ -34,7 +33,7 @@ class FindRouteView(View):
         start = geolocator.geocode(request.POST.get('start_location') + ', Poznań, województwo wielkopolskie, Polska')
         destination = geolocator.geocode(request.POST.get('goal_location') + ', Poznań, województwo wielkopolskie, Polska')
 
-        planner_straight = AStarPlanner(start_time, (start.latitude, start.longitude), (destination.latitude, destination.longitude), 'manhattan')
+        planner_straight = AStarPlanner(start_time, (start.latitude, start.longitude), (destination.latitude, destination.longitude), 'manhattan', '2024-10-21')
 
         for _ in range(20):
             planner_straight.find_next_plan()
