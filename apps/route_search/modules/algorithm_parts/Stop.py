@@ -1,5 +1,5 @@
 import numpy as np
-from algorithm_parts.utils import *
+from .utils import *
 
 
 class Stop:
@@ -18,7 +18,7 @@ class Stop:
         # stop_sequence here is the index of this stop in the order of the trip
         self.trips[trip_id] = (stop_sequence, departure_time_s, service_id)
 
-    """ tymczasowo, i chyba ostatcznie to nie będzie urzywane
+    """ tymczasowo, i chyba ostatcznie to nie będzie używane
     def prepare_sorted_trips(self):
         # FIXME - 24:30 should be before 00:10
         #Prepares added trips for use of 'constrained' `get_next_trips()`

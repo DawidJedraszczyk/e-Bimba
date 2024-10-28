@@ -3,10 +3,11 @@ from time import time
 from haversine import haversine, Unit
 from itertools import combinations
 
-from algorithm_parts.utils import get_next_day, time_to_seconds, get_previous_day, manhattan_distance, custom_print
-from algorithm_parts.Plan import Plan
-from algorithm_parts.PlanTrip import PlanTrip
-from algorithm_parts.DataLoaderSingleton import initialized_dataloader_singleton
+from django.templatetags.static import static
+from .utils import get_lat_lon_sets, get_closest_shape_point, get_next_day, time_to_seconds, get_previous_day, manhattan_distance, custom_print, seconds_to_time
+from .Plan import Plan
+from .PlanTrip import PlanTrip
+from .DataLoaderSingleton import initialized_dataloader_singleton
 from ebus.algorithm_settings import WALKING_SETTINGS, HEURISTIC_SETTINGS, PRINTING_SETTINGS
 
 
@@ -15,7 +16,11 @@ class AStarPlanner():
                  waiting_time_constant=time_to_seconds('00:03:00')):
         data_loader = initialized_dataloader_singleton
         self.stops = data_loader.get_stops()
+        self.stops_df = data_loader.get_stops_df()
+        self.stops_df.set_index('stop_id', inplace=True)
         self.trips = data_loader.get_trips()
+        self.trips_df = data_loader.get_trips_df()
+        self.shapes_df = data_loader.get_shapes_df()
         self.start_time = start_time
         self.START = START
         self.DESTINATION = DESTINATION
@@ -253,3 +258,145 @@ class AStarPlanner():
                                      extending_plan_trip.date,
                                      plan_trips=fastest_known_plan.plan_trips + [extending_plan_trip])
                 heapq.heappush(self.plans_queue, extended_plan)
+
+    def plans_to_html(self):
+        response = {}
+
+        for index, plan in enumerate(self.found_plans):
+            communication = []
+            start_time = None
+            destination_time = seconds_to_time(plan.time_at_destination)
+
+            for plan_trip in plan.plan_trips:
+                if not plan_trip.type == 'WALK':
+                    trip_from_df = self.trips_df.loc[plan_trip.trip_id]
+                    if not start_time:
+                        start_time = seconds_to_time(plan_trip.departure_time)
+
+                    communication.append(trip_from_df['route_id'])
+
+            communication_content = ''
+            for travel_option in communication:
+                communication_content += f'''<div style="padding: 5px; display: flex; flex-direction: column; justify-content: center; align-items: center;"><img style="height: 23px; width: 23px; margin-bottom: 5px;" src="{static('base_view/img/BUS.svg')}">{str(travel_option)}</div>'''
+
+            prepared_solution = {
+                'div': f'''<div style="display:none"></div>
+                           <div id="{index}" class="solution" style="cursor: pointer; width: 99%; border: solid 1px white; padding: 20px 0px; border-radius: 5px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
+                               <div style="font-size: 25px; margin-left: 5px;">{start_time}</div>
+                               <div style="display: flex;">{communication_content}</div>
+                               <div style="font-size: 25px; margin-right: 5px;">{destination_time}</div>
+                           </div>
+                        '''
+            }
+            response[str(index)] = prepared_solution
+        return response
+
+    def prepare_coords(self, plan_num: int):
+        response = {}
+
+        plan = self.found_plans[plan_num]
+
+        for index, plan_trip in enumerate(plan.plan_trips):
+            if index == 0:
+                start_stop = self.stops_df.loc[plan_trip.start_from_stop_id]
+                response[0] = [self.START, (start_stop.stop_lat, start_stop.stop_lon)]
+
+            if index == len(plan.plan_trips) - 1:
+                goal_stop = self.stops_df.loc[plan_trip.leave_at_stop_id]
+                response[len(plan.plan_trips) + 1] = [(goal_stop.stop_lat, goal_stop.stop_lon), self.DESTINATION]
+
+            response[index + 1] = []
+            sequence_numbers = []
+
+            if plan_trip.trip_id:
+                trip = self.trips[plan_trip.trip_id]
+                shape_id = int(self.trips_df.loc[plan_trip.trip_id].shape_id)
+                lat_lon_sets = get_lat_lon_sets(self.shapes_df, shape_id)
+                trip_stops = [self.stops[stop_id] for stop_id in trip.stop_ids]
+
+                for stop in trip_stops:
+                    if stop.stop_id in (plan_trip.start_from_stop_id, plan_trip.leave_at_stop_id):
+                        closest_point = get_closest_shape_point(stop.stop_lat, stop.stop_lon, lat_lon_sets)
+                        closest_lat, closest_lon = closest_point
+
+                        filtered_shape = self.shapes_df[
+                            (self.shapes_df['shape_id'] == shape_id) &
+                            (self.shapes_df['shape_pt_lat'] == closest_lat) &
+                            (self.shapes_df['shape_pt_lon'] == closest_lon)
+                            ]
+
+                        if not filtered_shape.empty:
+                            seq_num = int(filtered_shape['shape_pt_sequence'].iloc[0])
+                            sequence_numbers.append(seq_num)
+
+                if sequence_numbers:
+                    min_seq_num = min(sequence_numbers)
+                    max_seq_num = max(sequence_numbers)
+
+                    matching_shapes = self.shapes_df[
+                        (self.shapes_df['shape_id'] == shape_id) &
+                        (self.shapes_df['shape_pt_sequence'] >= min_seq_num) &
+                        (self.shapes_df['shape_pt_sequence'] <= max_seq_num)
+                        ]
+
+                    lat_lon_pairs = list(zip(matching_shapes['shape_pt_lat'], matching_shapes['shape_pt_lon']))
+                    response[index + 1] = lat_lon_pairs
+
+            else:
+                start_stop = self.stops_df.loc[plan_trip.start_from_stop_id]
+                goal_stop = self.stops_df.loc[plan_trip.leave_at_stop_id]
+
+                response[index + 1] = [(start_stop.stop_lat, start_stop.stop_lon),
+                                       (goal_stop.stop_lat, goal_stop.stop_lon)]
+
+        return response
+
+    def prepare_departure_details(self, plan_num: int, start_location: str, goal_location: str):
+        response = {}
+
+        plan = self.found_plans[plan_num]
+
+        for index, plan_trip in enumerate(plan.plan_trips):
+            if index == 0:
+                start_stop = self.stops_df.loc[plan_trip.start_from_stop_id]
+                response[0] = f'''<div style="display: flex; width: 90%; justify-content: center; align-items: center; margin: 10px 0;"><img style="width: 25px;" src="{static('base_view/img/WALK.png')}"><span style="margin-left: 10px; text-align: left;">{start_location} -> {start_stop["stop_name"]}</span></div>'''
+
+            if index == len(plan.plan_trips) - 1:
+                goal_stop = self.stops_df.loc[plan_trip.leave_at_stop_id]
+                response[
+                    len(plan.plan_trips) + 1] = f'''<div style="display: flex; width: 90%; justify-content: center; align-items: center; margin: 10px 0;"><img style="width: 25px;" src="{static('base_view/img/WALK.png')}"><span style="margin-left: 10px; text-align: left;"> {goal_stop["stop_name"]} -> {goal_location} </span></div>'''
+
+            departure_time = seconds_to_time(plan_trip.departure_time)
+            arrival_time = seconds_to_time(plan_trip.arrival_time)
+
+            if plan_trip.trip_id:
+                trip = self.trips_df.loc[plan_trip.trip_id]
+                route = trip['route_id']
+                direction = trip['trip_headsign']
+                response[
+                    index + 1] = f'''<div style="display: flex; width: 90%; flex-direction: column; justify-content: center; margin: 10px 0;"><div style="display:flex; align-items: center; margin: 10px 0;"><img src="{static('base_view/img/BUS.svg')}" alt="bus icon"/><span style="margin-left: 10px;">{route} - {direction} ({departure_time} - {arrival_time})</span></div><div class="stops" style="font-size: 14px; text-align: left;">'''
+
+                trip_stops_ids = [stop_id for stop_id in self.trips[plan_trip.trip_id].stop_ids]
+                in_our_trip_flag = False
+
+                for stop_id in trip_stops_ids:
+                    if stop_id == plan_trip.start_from_stop_id:
+                        in_our_trip_flag = True
+
+                    if in_our_trip_flag:
+                        stop_df = self.stops_df.loc[stop_id]
+                        stop_departure_time = "12:00"  # Update with actual logic for time if available
+                        response[index + 1] += f'''{stop_departure_time} {stop_df['stop_name']}<br>'''
+
+                    if stop_id == plan_trip.leave_at_stop_id:
+                        in_our_trip_flag = False
+
+            else:
+                start_stop = self.stops_df.loc[plan_trip.start_from_stop_id]
+                goal_stop = self.stops_df.loc[plan_trip.leave_at_stop_id]
+                response[
+                    index + 1] = f'''<div style="display: flex; width: 90%; justify-content: center; align-items: center; margin: 10px 0;"><img style="width: 25px;" src="{static('base_view/img/WALK.png')}"><span style="margin-left: 10px; text-align: left;"> {start_stop['stop_name']} -> {goal_stop['stop_name']}  ({departure_time} - {arrival_time})</span></div>'''
+
+            response[index + 1] += "</div></div>"
+
+        return response

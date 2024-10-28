@@ -1,6 +1,6 @@
-from algorithm_parts.PlanTrip import PlanTrip
-from algorithm_parts.utils import time_to_seconds, seconds_to_time, get_previous_day, get_next_day
-from algorithm_parts.DataLoaderSingleton import initialized_dataloader_singleton
+from .PlanTrip import PlanTrip
+from .utils import time_to_seconds, seconds_to_time, get_previous_day, get_next_day
+from .DataLoaderSingleton import initialized_dataloader_singleton
 
 
 class Plan():

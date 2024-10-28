@@ -6,12 +6,12 @@ import pandas as pd
 from time import time
 from itertools import combinations
 from haversine import haversine, Unit
-
-from algorithm_parts.utils import time_to_seconds, custom_print, manhattan_distance
+import os
+from .utils import time_to_seconds, custom_print, manhattan_distance
 from ebus.algorithm_settings import WALKING_SETTINGS
-from algorithm_parts.TimetableTrip import TimetableTrip
-from algorithm_parts.Stop import Stop
-
+from .TimetableTrip import TimetableTrip
+from .Stop import Stop
+from django.conf import settings
 
 class BiDirectionalKeyDict(dict):
     """
@@ -59,8 +59,7 @@ class DataLoaderSingleton:
 
     def __load_GTFS_into_dataframes(self):
         t0 = time()
-        # data_folder_path = os.path.join(BASE_DIR, "apps/route_search/modules/algorithm/data/")
-        data_folder_path = "data/"
+        data_folder_path = os.path.join(settings.BASE_DIR, "apps/route_search/modules/algorithm_parts/data/")
         data_file_format_suffix = ".txt"
         data_files = ["agency", "calendar", "feed_info", "routes", "shapes", "stop_times", "stops", "trips"]
 
@@ -186,6 +185,9 @@ class DataLoaderSingleton:
 
     def get_stops(self):
         return self.__stops
+
+    def get_stops_df(self):
+        return self.__dataframes['stops']
 
     def get_trips(self):
         return self.__trips

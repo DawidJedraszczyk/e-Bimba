@@ -1,5 +1,5 @@
-from algorithm_parts.DataLoaderSingleton import initialized_dataloader_singleton
-from algorithm_parts.utils import seconds_to_time
+from .DataLoaderSingleton import initialized_dataloader_singleton
+from .utils import seconds_to_time
 
 
 class PlanTrip:

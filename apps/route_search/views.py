@@ -38,8 +38,7 @@ class FindRouteView(View):
         for _ in range(20):
             planner_straight.find_next_plan()
 
-        response = plans_to_html(planner_straight.found_plans)  # prepare_response(algorithm_results)
-
+        response = planner_straight.plans_to_html()
 
         if not request.session.session_key:
             request.session.save()
@@ -74,7 +73,7 @@ class GetCoordsView(View):
 
             response = {}
             for solution_id in range(len(planner_straight.found_plans)):
-                response[solution_id] = prepare_coords(planner_straight, solution_id)
+                response[solution_id] = planner_straight.prepare_coords(solution_id)
 
             return JsonResponse(response)
         else:
@@ -101,7 +100,7 @@ class GetDeparturesDetailsView(View):
 
             response = {}
             for solution_id in range(len(planner_straight.found_plans)):
-                response[solution_id] = prepare_departure_details(planner_straight, solution_id, start_location, goal_location)
+                response[solution_id] = planner_straight.prepare_departure_details(solution_id, start_location, goal_location)
 
             return JsonResponse(response)
         else:
