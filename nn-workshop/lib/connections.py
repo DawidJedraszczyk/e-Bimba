@@ -126,7 +126,8 @@ class Connections:
       )
 
 
-def from_arrow(cs: pyarrow.ListArray) -> Connections:
+
+def connections_from_arrow(cs: pyarrow.ListArray) -> Connections:
   to_stops_off = cs.offsets
   to_stop, walk_time, first_arrival, last_departure, services = cs.values.flatten() # type: ignore
   services_off = services.offsets

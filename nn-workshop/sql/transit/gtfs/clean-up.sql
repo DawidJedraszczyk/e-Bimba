@@ -1,0 +1,11 @@
+drop table gtfs_agency;
+drop table gtfs_calendar;
+drop table gtfs_calendar_dates;
+drop table gtfs_feed_info;
+drop table gtfs_routes;
+drop table gtfs_shapes;
+drop table gtfs_stop_times;
+drop table gtfs_stops;
+drop table gtfs_trips;
+drop table gtfs_uniq_service;
+drop table gtfs_uniq_shape;

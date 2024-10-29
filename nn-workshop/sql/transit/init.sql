@@ -7,12 +7,7 @@ create type services as struct (
 
 create table agency (
   id int4 not null,
-  src_id text not null, -- dropped after import
   name text not null,
-  url text not null,
-  timezone text not null,
-  phone text,
-  lang text not null,
 );
 
 create sequence seq_agency_id minvalue 0 start 0;
@@ -20,12 +15,14 @@ create sequence seq_agency_id minvalue 0 start 0;
 
 create table stop (
   id int4 not null,
-  src_id text not null, -- dropped after import
   code text not null,
   name text not null,
-  lat float8 not null,
-  lon float8 not null,
-  zone text not null,
+  zone text,
+
+  coords struct (
+    lat float4,
+    lon float4
+  ) not null,
 );
 
 create sequence seq_stop_id minvalue 0 start 0;
@@ -33,14 +30,11 @@ create sequence seq_stop_id minvalue 0 start 0;
 
 create table route (
   id int4 not null,
-  src_id text not null, -- dropped after import
-  agency_id int4 not null,
-  short_name text not null,
-  long_name text not null,
-  "desc" text not null,
-  "type" int1 not null,
-  color text not null,
-  text_color text not null,
+  agency int4 not null,
+  name text not null,
+  type int1 not null,
+  color int4,
+  text_color int4,
 );
 
 create sequence seq_route_id minvalue 0 start 0;
@@ -48,37 +42,27 @@ create sequence seq_route_id minvalue 0 start 0;
 
 create table trip (
   id int4 not null,
-  src_id text not null, -- dropped after import
-  route_id int4 not null,
-  service_id int4 not null,
-  headsign text not null,
-  direction_id int1 not null,
-  shape_id int4 not null,
-  wheelchair_accessible bool not null,
+  route int4 not null,
+  service int4 not null,
+  shape int4,
+  wheelchair_accessible bool,
 );
 
 create sequence seq_trip_id minvalue 0 start 0;
 
 
 create table stop_time (
-  trip_id int4 not null,
+  trip int4 not null,
   sequence int2 not null,
-  stop_id int4 not null,
+  stop int4 not null,
   arrival int4 not null, -- in seconds after midnight (can be over 86400)
   departure int4 not null, -- also
-  headsign text not null,
   pickup_type int1 not null,
   drop_off_type int1 not null,
 );
 
 
-create table service (
-  id int4 not null,
-  src_id text not null, -- dropped after import
-);
-
 create sequence seq_service_id minvalue 0 start 0;
-
 
 create table regular_service (
   id int4 not null,
@@ -87,7 +71,6 @@ create table regular_service (
   end_date date not null,
 );
 
-
 create table exceptional_service (
   id int4 not null,
   date date not null,
@@ -95,28 +78,13 @@ create table exceptional_service (
 );
 
 
-create table shape (
-  id int4 not null,
-  src_id text not null, -- dropped after import
-);
-
 create sequence seq_shape_id minvalue 0 start 0;
 
-
 create table shape_point (
-  shape_id int4 not null,
+  shape int4 not null,
   sequence int4 not null,
-  lat float8 not null,
-  lon float8 not null,
-);
-
-
-create table feed_info (
-  publisher_name text not null,
-  publisher_url text not null,
-  lang text not null,
-  start_date date not null,
-  end_date date not null,
+  lat float4 not null,
+  lon float4 not null,
 );
 
 
@@ -130,7 +98,7 @@ create table connections (
     services struct (
       departure int4,
       arrival int4,
-      trip_id int4
+      trip int4
     )[][]
   )[] not null,
 );
@@ -147,14 +115,14 @@ create view connection as
       select
         from_stop,
         to_stop,
-        generate_subscripts(services, 1) - 1 as service_id,
+        generate_subscripts(services, 1) - 1 as service,
         unnest(services) as times,
       from to_stops
     )
   select
     from_stop,
     to_stop,
-    service_id,
+    service,
     unnest(times, max_depth := 2),
   from services;
 

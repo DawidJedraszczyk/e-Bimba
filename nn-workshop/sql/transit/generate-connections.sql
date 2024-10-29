@@ -1,29 +1,29 @@
 with
   gathered as (
     select
-      f.stop_id as from_stop,
-      t.stop_id as to_stop,
-      (select service_id from trip where id = f.trip_id) as service_id,
+      f.stop as from_stop,
+      t.stop as to_stop,
+      (select service from trip where id = f.trip) as service,
       list(
         struct_pack(
           f.departure,
           t.arrival,
-          f.trip_id
+          f.trip
         ) order by f.departure
       ) as times,
     from stop_time f
-    join stop_time t on (f.trip_id = t.trip_id and t.sequence > f.sequence)
+    join stop_time t on (f.trip = t.trip and t.sequence > f.sequence)
     where
       f.pickup_type != 1
       and t.drop_off_type != 1
-    group by from_stop, to_stop, service_id
+    group by from_stop, to_stop, service
   ),
 
   only_best as (
     select
       from_stop,
       to_stop,
-      service_id,
+      service,
       [
         x for x, i in times
         if coalesce(x.arrival < list_min([y.arrival for y in times[i+1:]]), true)
@@ -36,11 +36,16 @@ with
       from_stop,
       to_stop,
       map_from_entries(list(
-        struct_pack(k := service_id, v:= times)
+        struct_pack(k := service, v:= times)
       )) as s_map,
       [
         flatten(s_map[i])
-        for i in range((select max(id) from service) + 1)
+        for i in range(
+          (select max(id) from (
+            select id from regular_service
+            union all select id from exceptional_service)
+          ) + 1
+        )
       ] as services,
     from only_best b
     group by from_stop, to_stop

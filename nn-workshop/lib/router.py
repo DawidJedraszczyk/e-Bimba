@@ -420,7 +420,7 @@ class RouterTask:
 
 
 def get_stop_coords(max_stop_id: int, tdb: TransitDb) -> NDArray:
-  res = tdb.sql("select lat, lon from stop order by id").arrow()
+  res = tdb.sql("select unnest(coords) from stop order by id").arrow()
   return np.stack([res.field(0), res.field(1)], axis=-1)
 
 def stop_ids(arr: pyarrow.StructArray) -> NDArray:
