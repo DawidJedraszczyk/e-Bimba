@@ -13,18 +13,22 @@ services:
     image: redis:alpine
     restart: always
 
+  osrm:
+    image: ghcr.io/project-osrm/osrm-backend
+    command: osrm-routed --algorithm mld /data/map.osrm
+    volumes:
+      ./data/main/osrm:/data
+
   django:
     build:
-      context: .
-    command: >
-      sh -c "until pg_isready -h postgres -p 5432; do sleep 1; done &&
-             python manage.py migrate &&
-             python manage.py runserver 0.0.0.0:8000"
+      context: ./app
+      dockerfile: Dockerfile
     volumes:
-      - .:/usr/src/app
+      ./data/main:/data
     ports:
       - "8000:8000"
     depends_on:
+      - osrm
       - postgres
       - redis
     env_file:

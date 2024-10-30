@@ -11,10 +11,10 @@ import pyarrow
 import time as timer
 from typing import Optional
 
-from lib.connections import Connections
-from lib.osrm import *
-from lib.params import *
-from lib.transitdb import *
+from bimba.connections import Connections
+from bimba.osrm import *
+from bimba.params import *
+from bimba.transitdb import *
 
 
 INT32_MAX = 0x7FFFFFFF

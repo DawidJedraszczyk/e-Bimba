@@ -1,0 +1,14 @@
+{
+  "Poznań": {
+    "gtfs": {
+      "ztm": "https://www.ztm.poznan.pl/pl/dla-deweloperow/getGTFSFile"
+    },
+    "map": "http://download.geofabrik.de/europe/poland/wielkopolskie-latest.osm.pbf"
+  },
+  "Poznań (wrzesień)": {
+    "gtfs": {
+      "ztm": "https://www.ztm.poznan.pl/pl/dla-deweloperow/getGTFSFile/?file=20240905_20240930.zip"
+    },
+    "map": "http://download.geofabrik.de/europe/poland/wielkopolskie-latest.osm.pbf"
+  }
+}

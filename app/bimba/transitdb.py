@@ -10,10 +10,10 @@ import pyarrow
 import time
 from typing import TypedDict, cast
 
-from lib.connections import Connections, connections_from_arrow
-from lib.db import Db
-from lib.osrm import OsrmClient
-import lib.params as params
+from bimba.connections import Connections, connections_from_arrow
+from bimba.db import Db
+from bimba.osrm import OsrmClient
+import bimba.params as params
 
 
 class Services(TypedDict):
@@ -24,7 +24,7 @@ class Services(TypedDict):
 
 class TransitDb(Db):
   def __init__(self, path: Path):
-    scripts = Path(__file__).parent / ".." / "sql" / "transit"
+    scripts = Path(__file__).parent / "sql"
     variables = {k: v for k, v in params.__dict__.items() if not k.startswith('_')}
     super().__init__(path, scripts, variables)
     self.db.sql("install spatial; load spatial")

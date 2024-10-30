@@ -8,9 +8,16 @@ import requests
 import sys
 from typing import Iterable
 
-from lib.transitdb import *
-from lib.unzip import *
+SCRIPT_FOLDER = Path(__file__).parent
+sys.path.append(str(SCRIPT_FOLDER.parent / "app"))
 
+from bimba.transitdb import *
+from bimba.unzip import *
+
+
+DATA_FOLDER = SCRIPT_FOLDER.parent / "data" / "main"
+OSRM_FOLDER = DATA_FOLDER / "osrm"
+CITIES_FILE = SCRIPT_FOLDER / "cities.json"
 
 OSRM_IMAGE = "ghcr.io/project-osrm/osrm-backend"
 OSRM_PORT = 53909
@@ -90,56 +97,28 @@ def osrm_data(osm_url: str, folder: Path):
   osrm_backend(f"osrm-customize /data/map.osrm")
 
 
-def city(cities, name):
-  city = cities["cities"][name]
-  workdir = Path(city["workdir"])
-  region = cities["osrm"][city["osrm"]]
-
-  osrm_workdir = Path(region["workdir"])
-  osrm_data(region["map"], osrm_workdir)
+def prepare_city(city):
+  osrm_data(city["map"], OSRM_FOLDER)
 
   for k, url in city["gtfs"].items():
-    download_if_missing(url, workdir / f"{k}.zip")
+    download_if_missing(url, DATA_FOLDER / f"{k}.zip")
 
   import_gtfs(
-    [workdir / f"{k}.zip" for k in city["gtfs"].keys()],
-    workdir / "transit.db"
+    [DATA_FOLDER / f"{k}.zip" for k in city["gtfs"].keys()],
+    DATA_FOLDER / "transit.db"
   )
 
-  generate_connections(workdir / "transit.db", osrm_workdir)
+  generate_connections(DATA_FOLDER / "transit.db", OSRM_FOLDER)
 
 
 if __name__ == "__main__":
-  args = sys.argv[1:]
+  args = sys.argv
+  cities = json.loads(CITIES_FILE.read_bytes())
 
-  if len(args) == 0:
-    print(
-      "Commands:\n"
-      "  import GTFS_ZIP... TRANSIT_DB\n"
-      "  connections TRANSIT_DB OSRM_DATA\n"
-      "  osrm_data OSM_URL FOLDER\n"
-      "  CITIES_JSON CITY\n"
-    )
-    sys.exit()
-
-  match args[0]:
-    case "import":
-      zips = [Path(s) for s in args[1:-1]]
-      tdb_path = Path(args[-1])
-      import_gtfs(zips, tdb_path)
-
-    case "connections":
-      tdb_path = Path(args[1])
-      osrm_data = Path(args[2])
-      generate_connections(tdb_path, osrm_data)
-
-    case "osrm_data":
-      osm_url = args[1]
-      folder = Path(args[2])
-      osrm_data(osm_url, folder)
-
-    case _ if args[0].endswith(".json"):
-      cities_file = Path(args[0])
-      city_name = args[1]
-      cities = json.loads(cities_file.read_bytes())
-      city(cities, city_name)
+  if len(args) == 1:
+    print(f"Usage: {args[0]} CITY\nAvailable cities:")
+    for city in cities.keys():
+      print(f"  \"{city}\"")
+  else:
+    city_name = args[1]
+    prepare_city(cities[city_name])

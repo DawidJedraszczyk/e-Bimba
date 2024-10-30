@@ -4,6 +4,18 @@ This is a project that aims to reproduce the [jakdojade](https://jakdojade.pl) w
 
 ## Installation
 
+### Preparing data
+
+To prepare data for route planning go into the `pipeline` directory and run
+
+```bash
+./prepare.py Poznań
+```
+
+where `Poznań` can be replaced with any city defined in `pipeline/cities.json`.
+
+### Running the app
+
 As first step You have to install [docker compose](https://docs.docker.com/compose/install/).
 
 Create <b>.env</b> file, with same structure as in example:

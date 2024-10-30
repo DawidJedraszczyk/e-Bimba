@@ -1,13 +1,16 @@
+aiohttp==3.10.10
 asgiref==3.7.2
 beautifulsoup4==4.12.3
 bs4==0.0.2
 certifi==2024.2.2
 charset-normalizer==3.3.2
 Django==5.0.2
+duckdb==1.1.1
 geographiclib==2.0
 geopy==2.4.1
 holidays==0.42
 idna==3.6
+numba==0.60.0
 psycopg2-binary==2.9.9
 python-dateutil==2.8.2
 requests==2.31.0
