@@ -1,4 +1,5 @@
 import aiohttp
+import contextlib
 from itertools import chain
 import numpy as np
 from numpy.typing import NDArray
@@ -6,18 +7,12 @@ from typing import Iterable
 
 
 class OsrmClient:
+  base_url: str
+  profile: str
+
   def __init__(self, url, profile = "foot"):
-    self.session = aiohttp.ClientSession(url)
+    self.base_url = url
     self.profile = profile
-
-  async def __aenter__(self):
-    return self
-
-  async def __aexit__(self, exc_type, exc, tb):
-    await self.close()
-
-  async def close(self):
-    await self.session.close()
 
   async def distance_to_many(
       self,
@@ -38,8 +33,9 @@ class OsrmClient:
       coords_parts(),
     ))
 
-    async with self.session.get(url, params=params) as res:
-      data = await res.json()
+    async with aiohttp.ClientSession(self.base_url) as session:
+      async with session.get(url, params=params) as res:
+        data = await res.json()
 
     from_snap = data["sources"][0]["distance"]
     dst = data["distances"][0][1:]
@@ -48,6 +44,6 @@ class OsrmClient:
 
     return np.fromiter(
       (from_snap + dst[i] + destinations[i]["distance"] for i in range(0, count)),
-      float,
+      np.float32,
       count,
     )

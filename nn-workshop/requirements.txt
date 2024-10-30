@@ -1,4 +1,6 @@
 aiohttp==3.10.10
 docker==7.1.0
 duckdb==1.1.1
+haversine==2.8.1
+numba==0.60.0
 requests==2.32.3

@@ -1,0 +1,28 @@
+{
+  "cities": {
+    "Poznań": {
+      "gtfs": {
+        "ztm": "https://www.ztm.poznan.pl/pl/dla-deweloperow/getGTFSFile"
+      },
+      "osrm": "wielkopolskie",
+      "workdir": "data/Poznań"
+    },
+    "Poznań (wrzesień)": {
+      "gtfs": {
+        "ztm": "https://www.ztm.poznan.pl/pl/dla-deweloperow/getGTFSFile/?file=20240905_20240930.zip"
+      },
+      "osrm": "wielkopolskie",
+      "workdir": "data/Poznań (wrzesień)"
+    }
+  },
+  "osrm": {
+    "wielkopolskie": {
+      "map": "http://download.geofabrik.de/europe/poland/wielkopolskie-latest.osm.pbf",
+      "workdir": "data/osrm/wielkopolskie"
+    },
+    "mazowieckie": {
+      "map": "http://download.geofabrik.de/europe/poland/mazowieckie-latest.osm.pbf",
+      "workdir": "data/osrm/mazowieckie"
+    }
+  }
+}
