@@ -21,11 +21,7 @@ class SmallAutoBenchmark(BenchmarkStrategy):
                             'Start Time',
                             'Day of week',
                             'found route',
-                            'jak dojade route',
-                            'google route',
                             'found route duration',
-                            'jak dojade duration',
-                            'google route duration'
                             ])
             for i, route in enumerate(self.sample_routes):
                 writer.writerow([
@@ -35,15 +31,7 @@ class SmallAutoBenchmark(BenchmarkStrategy):
                     route.start_time,
                     route.week_day,
                     plans_to_string(self.planners[i].found_plans),
-                    str(route.jakdojade_plan),
-                    str(route.google_plan),
                     self.compute_travel_duration(
                         route.start_time,
                         seconds_to_time(self.planners[i].found_plans[0].time_at_destination)) if self.planners[i].found_plans else 'NA',
-                    self.compute_travel_duration(
-                        route.start_time, 
-                        route.jakdojade_plan.arrival_time),
-                    self.compute_travel_duration(
-                        route.start_time, 
-                        route.google_plan.arrival_time)
                     ])

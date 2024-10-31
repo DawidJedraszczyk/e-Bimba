@@ -7,11 +7,18 @@ from time import time
 from itertools import combinations
 from haversine import haversine, Unit
 import os
+from pathlib import Path
 from .utils import time_to_seconds, custom_print, manhattan_distance
 from ebus.algorithm_settings import WALKING_SETTINGS
 from .TimetableTrip import TimetableTrip
 from .Stop import Stop
-from django.conf import settings
+
+try:
+    from django.conf import settings
+except:
+    class settings:
+        BASE_DIR = str(Path(__file__).parents[4])
+
 
 class BiDirectionalKeyDict(dict):
     """
@@ -73,6 +80,7 @@ class DataLoaderSingleton:
             for data_file, data_file_path in zip(data_files, data_files_paths)
         }
         dataframes['trips'].set_index('trip_id', inplace=True)
+        dataframes['stops'].set_index('stop_id', inplace=True)
         custom_print(f'(loading gtfs - {time() - t0:.4f}s)', 'SETUP_TIMES')
         return dataframes
 
@@ -96,9 +104,9 @@ class DataLoaderSingleton:
     def __initialize_Stops(self):
         t0 = time()
         stops = {}
-        for _, row in self.__dataframes['stops'].iterrows():
-            stops[row['stop_id']] = Stop(
-                stop_id=row['stop_id'],
+        for id, row in self.__dataframes['stops'].iterrows():
+            stops[id] = Stop(
+                stop_id=id,
                 stop_lat=row['stop_lat'],
                 stop_lon=row['stop_lon'],
                 stop_name=row['stop_name'],

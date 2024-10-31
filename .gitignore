@@ -1,4 +1,5 @@
 .mypy_cache
 __pycache__
 /data
+/benchmark_results
 /.env

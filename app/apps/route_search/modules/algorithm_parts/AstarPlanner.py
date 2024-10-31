@@ -3,7 +3,11 @@ from time import time
 from haversine import haversine, Unit
 from itertools import combinations
 
-from django.templatetags.static import static
+try:
+    from django.templatetags.static import static
+except:
+    pass
+
 from .utils import get_lat_lon_sets, get_closest_shape_point, get_next_day, time_to_seconds, get_previous_day, manhattan_distance, custom_print, seconds_to_time
 from .Plan import Plan
 from .PlanTrip import PlanTrip
@@ -17,7 +21,6 @@ class AStarPlanner():
         data_loader = initialized_dataloader_singleton
         self.stops = data_loader.get_stops()
         self.stops_df = data_loader.get_stops_df()
-        self.stops_df.set_index('stop_id', inplace=True)
         self.trips = data_loader.get_trips()
         self.trips_df = data_loader.get_trips_df()
         self.shapes_df = data_loader.get_shapes_df()

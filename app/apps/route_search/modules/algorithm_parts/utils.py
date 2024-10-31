@@ -1,7 +1,6 @@
 import datetime
 from haversine import haversine, Unit
 from ebus.algorithm_settings import PRINTING_SETTINGS
-from django.templatetags.static import static
 import pandas as pd
 
 

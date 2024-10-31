@@ -4,7 +4,7 @@ from time import time
 import os
 
 from algorithm_parts.utils import time_to_seconds, seconds_to_time, custom_print, plans_to_string
-from algorithm_parts.AStarPlanner import AStarPlanner
+from algorithm_parts.AstarPlanner import AStarPlanner
 
 class BenchmarkStrategy():
     benchmark_type = None
