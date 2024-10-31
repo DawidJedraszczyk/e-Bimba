@@ -2,6 +2,7 @@ drop table gtfs_agency;
 drop table gtfs_calendar;
 drop table gtfs_calendar_dates;
 drop table gtfs_feed_info;
+drop table gtfs_frequencies;
 drop table gtfs_routes;
 drop table gtfs_shapes;
 drop table gtfs_stop_times;

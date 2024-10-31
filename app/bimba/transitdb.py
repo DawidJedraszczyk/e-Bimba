@@ -23,6 +23,13 @@ class Services(TypedDict):
 
 
 class TransitDb(Db):
+  OPTIONAL_GTFS_FILES = [
+    "calendar.txt",
+    "calendar_dates.txt",
+    "feed_info.txt",
+    "frequencies.txt",
+  ]
+
   def __init__(self, path: Path):
     scripts = Path(__file__).parent / "sql"
     variables = {k: v for k, v in params.__dict__.items() if not k.startswith('_')}
@@ -52,7 +59,11 @@ class TransitDb(Db):
 
     t0 = time.time()
     self.script("gtfs/init")
-    self.script("gtfs/import")
+    self.script("gtfs/import/required")
+
+    for opt_gtfs in self.OPTIONAL_GTFS_FILES:
+      if (gtfs_folder / opt_gtfs).exists():
+        self.script(f"gtfs/import/{opt_gtfs[:-4].replace("_", "-")}")
 
     t1 = time.time()
     self.sql("begin transaction")
@@ -65,24 +76,10 @@ class TransitDb(Db):
     print(f"Time: {_t(t2, t0)} (parsing: {_t(t1, t0)}, inserting: {_t(t2, t1)})")
 
 
-  async def generate_connections(self, osrm: OsrmClient):
+  async def calculate_stop_walks(self, osrm: OsrmClient):
     t0 = time.time()
-    await self._calc_stop_walks(osrm)
-
-    t1 = time.time()
-    print("Generating connections")
-    self.script("generate-connections")
-
-    t2 = time.time()
-    self.sql("analyze")
-
-    t3 = time.time()
-    print(f"Time: {_t(t3, t0)} (walks: {_t(t1, t0)}, connections: {_t(t2, t1)})")
-
-
-  async def _calc_stop_walks(self, osrm: OsrmClient):
     print("Calculating walking distances between stops")
-    inputs = self.script("stop-walk/init").arrow()
+    inputs = self.script("init-stop-walk").arrow()
     sem = asyncio.Semaphore(os.cpu_count())
 
     async def task(row):
@@ -100,16 +97,29 @@ class TransitDb(Db):
 
     for task in [asyncio.create_task(task(row)) for row in inputs]:
       from_id, to_ids, distances = await task
+      from_ids = np.repeat(from_id, len(to_ids))
 
       self.sql(
         "insert into stop_walk from result",
         views = {
           "result": pyarrow.table(
-            [np.repeat(from_id, len(to_ids)), to_ids, distances],
+            [from_ids, to_ids, distances],
             ["from_stop", "to_stop", "distance"],
           )
         },
       )
+    
+    t1 = time.time()
+    print(f"Time: {_t(t1, t0)}")
+
+
+  def finalize(self):
+    t0 = time.time()
+    print("Finalizing")
+    self.script("finalize")
+
+    t1 = time.time()
+    print(f"Time: {_t(t1, t0)}")
 
 
 def _t(t_to, t_from):

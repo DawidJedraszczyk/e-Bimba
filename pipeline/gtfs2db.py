@@ -7,21 +7,24 @@ SCRIPT_FOLDER = Path(__file__).parent
 sys.path.append(str(SCRIPT_FOLDER.parent / "app"))
 
 from bimba.db import *
+from bimba.transitdb import *
 from bimba.unzip import *
 
 
 SQL_GTFS_FOLDER = SCRIPT_FOLDER.parent / "app" / "bimba" / "sql" / "gtfs"
 
 
-def import_gtfs(gtfs_zip: Path, db_path: Path):
-  init_script = (SQL_GTFS_FOLDER / "init.sql").read_text().replace(
-    "create or replace temp table gtfs_",
-    "create table ",
-  )
-
-  import_script = (SQL_GTFS_FOLDER / "import.sql").read_text().replace(
+def get_import_script(name: str) -> str:
+  return (SQL_GTFS_FOLDER / "import" / f"{name}.sql").read_text().replace(
     "insert into gtfs_",
     "insert into ",
+  )
+
+
+def import_gtfs(gtfs_zip: Path, db_path: Path):
+  init_script = (SQL_GTFS_FOLDER / "init.sql").read_text().replace(
+    "create temp table gtfs_",
+    "create table ",
   )
 
   gtfs_folder = gtfs_zip.parent / gtfs_zip.name.replace(".zip", "")
@@ -30,7 +33,11 @@ def import_gtfs(gtfs_zip: Path, db_path: Path):
   with Db(db_path, Path.cwd()) as db:
     db.set_variable("GTFS_FOLDER", str(gtfs_folder))
     db.sql(init_script)
-    db.sql(import_script)
+    db.sql(get_import_script("required"))
+
+    for opt in TransitDb.OPTIONAL_GTFS_FILES:
+      if (gtfs_folder / opt).exists():
+        db.sql(get_import_script(opt[:-4].replace("_", "-")))
 
 
 if __name__ == "__main__":

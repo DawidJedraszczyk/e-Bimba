@@ -23,43 +23,6 @@ insert into gtfs_agency by name select
   ))
 from gtfs_parse_csv('agency');
 
-insert into gtfs_calendar by name select
-  columns(c -> c in (
-    'service_id',
-    'monday',
-    'tuesday',
-    'wednesday',
-    'thursday',
-    'friday',
-    'saturday',
-    'sunday',
-    'start_date',
-    'end_date',
-  ))
-from gtfs_parse_csv('calendar');
-
-insert into gtfs_calendar_dates by name select
-  columns(c -> c in (
-    'service_id',
-    'date',
-    'exception_type',
-  ))
-from gtfs_parse_csv('calendar_dates');
-
-insert into gtfs_feed_info by name select
-  columns(c -> c in (
-    'feed_publisher_name',
-    'feed_publisher_url',
-    'feed_lang',
-    'default_lang',
-    'feed_start_date',
-    'feed_end_date',
-    'feed_version',
-    'feed_contact_email',
-    'feed_contact_url',
-  ))
-from gtfs_parse_csv('feed_info');
-
 insert into gtfs_routes by name select
   columns(c -> c in (
     'route_id',

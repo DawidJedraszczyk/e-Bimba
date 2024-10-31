@@ -55,25 +55,6 @@ def start_osrm(data: Path):
     container.stop()
 
 
-def import_gtfs(zips: Iterable[Path], tdb_path: Path):
-  with TransitDb(tdb_path) as tdb:
-    tdb.init_schema()
-
-    for gtfs_zip in zips:
-      folder = gtfs_zip.parent / gtfs_zip.name.replace(".zip", "")
-      unzip(gtfs_zip, folder)
-      tdb.import_gtfs(folder)
-
-
-def generate_connections(tdb_path: Path, osrm_data: Path):
-  with (
-    start_osrm(osrm_data),
-    TransitDb(tdb_path) as tdb,
-  ):
-    osrm = OsrmClient(f"http://localhost:{OSRM_PORT}")
-    asyncio.run(tdb.generate_connections(osrm))
-
-
 def osrm_data(osm_url: str, folder: Path):
   if (folder / f"map.osrm.fileIndex").exists():
     return
@@ -98,17 +79,30 @@ def osrm_data(osm_url: str, folder: Path):
 
 
 def prepare_city(city):
-  osrm_data(city["map"], OSRM_FOLDER)
-
   for k, url in city["gtfs"].items():
     download_if_missing(url, DATA_FOLDER / f"{k}.zip")
 
-  import_gtfs(
-    [DATA_FOLDER / f"{k}.zip" for k in city["gtfs"].keys()],
-    DATA_FOLDER / "transit.db"
-  )
+  try:
+    with TransitDb(DATA_FOLDER / "transit.db") as tdb:
+      tdb.init_schema()
 
-  generate_connections(DATA_FOLDER / "transit.db", OSRM_FOLDER)
+      for gtfs in city["gtfs"].keys():
+        gtfs_zip = DATA_FOLDER / f"{gtfs}.zip"
+        folder = gtfs_zip.parent / gtfs_zip.name.replace(".zip", "")
+        unzip(gtfs_zip, folder)
+        tdb.import_gtfs(folder)
+
+      osrm_data(city["map"], OSRM_FOLDER)
+
+      with start_osrm(OSRM_FOLDER):
+        osrm = OsrmClient(f"http://localhost:{OSRM_PORT}")
+        asyncio.run(tdb.calculate_stop_walks(osrm))
+
+      tdb.finalize()
+
+  except:
+    (DATA_FOLDER / "transit.db").unlink(missing_ok=True)
+    raise
 
 
 if __name__ == "__main__":

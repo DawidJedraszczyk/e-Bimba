@@ -11,7 +11,7 @@ alter table gtfs_trips add column _tdb_id int4;
 update gtfs_trips set _tdb_id = nextval('seq_trip_id');
 
 
-create or replace temp table gtfs_uniq_service as
+create temp table gtfs_uniq_service as
   select
     service_id,
     nextval('seq_service_id') :: int4 as _tdb_id,
@@ -22,7 +22,7 @@ create or replace temp table gtfs_uniq_service as
   );
 
 
-create or replace temp table gtfs_uniq_shape as
+create temp table gtfs_uniq_shape as
   select
     shape_id,
     nextval('seq_shape_id') :: int4 as _tdb_id,

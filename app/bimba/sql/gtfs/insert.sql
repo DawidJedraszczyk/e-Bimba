@@ -5,7 +5,7 @@ from gtfs_agency
 order by _tdb_id;
 
 
-insert into stop select
+insert into imported_stop select
   _tdb_id,
   stop_code,
   stop_name,

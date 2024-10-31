@@ -1,4 +1,4 @@
-create or replace temp table gtfs_agency (
+create temp table gtfs_agency (
   agency_id text not null default '',
   agency_name text not null,
   agency_url text,
@@ -9,7 +9,7 @@ create or replace temp table gtfs_agency (
   agency_email text,
 );
 
-create or replace temp table gtfs_calendar (
+create temp table gtfs_calendar (
   service_id text not null,
   monday bool not null default false,
   tuesday bool not null default false,
@@ -22,13 +22,13 @@ create or replace temp table gtfs_calendar (
   end_date text not null,
 );
 
-create or replace temp table gtfs_calendar_dates (
+create temp table gtfs_calendar_dates (
   service_id text not null,
   date text not null,
   exception_type int1 not null,
 );
 
-create or replace temp table gtfs_feed_info (
+create temp table gtfs_feed_info (
   feed_publisher_name text,
   feed_publisher_url text,
   feed_lang text,
@@ -40,7 +40,15 @@ create or replace temp table gtfs_feed_info (
   feed_contact_url text,
 );
 
-create or replace temp table gtfs_routes (
+create temp table gtfs_frequencies (
+  trip_id text not null,
+  start_time text not null,
+  end_time text not null,
+  headway_secs int4 not null,
+  exact_times int1,
+);
+
+create temp table gtfs_routes (
   route_id text not null,
   agency_id text not null default '',
   route_short_name text,
@@ -56,7 +64,7 @@ create or replace temp table gtfs_routes (
   network_id text,
 );
 
-create or replace temp table gtfs_shapes (
+create temp table gtfs_shapes (
   shape_id text not null,
   shape_pt_lat float4 not null,
   shape_pt_lon float4 not null,
@@ -64,7 +72,7 @@ create or replace temp table gtfs_shapes (
   shape_dist_traveled float4,
 );
 
-create or replace temp table gtfs_stop_times (
+create temp table gtfs_stop_times (
   trip_id text not null,
   arrival_time text,
   departure_time text,
@@ -85,7 +93,7 @@ create or replace temp table gtfs_stop_times (
   drop_off_booking_rule_id text,
 );
 
-create or replace temp table gtfs_stops (
+create temp table gtfs_stops (
   stop_id text not null,
   stop_code text,
   stop_name text,
@@ -103,7 +111,7 @@ create or replace temp table gtfs_stops (
   platform_code text,
 );
 
-create or replace temp table gtfs_trips (
+create temp table gtfs_trips (
   route_id text not null,
   service_id text not null,
   trip_id text not null,

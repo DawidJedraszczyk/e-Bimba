@@ -19,8 +19,8 @@ select
       lon := t.coords.lon
     )
   ) to_stops,
-from stop f
-join stop t on (t.id > f.id)
+from imported_stop f
+join imported_stop t on (t.id > f.id)
 where
   ST_Distance_Sphere(
     ST_Point2D(f.coords.lat, f.coords.lon),

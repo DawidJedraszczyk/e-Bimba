@@ -10,5 +10,12 @@
       "ztm": "https://www.ztm.poznan.pl/pl/dla-deweloperow/getGTFSFile/?file=20240905_20240930.zip"
     },
     "map": "http://download.geofabrik.de/europe/poland/wielkopolskie-latest.osm.pbf"
+  },
+  "Warszawa": {
+    "gtfs": {
+      "wtp": "https://mkuran.pl/gtfs/warsaw.zip",
+      "wkd": "https://mkuran.pl/gtfs/wkd.zip"
+    },
+    "map": "http://download.geofabrik.de/europe/poland/mazowieckie-latest.osm.pbf"
   }
 }

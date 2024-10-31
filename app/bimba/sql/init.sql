@@ -15,7 +15,24 @@ create sequence seq_agency_id minvalue 0 start 0;
 
 create table stop (
   id int4 not null,
-  code text not null,
+  code text,
+  name text not null,
+  zone text,
+
+  coords struct (
+    lat float4,
+    lon float4
+  ) not null,
+
+  within_walking struct (
+    id int4,
+    distance int2
+  )[] not null,
+);
+
+create temp table imported_stop (
+  id int4 not null,
+  code text,
   name text not null,
   zone text,
 
@@ -57,8 +74,8 @@ create table stop_time (
   stop int4 not null,
   arrival int4 not null, -- in seconds after midnight (can be over 86400)
   departure int4 not null, -- also
-  pickup_type int1 not null,
-  drop_off_type int1 not null,
+  pickup_type int1,
+  drop_off_type int1,
 );
 
 
@@ -86,45 +103,6 @@ create table shape_point (
   lat float4 not null,
   lon float4 not null,
 );
-
-
-create table connections (
-  from_stop int4 not null,
-  to_stops struct (
-    to_stop int4,
-    walk_time int2, -- 0 if too far to walk
-    first_arrival int4, -- 0 if no services
-    last_departure int4, -- 0 if no services
-    services struct (
-      departure int4,
-      arrival int4,
-      trip int4
-    )[][]
-  )[] not null,
-);
-
-create view connection as
-  with
-    to_stops as (
-      select
-        from_stop,
-        unnest(to_stops, max_depth := 2),
-      from connections
-    ),
-    services as (
-      select
-        from_stop,
-        to_stop,
-        generate_subscripts(services, 1) - 1 as service,
-        unnest(services) as times,
-      from to_stops
-    )
-  select
-    from_stop,
-    to_stop,
-    service,
-    unnest(times, max_depth := 2),
-  from services;
 
 
 create macro parse_time(str) as
