@@ -123,3 +123,9 @@ create temp table gtfs_trips (
   wheelchair_accessible int1,
   bikes_allowed int1,
 );
+
+
+create or replace temp macro time_to_sec(time) as
+  60*60*cast(time[1:2] as int4)
+  + 60*cast(time[4:5] as int4)
+  + cast(time[7:8] as int4);

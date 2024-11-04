@@ -3,7 +3,7 @@ insert into stop by name select
   (
     select
       coalesce(list(
-        struct_pack(sw.id, distance)
+        struct_pack(to_stop := sw.id, distance)
         order by distance
       ), [])
     from (
@@ -11,5 +11,20 @@ insert into stop by name select
       union all
       select from_stop as id, distance from stop_walk where to_stop = i.id
     ) sw
-  ) as within_walking,
-from imported_stop i;
+  ) as walks,
+  (
+    select
+      coalesce(list(
+        struct_pack(trip := id, seq, departure)
+        order by id
+      ), []),
+    from (
+      select
+        id,
+        generate_subscripts(stops, 1) - 1 as seq,
+        unnest(stops, recursive := true),
+      from trip
+    ) t
+    where t.stop = i.id
+  ) as trips,
+from imported_stop i

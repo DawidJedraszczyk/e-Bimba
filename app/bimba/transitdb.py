@@ -66,14 +66,18 @@ class TransitDb(Db):
         self.script(f"gtfs/import/{opt_gtfs[:-4].replace("_", "-")}")
 
     t1 = time.time()
-    self.sql("begin transaction")
-    self.script("gtfs/assign-tdb-id")
-    self.script("gtfs/insert")
-    self.sql("commit")
-    self.script("gtfs/clean-up")
+    self.script("gtfs/process/assign-id")
+    self.script("gtfs/process/services")
+    self.script("gtfs/process/shapes")
+    self.script("gtfs/process/trips")
 
     t2 = time.time()
-    print(f"Time: {_t(t2, t0)} (parsing: {_t(t1, t0)}, inserting: {_t(t2, t1)})")
+    self.script("gtfs/insert")
+    self.script("gtfs/clean-up")
+
+    t3 = time.time()
+    print(f"Time: {_t(t2, t0)}"
+      f"(parsing: {_t(t1, t0)}, processing: {_t(t2, t1)}, inserting: {_t(t3, t2)})")
 
 
   async def calculate_stop_walks(self, osrm: OsrmClient):
