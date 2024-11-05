@@ -8,18 +8,13 @@ import os
 from pathlib import Path
 import pyarrow
 import time
-from typing import TypedDict, cast
 
-from bimba.connections import Connections, connections_from_arrow
-from bimba.db import Db
-from bimba.osrm import OsrmClient
-import bimba.params as params
-
-
-class Services(TypedDict):
-  yesterday: list[int]
-  today: list[int]
-  tomorrow: list[int]
+from .data.common import Services
+from .data.stops import Stops
+from .data.trips import Trips
+from .db import Db
+from .osrm import OsrmClient
+from ebus.algorithm_settings import WALKING_SETTINGS
 
 
 class TransitDb(Db):
@@ -32,20 +27,81 @@ class TransitDb(Db):
 
   def __init__(self, path: Path):
     scripts = Path(__file__).parent / "sql"
-    variables = {k: v for k, v in params.__dict__.items() if not k.startswith('_')}
+    variables = {
+      "MAX_STOP_WALK": WALKING_SETTINGS["TIME_WITHIN_WALKING"] * WALKING_SETTINGS["PACE"]
+    }
+
     super().__init__(path, scripts, variables)
     self.db.sql("install spatial; load spatial")
 
 
   def get_services(self, date: datetime.date) -> Services:
-    return self.sql("select get_service_lists(?)", (date,)).scalar()
+    s = self.sql("select get_service_lists(?)", [date]).scalar()
+
+    return Services(
+      np.array(s["today"], dtype=np.int32),
+      np.array(s["yesterday"], dtype=np.int32),
+      np.array(s["tomorrow"], dtype=np.int32),
+    )
+
 
   def nearest_stops(self, lat: float, lon: float) -> pyarrow.StructArray:
     return self.script("get-nearest-stops", {"lat":lat, "lon":lon}).arrow()
 
-  def get_connections(self) -> Connections:
-    cs = self.sql("select to_stops from connections order by from_stop").arrow().field(0)
-    return connections_from_arrow(cast(pyarrow.ListArray, cs))
+
+  def get_stops(self) -> Stops:
+    a = self.sql("select * from stop order by id").arrow()
+    ids, codes, names, zones, coords, walks, trips = a.flatten()
+    lats, lons = coords.flatten()
+    walks_off = walks.offsets
+    walks_stop_ids, walks_distances = walks.values.flatten()
+    trips_off = trips.offsets
+    trips_ids, trips_seqs, trips_departures = trips.values.flatten()
+    assert np.array_equal(ids, np.arange(len(a)))
+
+    return Stops(
+      codes.tolist(),
+      names.tolist(),
+      zones.tolist(),
+      lats.to_numpy(),
+      lons.to_numpy(),
+      walks_off.to_numpy(),
+      walks_stop_ids.to_numpy(),
+      walks_distances.to_numpy(),
+      trips_off.to_numpy(),
+      trips_ids.to_numpy(),
+      trips_seqs.to_numpy(),
+      trips_departures.to_numpy(),
+    )
+
+
+  def get_trips(self) -> Trips:
+    a = self.sql("select * from trip order by id").arrow()
+    ids, routes, shapes, first_departures, last_departures, instances, stops = a.flatten()
+    instances_off = instances.offsets
+    instances_services, instances_start_times, _ = instances.values.flatten()
+    instances_services_off = instances_services.offsets
+    instances_services = instances_services.values
+    instances_start_times_off = instances_start_times.offsets
+    instances_start_times = instances_start_times.values
+    stops_off = stops.offsets
+    stops_ids, stops_arrivals, _, _, _ = stops.values.flatten()
+    assert np.array_equal(ids, np.arange(len(a)))
+
+    return Trips(
+      routes.to_numpy(),
+      shapes.to_numpy(),
+      first_departures.to_numpy(),
+      last_departures.to_numpy(),
+      instances_off.to_numpy(),
+      instances_services_off.to_numpy(),
+      instances_services.to_numpy(),
+      instances_start_times_off.to_numpy(),
+      instances_start_times.to_numpy(),
+      stops_off.to_numpy(),
+      stops_ids.to_numpy(),
+      stops_arrivals.to_numpy(),
+    )
 
 
   def init_schema(self):

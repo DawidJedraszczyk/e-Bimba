@@ -26,5 +26,6 @@ insert into stop by name select
       from trip
     ) t
     where t.stop = i.id
+      and t.pickup_type != 1
   ) as trips,
 from imported_stop i

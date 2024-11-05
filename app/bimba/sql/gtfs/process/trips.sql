@@ -10,8 +10,8 @@ create temp table processed_trip as with
           stop := (select id from gtfs_stops s where s.stop_id = st.stop_id),
           arrival := time_to_sec(st.arrival_time),
           departure := time_to_sec(st.departure_time),
-          st.pickup_type,
-          st.drop_off_type
+          pickup_type := coalesce(st.pickup_type, 0),
+          drop_off_type := coalesce(st.drop_off_type, 0)
         ) order by st.stop_sequence
       ) as raw_stops,
       raw_stops[1].departure as start_time,
