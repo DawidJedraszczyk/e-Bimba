@@ -70,7 +70,7 @@ class Trips:
     self.stops_arrivals = stops_arrivals
 
 
-  def get_trip(self, id: int) -> Trip:
+  def __getitem__(self, id: int) -> Trip:
     return Trip(
       self.routes[id],
       self.shapes[id],
@@ -79,6 +79,10 @@ class Trips:
       Range(self.instances_off[id], self.instances_off[id+1]),
       Range(self.stops_off[id], self.stops_off[id+1]),
     )
+
+
+  def get_trip(self, id: int) -> Trip:
+    return self[id]
 
 
   def get_stops_after(self, trip_id: int, seq: int) -> Iterator[TripStop]:

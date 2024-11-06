@@ -10,6 +10,8 @@ import pyarrow
 import time
 
 from .data.common import Services
+from .data.routes import Routes
+from .data.shapes import Shapes
 from .data.stops import Stops
 from .data.trips import Trips
 from .db import Db
@@ -47,6 +49,34 @@ class TransitDb(Db):
 
   def nearest_stops(self, lat: float, lon: float) -> pyarrow.StructArray:
     return self.script("get-nearest-stops", {"lat":lat, "lon":lon}).arrow()
+
+
+  def get_routes(self) -> Routes:
+    a = self.sql("select * from route order by id").arrow()
+    ids, agencies, names, types, colors, text_colors = a.flatten()
+    assert np.array_equal(ids, np.arange(len(a)))
+
+    return Routes(
+      agencies.to_numpy(),
+      names.tolist(),
+      types.to_numpy(),
+      colors.to_numpy(),
+      text_colors.to_numpy(),
+    )
+
+
+  def get_shapes(self) -> Shapes:
+    a = self.sql("select * from shape order by id").arrow()
+    ids, points = a.flatten()
+    points_off = points.offsets
+    points_lats, points_lons = points.values.flatten()
+    assert np.array_equal(ids, np.arange(len(a)))
+
+    return Shapes(
+      points_off.to_numpy(),
+      points_lats.to_numpy(),
+      points_lons.to_numpy(),
+    )
 
 
   def get_stops(self) -> Stops:

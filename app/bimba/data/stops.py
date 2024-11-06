@@ -69,7 +69,7 @@ class Stops:
     self.trips_seqs = trips_seqs
     self.trips_departures = trips_departures
 
-  def get_stop(self, id: int) -> Stop:
+  def __getitem__(self, id: int) -> Stop:
     return Stop(
       self.codes[id],
       self.names[id],
@@ -78,6 +78,9 @@ class Stops:
       Range(self.walks_off[id], self.walks_off[id+1]),
       Range(self.trips_off[id], self.trips_off[id+1]),
     )
+
+  def get_stop(self, id: int) -> Stop:
+    return self[id]
 
   def get_stop_walks(self, id) -> Iterator[StopWalk]:
     return self.get_walks(Range(self.walks_off[id], self.walks_off[id+1]))

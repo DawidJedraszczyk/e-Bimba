@@ -371,7 +371,7 @@ class RouterTask:
 
 
   def stop_name(self, id):
-    return self.stops.get_stop(id).name
+    return self.stops[id].name
 
 
 def get_stop_coords(max_stop_id: int, tdb: TransitDb) -> NDArray:
