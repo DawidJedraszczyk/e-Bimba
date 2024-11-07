@@ -15,12 +15,17 @@ HEURISTIC_SETTINGS = {
     'ALWAYS_WALKING_TIME_CONSTANT': 180 # seconds
 }
 
+METRICS_SETTINGS = {
+    'TIME': True,
+    'EXPANSIONS' : True,
+}
+
 PRINTING_SETTINGS = {
     'DEFAULT': True,
     'SETUP_TIMES' : True,
     'DATASTRUCTURES_INIT_TIMES' : True,
     'ALGORITHM_PREPROCESSING_TIMES' : True,
-    'DEBUG' : True,
+    'DEBUG' : False,
     'BENCHMARK' : True,
     'PRINT_PLAN' : True,
     'ALGORITHM_ITERATIONS' : True,
