@@ -16,11 +16,11 @@ HEURISTIC_SETTINGS = {
 }
 
 PRINTING_SETTINGS = {
-    'DEFAULT': False,
+    'DEFAULT': True,
     'SETUP_TIMES' : True,
     'DATASTRUCTURES_INIT_TIMES' : True,
     'ALGORITHM_PREPROCESSING_TIMES' : True,
-    'DEBUG' : False,
+    'DEBUG' : True,
     'BENCHMARK' : True,
     'PRINT_PLAN' : True,
     'ALGORITHM_ITERATIONS' : True,

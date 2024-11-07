@@ -3,7 +3,7 @@ import os
 
 from benchmark.BenchmarkStrategy import BenchmarkStrategy
 from benchmark.routes_generating.custom_routes import get_custom_sample_routes
-from algorithm_parts.utils import seconds_to_time, plans_to_string
+from algorithm_parts.utils import seconds_to_time, plans_to_string, custom_print
 
 class CustomBenchmark(BenchmarkStrategy):
     def __init__(self):
@@ -13,6 +13,7 @@ class CustomBenchmark(BenchmarkStrategy):
 
     def print_results_to_csv(self):
         filename = self.get_csv_filename()
+        custom_print(filename,'BENCHMARK')
         with open(filename, mode='w', newline='') as file:
             writer = csv.writer(file)
             writer.writerow(['Time searching',
