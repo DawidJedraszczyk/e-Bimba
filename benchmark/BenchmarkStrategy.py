@@ -73,3 +73,20 @@ class BenchmarkStrategy():
         filename = os.path.join(directory, f"{self.benchmark_type}_results{current_time}.csv")
         return filename
     
+    # There are different types of benchmark, but some metrics are common for all of them
+    # and here they are computed and returned as dictionary
+    def get_common_metrics_csv_row_dict(self, route, route_index, algorithm_metrics_dict):
+        row_dictinary = {
+            'Time searching': round(self.total_times[route_index], 3),
+            'Start name': route.start_name,
+            'Destination Name': route.destination_name,
+            'Start Time': route.start_time,
+            'Day of week': route.week_day,
+            'found route': plans_to_string(self.planners[route_index].found_plans),
+            'found route duration': self.compute_travel_duration(
+                route.start_time,
+                seconds_to_time(self.planners[route_index].found_plans[0].time_at_destination)) if self.planners[route_index].found_plans else 'NA',
+        }
+        row_dictinary.update(algorithm_metrics_dict)
+        return row_dictinary
+    

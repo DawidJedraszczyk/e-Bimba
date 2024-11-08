@@ -2,6 +2,7 @@ import heapq
 from time import time
 from haversine import haversine, Unit
 from itertools import combinations
+import time
 
 try:
     from django.templatetags.static import static
@@ -12,12 +13,13 @@ from .utils import get_lat_lon_sets, get_closest_shape_point, get_next_day, time
 from .Plan import Plan
 from .PlanTrip import PlanTrip
 from .DataLoaderSingleton import initialized_dataloader_singleton
-from ebus.algorithm_settings import WALKING_SETTINGS, HEURISTIC_SETTINGS, PRINTING_SETTINGS
+from ebus.algorithm_settings import WALKING_SETTINGS, HEURISTIC_SETTINGS, PRINTING_SETTINGS, METRICS_SETTINGS
 
 
 class AStarPlanner():
     def __init__(self, start_time, START, DESTINATION, distance_metric, current_date,
                  waiting_time_constant=time_to_seconds('00:03:00')):
+        start_init_time = time.time()
         data_loader = initialized_dataloader_singleton
         self.stops = data_loader.get_stops()
         self.stops_df = data_loader.get_stops_df()
@@ -29,11 +31,32 @@ class AStarPlanner():
         self.DESTINATION = DESTINATION
         self.distance_metric = distance_metric
         self.waiting_time_constant = waiting_time_constant
-        self.start_walking_times = self.__get_start_walking_times()
-        self.destination_walking_times = self.__get_destination_walking_times()
-        self.heuristic_times = self.__get_destination_heurisitc_time()
+        self.start_walking_times, start_walking_times_time = self.__get_start_walking_times()
+        self.destination_walking_times, destination_walking_times_time = self.__get_destination_walking_times()
+        self.heuristic_times, precomputed_heurisitc_times_time = self.__get_destination_heurisitc_time()
         self.start_within_walking = self.__get_start_within_walking()
         self.plans_queue = []
+        self.found_plans = list()
+        self.iterations = 0
+        end_init_time = time.time()
+        init_time = end_init_time - start_init_time
+        self.metrics = {
+            'iterations': 0, #i
+            'unique_stops_visited': 0, #i
+            'plans_queue_max_size': 0, #i
+            'all_stops_retrieved_total': 0, #i sum, over all iterations, of all the stops that were connected to the current stop, there may be repetitions
+            'expansions_total' : 0, #i
+            'walking_expansions_total': 0, #i
+            'trasnit_expansions_total': 0, #i
+            'get_next_trips_time_total': 0, #i
+            'plan_compute_heurstic_time_total': 0, #i
+            'plan_compute_actual_time_total': 0, #i
+            'find_plans_time_total': 0, #i
+            'planner_initialization_time': init_time, #i
+            'start_walking_times_time': start_walking_times_time,
+            'destination_walking_times_time' : destination_walking_times_time,
+            'precomputed_heurisitc_times_time': precomputed_heurisitc_times_time,
+        }
         for stop_id in self.start_within_walking.keys():
             plan = Plan(
                 self.start_walking_times,
@@ -42,9 +65,11 @@ class AStarPlanner():
                 self.start_time,
                 current_date,
                 starting_stop_id=stop_id)
+            start_time_heuristic = time.time()
+            plan.compute_heuristic_time_at_destination()
+            end_time_heuristic = time.time()
+            self.metrics['plan_compute_heurstic_time_total'] += (end_time_heuristic - start_time_heuristic)
             heapq.heappush(self.plans_queue, plan)
-        self.found_plans = list()
-        self.iterations = 0
 
     # returns negative value if fastest_way is faster than alternative_way
     def __compute_trips_arrival_time_difference(self, fastest_way, alternative_way_arrival_time_s,
@@ -64,7 +89,7 @@ class AStarPlanner():
     # Also they must be made more accurate in the future, possibly with help of OSRM
 
     def __get_start_walking_times(self):
-        t0 = time()
+        t0 = time.time()
         if self.distance_metric == 'straight':
             start_walking_times = {
                 stop.stop_id: haversine(
@@ -83,11 +108,11 @@ class AStarPlanner():
             }
         else:
             raise ValueError(f'Unknown distance metric: {self.distance_metric}')
-        custom_print(f'(start_walking_times_straight - {time() - t0:.4f}s)', 'ALGORITHM_PREPROCESSING_TIMES')
-        return start_walking_times
+        custom_print(f'(start_walking_times_straight - {time.time() - t0:.4f}s)', 'ALGORITHM_PREPROCESSING_TIMES')
+        return start_walking_times, time.time() - t0
 
     def __get_start_within_walking(self):
-        t0 = time()
+        t0 = time.time()
         # TODO - may need to specify incremental increase in case no route found?
         #   or similar "at least X"? or somehow "without explicit"?
         start_within_walking = {
@@ -95,11 +120,11 @@ class AStarPlanner():
             for stop_id, walking_time in self.start_walking_times.items()
             if walking_time <= WALKING_SETTINGS['TIME_WITHIN_WALKING']
         }
-        custom_print(f'(start_within_walking - {time() - t0:.4f}s)', 'ALGORITHM_PREPROCESSING_TIMES')
+        custom_print(f'(start_within_walking - {time.time() - t0:.4f}s)', 'ALGORITHM_PREPROCESSING_TIMES')
         return start_within_walking
 
     def __get_destination_walking_times(self):
-        t0 = time()
+        t0 = time.time()
         if self.distance_metric == 'straight':
             destination_walking_times = {
                 stop.stop_id: haversine(
@@ -118,14 +143,14 @@ class AStarPlanner():
             }
         else:
             raise ValueError(f'Unknown distance metric: {self.distance_metric}')
-        custom_print(f'(destination_walking_times_straight - {time() - t0:.4f}s)', 'ALGORITHM_PREPROCESSING_TIMES')
-        return destination_walking_times
+        custom_print(f'(destination_walking_times_straight - {time.time() - t0:.4f}s)', 'ALGORITHM_PREPROCESSING_TIMES')
+        return destination_walking_times, time.time() - t0
 
     def __get_destination_heurisitc_time(self):
         # This may be overestimating (especially in Manhattan) -> potential problems
         #   BUT note that this may work in practice anyways
         # heuristic = time with tram avg speed to dest + assumed walking time constant
-        t0 = time()
+        t0 = time.time()
         if self.distance_metric == 'straight':
             heuristic_times = {
                 stop.stop_id: haversine(
@@ -144,21 +169,20 @@ class AStarPlanner():
             }
         else:
             raise ValueError(f'Unknown distance metric: {self.distance_metric}')
-        custom_print(f'(destination_heuristic_times - {time() - t0:.4f}s)', 'ALGORITHM_PREPROCESSING_TIMES')
-        return heuristic_times
+        custom_print(f'(destination_heuristic_times - {time.time() - t0:.4f}s)', 'ALGORITHM_PREPROCESSING_TIMES')
+        return heuristic_times, time.time() - t0
 
     # Mere algorithm
     def find_next_plan(self):
+        start_time_find_next_plan = time.time()
         visited_stops = set()
         while len(self.plans_queue) != 0:
             self.iterations += 1
-            # print('iteration', self.iterations)
 
             if not self.plans_queue:
                 raise Exception('no more plans')
 
             # remove fastest known plan yet from queue
-            t = time()
             plan_accepted = False
             while not plan_accepted:
                 fastest_known_plan = heapq.heappop(self.plans_queue)
@@ -168,34 +192,48 @@ class AStarPlanner():
                 if fastest_known_plan.is_terminal:
                     self.found_plans.append(fastest_known_plan)
                     custom_print(self.iterations, 'ALGORITHM_ITERATIONS')
+                    self.metrics['iterations'] = self.iterations
+                    self.metrics['unique_stops_visited'] = len(visited_stops)
+                    end_time_find_next_plan = time.time()
+                    time_find_next_plan = end_time_find_next_plan - start_time_find_next_plan
+                    self.metrics['find_plans_time_total'] += time_find_next_plan
                     return fastest_known_plan
                 if len(fastest_known_plan.plan_trips) == 0:
                     plan_accepted = True
                     continue
                 last_stop_id = fastest_known_plan.plan_trips[-1].leave_at_stop_id
+                # TODO: WARNING - this should to be tested, Most certainly it is wrong for neural network heuristic
+                # there may be more effecitive way to the node.
+                # The plan should be rejected, only if if it gets to visited stop in longer time
                 if last_stop_id not in visited_stops:
                     plan_accepted = True
                     visited_stops.add(last_stop_id)
 
-            # if len(fastest_known_plan.plan_trips) > 0:
-            #   print_trip(fastest_known_plan.plan_trips[-1])
-
             # make this plan potential subject for terminal
             # (it was the best option so far and if remains so after we consider its
-            # walking distance directly, it's good enough to be considered best result)
+            # actual walking distance directly => there is no better plan)
+            start_time_destinaiton_walking = time.time()
             fastest_known_plan.set_as_terminal()
+            end_time_destinaiton_walking = time.time()
+            self.metrics['plan_compute_actual_time_total'] += (end_time_destinaiton_walking - start_time_destinaiton_walking)
+            # push it back to the queue
             heapq.heappush(self.plans_queue, fastest_known_plan)
 
             # print(f'visited {fastest_known_plan.current_stop_id}, on {seconds_to_time(fastest_known_plan.current_time)} - time at destination: {seconds_to_time(fastest_known_plan.heuristic_time_at_destination)}, [{fastest_known_plan.arrival_date}]')
 
-            # try extending queue with **fastest** ways to **all** reachable stops
+            # try extending queue with fastest ways to all reachable stops
             # from stop we're currently at after following fastest known plan yet
             current_stop = self.stops[fastest_known_plan.current_stop_id]
             fastest_ways = dict()
+
             ## factor in trips from this stop directly
+            start_time_get_trips = time.time()
             available_trips = current_stop.get_next_trips(
                 start_time_s=fastest_known_plan.current_time + self.waiting_time_constant,
                 date_str=fastest_known_plan.arrival_date)
+            end_time_get_trips = time.time()
+            self.metrics['get_next_trips_time_total'] += (end_time_get_trips - start_time_get_trips)
+
             if available_trips:
                 for trip_id, (stop_index_in_sequence, departure_time, trip_date) in available_trips.items():
                     if trip_id in fastest_known_plan.used_trips:
@@ -216,22 +254,15 @@ class AStarPlanner():
                                 type='bus',  # TODO - change when distinction between buses and trams is implemented
                                 date=trip_date
                             )
-            # else:
-            # print('NO TRIPS AVAILABLE!')
-            ## factor in stops within walking distance
-            bus_trips_found = len(fastest_ways)
-            # print('new_bus_trips_found = ',bus_trips_found)
-            # if bus_trips_found == 0:
-            # print(available_trips)
+            else:
+                custom_print('NO TRIPS AVAILABLE!', 'DEBUG')
+            transit_trips_found = len(fastest_ways)
 
+            ## factor in stops within walking distance
             for stop_id, walking_time in current_stop.stops_within_walking_straight.items():
                 # TODO - get exact walking time
-                # print(stop_id)
-                # print(fastest_known_plan.used_stops)
                 if stop_id not in fastest_known_plan.used_stops:
-                    time_at_stop = fastest_known_plan.current_time + walking_time + HEURISTIC_SETTINGS[
-                        'ALWAYS_WALKING_TIME_CONSTANT']
-                    # if stop_id not in fastest_ways.keys() or fastest_ways[stop_id][2] > arrival_time:
+                    time_at_stop = fastest_known_plan.current_time + walking_time + HEURISTIC_SETTINGS['ALWAYS_WALKING_TIME_CONSTANT']
                     if stop_id not in fastest_ways.keys() or self.__compute_trips_arrival_time_difference(
                             fastest_ways[stop_id],
                             time_at_stop,
@@ -245,14 +276,8 @@ class AStarPlanner():
                             type='WALK',
                             date=fastest_known_plan.arrival_date
                         )
-                    # else:
-                    # print('STOP ALREADY DISCOVERED, with faster time!')
-                # else:
-                # print('STOP ALREADY USED!')
-            ## create extended plans and add them to the queue
-            stops_within_walking_found = len(fastest_ways) - bus_trips_found
-            # print('stops_within_walking_found:', stops_within_walking_found)
 
+            ## create extended plans and add them to the queue
             for stop_id, extending_plan_trip in fastest_ways.items():
                 extended_plan = Plan(self.start_walking_times,
                                      self.destination_walking_times,
@@ -260,7 +285,20 @@ class AStarPlanner():
                                      fastest_known_plan.start_time,
                                      extending_plan_trip.date,
                                      plan_trips=fastest_known_plan.plan_trips + [extending_plan_trip])
+                start_time_heuristic = time.time()
+                extended_plan.compute_heuristic_time_at_destination()
+                end_time_heuristic = time.time()
+                self.metrics['plan_compute_heurstic_time_total'] += (end_time_heuristic - start_time_heuristic)
                 heapq.heappush(self.plans_queue, extended_plan)
+            
+            if METRICS_SETTINGS['EXPANSIONS']:
+                self.metrics['trasnit_expansions_total'] += transit_trips_found
+                self.metrics['walking_expansions_total'] += (len(fastest_ways) - transit_trips_found)
+                self.metrics['all_stops_retrieved_total'] += len(available_trips)
+                self.metrics['all_stops_retrieved_total'] += len(current_stop.stops_within_walking_straight.items())
+                self.metrics['expansions_total'] += len(fastest_ways)
+                if len(self.plans_queue) > self.metrics['plans_queue_max_size']:
+                    self.metrics['plans_queue_max_size'] = len(self.plans_queue)
 
     def plans_to_html(self):
         response = {}
