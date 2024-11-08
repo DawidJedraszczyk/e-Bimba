@@ -69,6 +69,12 @@ class Stops:
     self.trips_seqs = trips_seqs
     self.trips_departures = trips_departures
 
+
+  def enumerate(self) -> Iterator[tuple[int, Stop]]:
+    for i in range(len(self.lats)):
+      yield (i, self[i])
+
+
   def __getitem__(self, id: int) -> Stop:
     return Stop(
       self.codes[id],

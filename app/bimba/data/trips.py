@@ -116,7 +116,7 @@ class Trips:
 
 
   def _get_next_start(self, i_beg, i_end, day_services, time: int) -> int:
-    start_time = INF_TIME
+    start_time = nb.int32(INF_TIME)
 
     for instance in range(i_beg, i_end):
       if not self._instance_and_day_have_common_service(instance, day_services):
