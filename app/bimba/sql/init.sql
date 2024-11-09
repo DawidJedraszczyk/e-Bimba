@@ -60,6 +60,7 @@ create table trip (
   id int4 not null,
   route int4 not null,
   shape int4,
+  headsign text,
   first_departure int4 not null,
   last_departure int4 not null,
 

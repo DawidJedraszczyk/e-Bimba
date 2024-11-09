@@ -303,7 +303,7 @@ class RouterTask:
         if start_time == INF_TIME:
           continue
 
-        for to_stop, stop_arrival in self.trips.get_stops_after(trip_id, stop_seq):
+        for to_stop, stop_arrival, _ in self.trips.get_stops_after(trip_id, stop_seq):
           node = self.get_node(to_stop)
 
           if node.arrival is None or node.arrival > self.arrival:

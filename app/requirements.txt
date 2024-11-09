@@ -12,6 +12,7 @@ holidays==0.42
 idna==3.6
 numba==0.60.0
 psycopg2-binary==2.9.9
+pyarrow==18.0.0
 python-dateutil==2.8.2
 requests==2.31.0
 six==1.16.0

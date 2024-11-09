@@ -24,7 +24,7 @@ services:
       context: ./app
       dockerfile: Dockerfile
     volumes:
-      ./data/main:/data
+      ./data/main/transit.db:/app/transit.db
     ports:
       - "8000:8000"
     depends_on:

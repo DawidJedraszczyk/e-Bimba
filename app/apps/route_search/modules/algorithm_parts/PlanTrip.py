@@ -26,7 +26,7 @@ class PlanTrip(NamedTuple):
         return result
 
     def __repr__(self):
-        return f"PlanTrip({';'.join(map(str, [
+        return f"""PlanTrip({';'.join(map(str, [
             self.trip_id, self.start_from_stop_id,
             self.departure_time, self.leave_at_stop_id, self.arrival_time,
-        ]))})"
+        ]))})"""

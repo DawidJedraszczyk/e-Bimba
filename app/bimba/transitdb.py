@@ -107,7 +107,7 @@ class TransitDb(Db):
 
   def get_trips(self) -> Trips:
     a = self.sql("select * from trip order by id").arrow()
-    ids, routes, shapes, first_departures, last_departures, instances, stops = a.flatten()
+    ids, routes, shapes, headsigns, first_departures, last_departures, instances, stops = a.flatten()
     instances_off = instances.offsets
     instances_services, instances_start_times, _ = instances.values.flatten()
     instances_services_off = instances_services.offsets
@@ -115,12 +115,13 @@ class TransitDb(Db):
     instances_start_times_off = instances_start_times.offsets
     instances_start_times = instances_start_times.values
     stops_off = stops.offsets
-    stops_ids, stops_arrivals, _, _, _ = stops.values.flatten()
+    stops_ids, stops_arrivals, stops_departures, _, _ = stops.values.flatten()
     assert np.array_equal(ids, np.arange(len(a)))
 
     return Trips(
       routes.to_numpy(),
       shapes.to_numpy(),
+      headsigns.tolist(),
       first_departures.to_numpy(),
       last_departures.to_numpy(),
       instances_off.to_numpy(),
@@ -131,6 +132,7 @@ class TransitDb(Db):
       stops_off.to_numpy(),
       stops_ids.to_numpy(),
       stops_arrivals.to_numpy(),
+      stops_departures.to_numpy(),
     )
 
 
@@ -149,7 +151,7 @@ class TransitDb(Db):
 
     for opt_gtfs in self.OPTIONAL_GTFS_FILES:
       if (gtfs_folder / opt_gtfs).exists():
-        self.script(f"gtfs/import/{opt_gtfs[:-4].replace("_", "-")}")
+        self.script(f"gtfs/import/{opt_gtfs[:-4].replace('_', '-')}")
 
     t1 = time.time()
     self.script("gtfs/process/assign-id")

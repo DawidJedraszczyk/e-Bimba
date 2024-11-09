@@ -4,6 +4,7 @@ create temp table processed_trip as with
       (select id from gtfs_routes r where r.route_id = first(t.route_id)) as route,
       (select id from service_map s where s.service_id = first(t.service_id)) as service,
       (select id from shape_map s where s.shape_id = first(t.shape_id)) as shape,
+      first(trip_headsign) as headsign,
       coalesce(first(wheelchair_accessible), 0) as wheelchair_accessible,
       list(
         struct_pack(
@@ -34,6 +35,7 @@ create temp table processed_trip as with
       route,
       service,
       shape,
+      headsign,
       list(start_time order by start_time) as start_times,
       stops,
       wheelchair_accessible,
@@ -45,6 +47,7 @@ create temp table processed_trip as with
     select
       route,
       shape,
+      headsign,
       list(
         service
         order by service
@@ -59,6 +62,7 @@ create temp table processed_trip as with
 select
   route,
   shape,
+  headsign,
   min(start_times[1]) as first_departure,
   max(start_times[-1]) as last_departure,
   list(

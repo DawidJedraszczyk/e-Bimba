@@ -10,6 +10,7 @@ from .common import *
 class Trip(NamedTuple):
   route_id: int
   shape_id: int
+  headsign: str
   first_departure: int
   last_departure: int
   instances: Range
@@ -24,11 +25,13 @@ class TripInstance(NamedTuple):
 class TripStop(NamedTuple):
   stop_id: int
   arrival: int
+  departure: int
 
 
 @jitclass([
   ("routes", nb.int32[:]),
   ("shapes", nb.int32[:]),
+  ("headsigns", nbt.List(nbt.string)),
   ("first_departures", nb.int32[:]),
   ("last_departures", nb.int32[:]),
   ("instances_off", nb.int32[:]),
@@ -39,12 +42,14 @@ class TripStop(NamedTuple):
   ("stops_off", nb.int32[:]),
   ("stops_ids", nb.int32[:]),
   ("stops_arrivals", nb.int32[:]),
+  ("stops_departures", nb.int32[:]),
 ])
 class Trips:
   def __init__(
     self,
     routes,
     shapes,
+    headsigns,
     first_departures,
     last_departures,
     instances_off,
@@ -55,9 +60,11 @@ class Trips:
     stops_off,
     stops_ids,
     stops_arrivals,
+    stops_departures,
   ):
     self.routes = routes
     self.shapes = shapes
+    self.headsigns = headsigns
     self.first_departures = first_departures
     self.last_departures = last_departures
     self.instances_off = instances_off
@@ -68,12 +75,14 @@ class Trips:
     self.stops_off = stops_off
     self.stops_ids = stops_ids
     self.stops_arrivals = stops_arrivals
+    self.stops_departures = stops_departures
 
 
   def __getitem__(self, id: int) -> Trip:
     return Trip(
       self.routes[id],
       self.shapes[id],
+      self.headsigns[id],
       self.first_departures[id],
       self.last_departures[id],
       Range(self.instances_off[id], self.instances_off[id+1]),
@@ -85,6 +94,16 @@ class Trips:
     return self[id]
 
 
+  def get_trip_stops(self, trip_id: int) -> list[TripStop]:
+    end = self.stops_off[trip_id+1]
+    beg = self.stops_off[trip_id]
+
+    return [
+      TripStop(self.stops_ids[i], self.stops_arrivals[i], self.stops_departures[i])
+      for i in range(beg, end)
+    ]
+
+
   def get_stops_after(self, trip_id: int, seq: int) -> Iterator[TripStop]:
     end = self.stops_off[trip_id+1]
     beg = self.stops_off[trip_id] + seq + 1
@@ -93,6 +112,7 @@ class Trips:
       yield TripStop(
         self.stops_ids[i],
         self.stops_arrivals[i],
+        self.stops_departures[i],
       )
 
 
