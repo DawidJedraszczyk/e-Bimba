@@ -6,6 +6,7 @@ import json
 from pathlib import Path
 import requests
 import sys
+import time
 from typing import Iterable
 
 SCRIPT_FOLDER = Path(__file__).parent
@@ -49,14 +50,26 @@ def start_osrm(data: Path):
   )
 
   try:
+    asyncio.run(osrm_healthcheck())
     yield
   finally:
     print("Stopping osrm-routed")
     container.stop()
 
 
+async def osrm_healthcheck():
+  osrm = OsrmClient(f"http://localhost:{OSRM_PORT}")
+
+  # Wait for up to 30 seconds, check every 0.25 seconds
+  for _ in range(30 * 4):
+    if await osrm.healthcheck():
+      return
+    else:
+      time.sleep(0.25)
+
+
 def osrm_data(osm_url: str, folder: Path):
-  if (folder / f"map.osrm.fileIndex").exists():
+  if (folder / f"map.osrm.mldgr").exists():
     return
 
   osm_file = folder / "map.osm.pbf"

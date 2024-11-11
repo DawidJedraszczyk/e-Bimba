@@ -14,6 +14,7 @@ class OsrmClient:
     self.base_url = url
     self.profile = profile
 
+
   async def distance_to_many(
       self,
       from_lat: float,
@@ -47,3 +48,13 @@ class OsrmClient:
       np.float32,
       count,
     )
+
+
+  async def healthcheck(self) -> bool:
+    try:
+      async with aiohttp.ClientSession(self.base_url) as session:
+        async with session.get(f"/nearest/v1/{self.profile}/0,0.json") as res:
+          await res.json()
+          return True
+    except:
+      return False
