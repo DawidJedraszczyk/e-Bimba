@@ -1,93 +1,105 @@
-import heapq
-from time import time
 from haversine import haversine, Unit
+import heapq
 from itertools import combinations
+import numba as nb
+import numba.types as nbt
+import time
 
 try:
     from django.templatetags.static import static
 except:
     pass
 
-from .utils import get_lat_lon_sets, get_closest_shape_point, get_next_day, time_to_seconds, get_previous_day, manhattan_distance, custom_print, seconds_to_time
+from bimba.data.common import INF_TIME, Services
+from bimba.data.stops import Stops
+from bimba.data.trips import Trips
+from .data import Data
+from .utils import get_lat_lon_sets, get_closest_shape_point, time_to_seconds, manhattan_distance, custom_print, seconds_to_time
 from .Plan import Plan
 from .PlanTrip import PlanTrip
-from .DataLoaderSingleton import initialized_dataloader_singleton
-from ebus.algorithm_settings import WALKING_SETTINGS, HEURISTIC_SETTINGS, PRINTING_SETTINGS
+from ebus.algorithm_settings import WALKING_SETTINGS, HEURISTIC_SETTINGS, PRINTING_SETTINGS, METRICS_SETTINGS
 
 
 class AStarPlanner():
     def __init__(self, start_time, START, DESTINATION, distance_metric, current_date,
                  waiting_time_constant=time_to_seconds('00:03:00')):
-        data_loader = initialized_dataloader_singleton
-        self.stops = data_loader.get_stops()
-        self.stops_df = data_loader.get_stops_df()
-        self.trips = data_loader.get_trips()
-        self.trips_df = data_loader.get_trips_df()
-        self.shapes_df = data_loader.get_shapes_df()
+        start_init_time = time.time()
+        self.data = Data.instance()
+        self.services = self.data.services_around(current_date)
         self.start_time = start_time
         self.START = START
         self.DESTINATION = DESTINATION
         self.distance_metric = distance_metric
         self.waiting_time_constant = waiting_time_constant
-        self.start_walking_times = self.__get_start_walking_times()
-        self.destination_walking_times = self.__get_destination_walking_times()
-        self.heuristic_times = self.__get_destination_heurisitc_time()
+        self.start_walking_times, start_walking_times_time = self.__get_start_walking_times()
+        self.destination_walking_times, destination_walking_times_time = self.__get_destination_walking_times()
+        self.heuristic_times, precomputed_heurisitc_times_time = self.__get_destination_heurisitc_time()
         self.start_within_walking = self.__get_start_within_walking()
         self.plans_queue = []
+        self.found_plans = list()
+        self.iterations = 0
+        end_init_time = time.time()
+        init_time = end_init_time - start_init_time
+        self.metrics = {
+            'iterations': 0, #i
+            'unique_stops_visited': 0, #i
+            'plans_queue_max_size': 0, #i
+            'expansions_total' : 0, #i sum, over all iterations, of all the stops that were connected to the current stop, there may be repetitions
+            'walking_expansions_total': 0, #i
+            'trasnit_expansions_total': 0, #i
+            'get_next_trips_time_total': 0, #i
+            'plan_compute_heurstic_time_total': 0, #i
+            'plan_compute_actual_time_total': 0, #i
+            'find_plans_time_total': 0, #i
+            'planner_initialization_time': init_time, #i
+            'start_walking_times_time': start_walking_times_time,
+            'destination_walking_times_time' : destination_walking_times_time,
+            'precomputed_heurisitc_times_time': precomputed_heurisitc_times_time,
+        }
         for stop_id in self.start_within_walking.keys():
             plan = Plan(
                 self.start_walking_times,
                 self.destination_walking_times,
                 self.heuristic_times,
                 self.start_time,
-                current_date,
                 starting_stop_id=stop_id)
+            start_time_heuristic = time.time()
+            plan.compute_heuristic_time_at_destination()
+            end_time_heuristic = time.time()
+            self.metrics['plan_compute_heurstic_time_total'] += (end_time_heuristic - start_time_heuristic)
             heapq.heappush(self.plans_queue, plan)
         self.found_plans = list()
         self.iterations = 0
-
-    # returns negative value if fastest_way is faster than alternative_way
-    def __compute_trips_arrival_time_difference(self, fastest_way, alternative_way_arrival_time_s,
-                                                alterntaive_way_date):
-        if fastest_way.date == alterntaive_way_date:
-            difference = fastest_way.arrival_time - alternative_way_arrival_time_s
-        elif fastest_way.date == get_previous_day(alterntaive_way_date):
-            difference = fastest_way.arrival_time - (alternative_way_arrival_time_s + time_to_seconds('24:00:00'))
-        elif fastest_way.date == get_next_day(alterntaive_way_date):
-            difference = fastest_way.arrival_time - (alternative_way_arrival_time_s - time_to_seconds('24:00:00'))
-        else:
-            raise ValueError(f"Dates of arrival are too far apart: {fastest_way.date} and {alterntaive_way_date}")
-        return difference
 
     # TODO: This methods that will be used every time new route is searched,
     # and thus should be optimized for time perfomance
     # Also they must be made more accurate in the future, possibly with help of OSRM
 
     def __get_start_walking_times(self):
-        t0 = time()
+        t0 = time.time()
         if self.distance_metric == 'straight':
             start_walking_times = {
-                stop.stop_id: haversine(
-                    (stop.stop_lat, stop.stop_lon), self.START,
+                stop_id: haversine(
+                    (stop.coords.lat, stop.coords.lon), self.START,
                     unit=Unit.METERS
                 ) / WALKING_SETTINGS['PACE']
-                for stop in self.stops.values()
+                for stop_id, stop in self.data.stops.enumerate()
             }
         elif self.distance_metric == 'manhattan':
             start_walking_times = {
-                stop.stop_id: manhattan_distance(
-                    stop.stop_lat, stop.stop_lon,
+                stop_id: manhattan_distance(
+                    stop.coords.lat, stop.coords.lon,
                     self.START[0], self.START[1]
                 ) / WALKING_SETTINGS['PACE']
-                for stop in self.stops.values()
+                for stop_id, stop in self.data.stops.enumerate()
             }
         else:
             raise ValueError(f'Unknown distance metric: {self.distance_metric}')
-        custom_print(f'(start_walking_times_straight - {time() - t0:.4f}s)', 'ALGORITHM_PREPROCESSING_TIMES')
-        return start_walking_times
+        custom_print(f'(start_walking_times_straight - {time.time() - t0:.4f}s)', 'ALGORITHM_PREPROCESSING_TIMES')
+        return start_walking_times, time.time() - t0
 
     def __get_start_within_walking(self):
-        t0 = time()
+        t0 = time.time()
         # TODO - may need to specify incremental increase in case no route found?
         #   or similar "at least X"? or somehow "without explicit"?
         start_within_walking = {
@@ -95,70 +107,69 @@ class AStarPlanner():
             for stop_id, walking_time in self.start_walking_times.items()
             if walking_time <= WALKING_SETTINGS['TIME_WITHIN_WALKING']
         }
-        custom_print(f'(start_within_walking - {time() - t0:.4f}s)', 'ALGORITHM_PREPROCESSING_TIMES')
+        custom_print(f'(start_within_walking - {time.time() - t0:.4f}s)', 'ALGORITHM_PREPROCESSING_TIMES')
         return start_within_walking
 
     def __get_destination_walking_times(self):
-        t0 = time()
+        t0 = time.time()
         if self.distance_metric == 'straight':
             destination_walking_times = {
-                stop.stop_id: haversine(
-                    (stop.stop_lat, stop.stop_lon), self.DESTINATION,
+                stop_id: haversine(
+                    (stop.coords.lat, stop.coords.lon), self.DESTINATION,
                     unit=Unit.METERS
                 ) / WALKING_SETTINGS['PACE']
-                for stop in self.stops.values()
+                for stop_id, stop in self.data.stops.enumerate()
             }
         elif self.distance_metric == 'manhattan':
             destination_walking_times = {
-                stop.stop_id: manhattan_distance(
-                    stop.stop_lat, stop.stop_lon,
+                stop_id: manhattan_distance(
+                    stop.coords.lat, stop.coords.lon,
                     self.DESTINATION[0], self.DESTINATION[1]
                 ) / WALKING_SETTINGS['PACE']
-                for stop in self.stops.values()
+                for stop_id, stop in self.data.stops.enumerate()
             }
         else:
             raise ValueError(f'Unknown distance metric: {self.distance_metric}')
-        custom_print(f'(destination_walking_times_straight - {time() - t0:.4f}s)', 'ALGORITHM_PREPROCESSING_TIMES')
-        return destination_walking_times
+        custom_print(f'(destination_walking_times_straight - {time.time() - t0:.4f}s)', 'ALGORITHM_PREPROCESSING_TIMES')
+        return destination_walking_times, time.time() - t0
 
     def __get_destination_heurisitc_time(self):
         # This may be overestimating (especially in Manhattan) -> potential problems
         #   BUT note that this may work in practice anyways
         # heuristic = time with tram avg speed to dest + assumed walking time constant
-        t0 = time()
+        t0 = time.time()
         if self.distance_metric == 'straight':
             heuristic_times = {
-                stop.stop_id: haversine(
-                    (stop.stop_lat, stop.stop_lon), self.DESTINATION,
+                stop_id: haversine(
+                    (stop.coords.lat, stop.coords.lon), self.DESTINATION,
                     unit=Unit.METERS
                 ) / WALKING_SETTINGS['PACE'] + HEURISTIC_SETTINGS['ALWAYS_WALKING_TIME_CONSTANT']
-                for stop in self.stops.values()
+                for stop_id, stop in self.data.stops.enumerate()
             }
         elif self.distance_metric == 'manhattan':
             heuristic_times = {
-                stop.stop_id: manhattan_distance(
-                    stop.stop_lat, stop.stop_lon,
+                stop_id: manhattan_distance(
+                    stop.coords.lat, stop.coords.lon,
                     self.DESTINATION[0], self.DESTINATION[1]
                 ) / HEURISTIC_SETTINGS['MAX_SPEED'] + HEURISTIC_SETTINGS['ALWAYS_WALKING_TIME_CONSTANT']
-                for stop in self.stops.values()
+                for stop_id, stop in self.data.stops.enumerate()
             }
         else:
             raise ValueError(f'Unknown distance metric: {self.distance_metric}')
-        custom_print(f'(destination_heuristic_times - {time() - t0:.4f}s)', 'ALGORITHM_PREPROCESSING_TIMES')
-        return heuristic_times
+        custom_print(f'(destination_heuristic_times - {time.time() - t0:.4f}s)', 'ALGORITHM_PREPROCESSING_TIMES')
+        return heuristic_times, time.time() - t0
 
     # Mere algorithm
     def find_next_plan(self):
+        start_time_find_next_plan = time.time()
         visited_stops = set()
         while len(self.plans_queue) != 0:
             self.iterations += 1
-            # print('iteration', self.iterations)
 
             if not self.plans_queue:
                 raise Exception('no more plans')
 
             # remove fastest known plan yet from queue
-            t = time()
             plan_accepted = False
             while not plan_accepted:
                 fastest_known_plan = heapq.heappop(self.plans_queue)
@@ -168,99 +179,79 @@ class AStarPlanner():
                 if fastest_known_plan.is_terminal:
                     self.found_plans.append(fastest_known_plan)
                     custom_print(self.iterations, 'ALGORITHM_ITERATIONS')
+                    self.metrics['iterations'] = self.iterations
+                    self.metrics['unique_stops_visited'] = len(visited_stops)
+                    end_time_find_next_plan = time.time()
+                    time_find_next_plan = end_time_find_next_plan - start_time_find_next_plan
+                    self.metrics['find_plans_time_total'] += time_find_next_plan
                     return fastest_known_plan
                 if len(fastest_known_plan.plan_trips) == 0:
                     plan_accepted = True
                     continue
                 last_stop_id = fastest_known_plan.plan_trips[-1].leave_at_stop_id
+                # TODO: WARNING - this should to be tested, Most certainly it is wrong for neural network heuristic
+                # there may be more effecitive way to the node.
+                # The plan should be rejected, only if if it gets to visited stop in longer time
                 if last_stop_id not in visited_stops:
                     plan_accepted = True
                     visited_stops.add(last_stop_id)
 
-            # if len(fastest_known_plan.plan_trips) > 0:
-            #   print_trip(fastest_known_plan.plan_trips[-1])
-
             # make this plan potential subject for terminal
             # (it was the best option so far and if remains so after we consider its
-            # walking distance directly, it's good enough to be considered best result)
+            # actual walking distance directly => there is no better plan)
+            start_time_destinaiton_walking = time.time()
             fastest_known_plan.set_as_terminal()
+            end_time_destinaiton_walking = time.time()
+            self.metrics['plan_compute_actual_time_total'] += (end_time_destinaiton_walking - start_time_destinaiton_walking)
+            # push it back to the queue
             heapq.heappush(self.plans_queue, fastest_known_plan)
 
             # print(f'visited {fastest_known_plan.current_stop_id}, on {seconds_to_time(fastest_known_plan.current_time)} - time at destination: {seconds_to_time(fastest_known_plan.heuristic_time_at_destination)}, [{fastest_known_plan.arrival_date}]')
 
-            # try extending queue with **fastest** ways to **all** reachable stops
+            # try extending queue with fastest ways to all reachable stops
             # from stop we're currently at after following fastest known plan yet
-            current_stop = self.stops[fastest_known_plan.current_stop_id]
-            fastest_ways = dict()
-            ## factor in trips from this stop directly
-            available_trips = current_stop.get_next_trips(
-                start_time_s=fastest_known_plan.current_time + self.waiting_time_constant,
-                date_str=fastest_known_plan.arrival_date)
-            if available_trips:
-                for trip_id, (stop_index_in_sequence, departure_time, trip_date) in available_trips.items():
-                    if trip_id in fastest_known_plan.used_trips:
-                        continue  # covered in other plans, would be duplication
-                    trip = self.trips[trip_id]
-                    for i in range(stop_index_in_sequence + 1, len(trip.stop_ids)):
-                        stop_id, arrival_time = trip.stop_ids[i], trip.arrival_times_s[i]
-                        if stop_id not in fastest_ways.keys() or self.__compute_trips_arrival_time_difference(
-                                fastest_ways[stop_id],
-                                arrival_time,
-                                trip_date) > 0:
-                            fastest_ways[stop_id] = PlanTrip(
-                                trip_id=trip_id,
-                                start_from_stop_id=current_stop.stop_id,
-                                departure_time=departure_time,
-                                leave_at_stop_id=stop_id,
-                                arrival_time=arrival_time,
-                                type='bus',  # TODO - change when distinction between buses and trams is implemented
-                                date=trip_date
-                            )
-            # else:
-            # print('NO TRIPS AVAILABLE!')
-            ## factor in stops within walking distance
-            bus_trips_found = len(fastest_ways)
-            # print('new_bus_trips_found = ',bus_trips_found)
-            # if bus_trips_found == 0:
-            # print(available_trips)
+            start_time_get_trips = time.time()
 
-            for stop_id, walking_time in current_stop.stops_within_walking_straight.items():
-                # TODO - get exact walking time
-                # print(stop_id)
-                # print(fastest_known_plan.used_stops)
-                if stop_id not in fastest_known_plan.used_stops:
-                    time_at_stop = fastest_known_plan.current_time + walking_time + HEURISTIC_SETTINGS[
-                        'ALWAYS_WALKING_TIME_CONSTANT']
-                    # if stop_id not in fastest_ways.keys() or fastest_ways[stop_id][2] > arrival_time:
-                    if stop_id not in fastest_ways.keys() or self.__compute_trips_arrival_time_difference(
-                            fastest_ways[stop_id],
-                            time_at_stop,
-                            fastest_known_plan.arrival_date) > 0:
-                        fastest_ways[stop_id] = PlanTrip(
-                            trip_id=None,
-                            start_from_stop_id=current_stop.stop_id,
-                            departure_time=fastest_known_plan.current_time,
-                            leave_at_stop_id=stop_id,
-                            arrival_time=time_at_stop,
-                            type='WALK',
-                            date=fastest_known_plan.arrival_date
-                        )
-                    # else:
-                    # print('STOP ALREADY DISCOVERED, with faster time!')
-                # else:
-                # print('STOP ALREADY USED!')
+            fastest_ways = get_next_trips(
+                stops = self.data.stops,
+                trips = self.data.trips,
+                from_stop = fastest_known_plan.current_stop_id,
+                services = self.services,
+                time = fastest_known_plan.current_time,
+                used_trips = fastest_known_plan.used_trips,
+                visited_stops = fastest_known_plan.used_stops,
+                transfer_time = self.waiting_time_constant,
+                pace = WALKING_SETTINGS["PACE"],
+                walk_time_constant = HEURISTIC_SETTINGS['ALWAYS_WALKING_TIME_CONSTANT'],
+            )
+
+            end_time_get_trips = time.time()
+            self.metrics['get_next_trips_time_total'] += (end_time_get_trips - start_time_get_trips)
+
+            walking_trips_found = 0
+
             ## create extended plans and add them to the queue
-            stops_within_walking_found = len(fastest_ways) - bus_trips_found
-            # print('stops_within_walking_found:', stops_within_walking_found)
-
             for stop_id, extending_plan_trip in fastest_ways.items():
+                if extending_plan_trip.trip_id == -1:
+                    walking_trips_found += 1
+
                 extended_plan = Plan(self.start_walking_times,
                                      self.destination_walking_times,
                                      self.heuristic_times,
                                      fastest_known_plan.start_time,
-                                     extending_plan_trip.date,
                                      plan_trips=fastest_known_plan.plan_trips + [extending_plan_trip])
+                start_time_heuristic = time.time()
+                extended_plan.compute_heuristic_time_at_destination()
+                end_time_heuristic = time.time()
+                self.metrics['plan_compute_heurstic_time_total'] += (end_time_heuristic - start_time_heuristic)
                 heapq.heappush(self.plans_queue, extended_plan)
+
+            if METRICS_SETTINGS['EXPANSIONS']:
+                self.metrics['trasnit_expansions_total'] += len(fastest_ways) - walking_trips_found
+                self.metrics['walking_expansions_total'] += walking_trips_found
+                self.metrics['expansions_total'] += len(fastest_ways)
+                if len(self.plans_queue) > self.metrics['plans_queue_max_size']:
+                    self.metrics['plans_queue_max_size'] = len(self.plans_queue)
 
     def plans_to_html(self):
         response = {}
@@ -271,12 +262,12 @@ class AStarPlanner():
             destination_time = seconds_to_time(plan.time_at_destination)
 
             for plan_trip in plan.plan_trips:
-                if not plan_trip.type == 'WALK':
-                    trip_from_df = self.trips_df.loc[plan_trip.trip_id]
+                if plan_trip.trip_id != -1:
                     if not start_time:
                         start_time = seconds_to_time(plan_trip.departure_time)
 
-                    communication.append(trip_from_df['route_id'])
+                    route_id = self.data.trips[plan_trip.trip_id].route_id
+                    communication.append(self.data.routes[route_id].name)
 
             communication_content = ''
             for travel_option in communication:
@@ -300,57 +291,25 @@ class AStarPlanner():
         plan = self.found_plans[plan_num]
 
         for index, plan_trip in enumerate(plan.plan_trips):
+            start_stop = self.data.stops[plan_trip.start_from_stop_id]
+            goal_stop = self.data.stops[plan_trip.leave_at_stop_id]
+
             if index == 0:
-                start_stop = self.stops_df.loc[plan_trip.start_from_stop_id]
-                response[0] = [self.START, (start_stop.stop_lat, start_stop.stop_lon)]
+                response[0] = [self.START, (start_stop.coords.lat, start_stop.coords.lon)]
 
             if index == len(plan.plan_trips) - 1:
-                goal_stop = self.stops_df.loc[plan_trip.leave_at_stop_id]
-                response[len(plan.plan_trips) + 1] = [(goal_stop.stop_lat, goal_stop.stop_lon), self.DESTINATION]
+                response[len(plan.plan_trips) + 1] = [(goal_stop.coords.lat, goal_stop.coords.lon), self.DESTINATION]
 
-            response[index + 1] = []
-            sequence_numbers = []
-
-            if plan_trip.trip_id:
-                trip = self.trips[plan_trip.trip_id]
-                shape_id = int(self.trips_df.loc[plan_trip.trip_id].shape_id)
-                lat_lon_sets = get_lat_lon_sets(self.shapes_df, shape_id)
-                trip_stops = [self.stops[stop_id] for stop_id in trip.stop_ids]
-
-                for stop in trip_stops:
-                    if stop.stop_id in (plan_trip.start_from_stop_id, plan_trip.leave_at_stop_id):
-                        closest_point = get_closest_shape_point(stop.stop_lat, stop.stop_lon, lat_lon_sets)
-                        closest_lat, closest_lon = closest_point
-
-                        filtered_shape = self.shapes_df[
-                            (self.shapes_df['shape_id'] == shape_id) &
-                            (self.shapes_df['shape_pt_lat'] == closest_lat) &
-                            (self.shapes_df['shape_pt_lon'] == closest_lon)
-                            ]
-
-                        if not filtered_shape.empty:
-                            seq_num = int(filtered_shape['shape_pt_sequence'].iloc[0])
-                            sequence_numbers.append(seq_num)
-
-                if sequence_numbers:
-                    min_seq_num = min(sequence_numbers)
-                    max_seq_num = max(sequence_numbers)
-
-                    matching_shapes = self.shapes_df[
-                        (self.shapes_df['shape_id'] == shape_id) &
-                        (self.shapes_df['shape_pt_sequence'] >= min_seq_num) &
-                        (self.shapes_df['shape_pt_sequence'] <= max_seq_num)
-                        ]
-
-                    lat_lon_pairs = list(zip(matching_shapes['shape_pt_lat'], matching_shapes['shape_pt_lon']))
-                    response[index + 1] = lat_lon_pairs
-
+            if plan_trip.trip_id != -1:
+                trip = self.data.trips[plan_trip.trip_id]
+                shape_id = trip.shape_id
+                points = self.data.shapes.get_points_between(shape_id, start_stop.coords, goal_stop.coords)
+                response[index + 1] = [(p.lat, p.lon) for p in points]
             else:
-                start_stop = self.stops_df.loc[plan_trip.start_from_stop_id]
-                goal_stop = self.stops_df.loc[plan_trip.leave_at_stop_id]
-
-                response[index + 1] = [(start_stop.stop_lat, start_stop.stop_lon),
-                                       (goal_stop.stop_lat, goal_stop.stop_lon)]
+                response[index + 1] = [
+                    (start_stop.coords.lat, start_stop.coords.lon),
+                    (goal_stop.coords.lat, goal_stop.coords.lon),
+                ]
 
         return response
 
@@ -360,46 +319,150 @@ class AStarPlanner():
         plan = self.found_plans[plan_num]
 
         for index, plan_trip in enumerate(plan.plan_trips):
+            start_stop = self.data.stops[plan_trip.start_from_stop_id]
+            goal_stop = self.data.stops[plan_trip.leave_at_stop_id]
+
             if index == 0:
-                start_stop = self.stops_df.loc[plan_trip.start_from_stop_id]
-                response[0] = f'''<div style="display: flex; width: 90%; justify-content: center; align-items: center; margin: 10px 0;"><img style="width: 25px;" src="{static('base_view/img/WALK.png')}"><span style="margin-left: 10px; text-align: left;">{start_location} -> {start_stop["stop_name"]}</span></div>'''
+                response[0] = f'''
+                    <div style="display: flex; width: 90%; justify-content: center; align-items: center; margin: 10px 0;">
+                        <img style="width: 25px;" src="{static('base_view/img/WALK.png')}">
+                        <span style="margin-left: 10px; text-align: left;">
+                            {start_location} -> {start_stop.name}
+                        </span>
+                    </div>
+                '''
 
             if index == len(plan.plan_trips) - 1:
-                goal_stop = self.stops_df.loc[plan_trip.leave_at_stop_id]
-                response[
-                    len(plan.plan_trips) + 1] = f'''<div style="display: flex; width: 90%; justify-content: center; align-items: center; margin: 10px 0;"><img style="width: 25px;" src="{static('base_view/img/WALK.png')}"><span style="margin-left: 10px; text-align: left;"> {goal_stop["stop_name"]} -> {goal_location} </span></div>'''
+                response[len(plan.plan_trips) + 1] = f'''
+                    <div style="display: flex; width: 90%; justify-content: center; align-items: center; margin: 10px 0;">
+                        <img style="width: 25px;" src="{static('base_view/img/WALK.png')}">
+                        <span style="margin-left: 10px; text-align: left;">
+                            {goal_stop.name} -> {goal_location}
+                        </span>
+                    </div>
+                '''
 
             departure_time = seconds_to_time(plan_trip.departure_time)
             arrival_time = seconds_to_time(plan_trip.arrival_time)
 
-            if plan_trip.trip_id:
-                trip = self.trips_df.loc[plan_trip.trip_id]
-                route = trip['route_id']
-                direction = trip['trip_headsign']
+            if plan_trip.trip_id != -1:
+                trip = self.data.trips[plan_trip.trip_id]
+                route = self.data.routes[trip.route_id].name
+                direction = trip.headsign
                 response[
                     index + 1] = f'''<div style="display: flex; width: 90%; flex-direction: column; justify-content: center; margin: 10px 0;"><div style="display:flex; align-items: center; margin: 10px 0;"><img src="{static('base_view/img/BUS.svg')}" alt="bus icon"/><span style="margin-left: 10px;">{route} - {direction} ({departure_time} - {arrival_time})</span></div><div class="stops" style="font-size: 14px; text-align: left;">'''
 
-                trip_stops_ids = [stop_id for stop_id in self.trips[plan_trip.trip_id].stop_ids]
                 in_our_trip_flag = False
+                time_offset = 0
 
-                for stop_id in trip_stops_ids:
+                for stop_id, arrival, departure in self.data.trips.get_trip_stops(plan_trip.trip_id):
                     if stop_id == plan_trip.start_from_stop_id:
                         in_our_trip_flag = True
+                        time_offset = departure
+                        relevant_time = departure
+                    else:
+                        relevant_time = arrival
 
                     if in_our_trip_flag:
-                        stop_df = self.stops_df.loc[stop_id]
-                        stop_departure_time = "12:00"  # Update with actual logic for time if available
-                        response[index + 1] += f'''{stop_departure_time} {stop_df['stop_name']}<br>'''
+                        time = relevant_time - time_offset + plan_trip.departure_time
+                        stop = self.data.stops[stop_id]
+                        response[index + 1] += f'''{seconds_to_time(time)} {stop.name}<br>'''
 
                     if stop_id == plan_trip.leave_at_stop_id:
                         in_our_trip_flag = False
 
             else:
-                start_stop = self.stops_df.loc[plan_trip.start_from_stop_id]
-                goal_stop = self.stops_df.loc[plan_trip.leave_at_stop_id]
-                response[
-                    index + 1] = f'''<div style="display: flex; width: 90%; justify-content: center; align-items: center; margin: 10px 0;"><img style="width: 25px;" src="{static('base_view/img/WALK.png')}"><span style="margin-left: 10px; text-align: left;"> {start_stop['stop_name']} -> {goal_stop['stop_name']}  ({departure_time} - {arrival_time})</span></div>'''
+                response[index + 1] = f'''
+                    <div style="display: flex; width: 90%; justify-content: center; align-items: center; margin: 10px 0;">
+                        <img style="width: 25px;" src="{static('base_view/img/WALK.png')}">
+                        <span style="margin-left: 10px; text-align: left;">
+                            {start_stop.name} -> {goal_stop.name}  ({departure_time} - {arrival_time})
+                        </span>
+                    </div>
+                '''
 
             response[index + 1] += "</div></div>"
 
         return response
+
+
+_NB_PLAN_TRIP_TYPE = nbt.NamedUniTuple(nb.int32, 5, PlanTrip)
+_COMPILATION_T0 = time.time()
+
+@nb.jit(
+    nbt.DictType(nb.int32, _NB_PLAN_TRIP_TYPE)
+    (
+        Stops.class_type.instance_type,
+        Trips.class_type.instance_type,
+        nb.int64,
+        Services.class_type.instance_type,
+        nb.int64,
+        nbt.Set(nb.int64, True),
+        nbt.Set(nb.int64, True),
+        nb.int64,
+        nb.float64,
+        nb.int64,
+    ),
+)
+def get_next_trips(
+    stops: Stops,
+    trips: Trips,
+    from_stop: int,
+    services: Services,
+    time: int,
+    used_trips: set,
+    visited_stops: set,
+    transfer_time: int,
+    pace: float,
+    walk_time_constant: int,
+) -> dict[int, PlanTrip]:
+    fastest_ways = nb.typed.Dict.empty(nb.int32, _NB_PLAN_TRIP_TYPE)
+    from_stop = nb.int32(from_stop)
+    time = nb.int32(time)
+
+    for to_stop, distance in stops.get_stop_walks(from_stop):
+        if to_stop in visited_stops:
+            continue
+
+        time_at_stop = time + nb.int32(distance / pace) + walk_time_constant
+
+        fastest_ways[to_stop] = PlanTrip(
+            trip_id = nb.int32(-1),
+            start_from_stop_id = from_stop,
+            departure_time = time,
+            leave_at_stop_id = to_stop,
+            arrival_time = nb.int32(time_at_stop),
+        )
+
+    for trip_id, from_seq, stop_departure in stops.get_stop_trips(from_stop):
+        if trip_id in used_trips:
+            continue
+
+        min_start = time + transfer_time - stop_departure
+        start_time = trips.get_next_start(trip_id, services, min_start)
+
+        if start_time == INF_TIME:
+            continue
+
+        if start_time + stop_departure - time > 900:
+            continue
+
+        for to_stop, stop_arrival, _ in trips.get_stops_after(trip_id, from_seq):
+            if to_stop in visited_stops:
+                continue
+
+            arrival = start_time + stop_arrival
+
+            if to_stop not in fastest_ways or fastest_ways[to_stop].arrival_time > arrival:
+                fastest_ways[to_stop] = PlanTrip(
+                    trip_id = trip_id,
+                    start_from_stop_id = from_stop,
+                    departure_time = nb.int32(start_time + stop_departure),
+                    leave_at_stop_id = to_stop,
+                    arrival_time = nb.int32(arrival),
+                )
+
+    return fastest_ways
+
+
+custom_print(f'(jit get_next_trips - {time.time() - _COMPILATION_T0:.4f}s)', 'SETUP_TIMES')

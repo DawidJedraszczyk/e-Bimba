@@ -1,6 +1,6 @@
+from .data import Data
 from .PlanTrip import PlanTrip
-from .utils import time_to_seconds, seconds_to_time, get_previous_day, get_next_day
-from .DataLoaderSingleton import initialized_dataloader_singleton
+from .utils import time_to_seconds, seconds_to_time
 
 
 class Plan():
@@ -23,74 +23,74 @@ class Plan():
             destination_walking_times,
             heuristic_times,
             start_time,  # start time of the plan (used only for initialization)
-            arrival_date,
             # date of a last trip in the plan. If the plan spans over midnight, the date may be the next day
             starting_stop_id: int = None,
             plan_trips: list[PlanTrip] = None,
     ):
         if starting_stop_id is None and plan_trips is None:
             raise Exception('either starting_stop_id or plan_trips must be specified')
+        
+        self.heuristic_times = heuristic_times
+        self.destination_walking_times = destination_walking_times
+        self.heuristic_time_at_destination = None
+        self.time_at_destination = None
 
         if starting_stop_id is not None and start_time is not None:
             # initialization
-            self.arrival_date = arrival_date
             self.plan_trips = list()
-            self.used_trips = set()
-            self.used_stops = set()
+            self.used_trips = {-1} # numba can't handle an empty set
+            self.used_stops = {starting_stop_id}
             self.current_stop_id = starting_stop_id
-            self.start_time = start_time + start_walking_times[starting_stop_id]
+            self.start_time = start_time + int(start_walking_times[starting_stop_id])
             self.current_time = self.start_time
-            self.time_at_destination = self.current_time + destination_walking_times[starting_stop_id]
-            self.heuristic_time_at_destination = self.current_time + heuristic_times[starting_stop_id]
 
         if plan_trips is not None:
             # extended plan
-            self.arrival_date = arrival_date
             self.start_time = start_time
             self.plan_trips = plan_trips
             self.used_trips = {plan_trip.trip_id for plan_trip in plan_trips}
             self.used_stops = {plan_trip.start_from_stop_id for plan_trip in plan_trips}
-            last_plan_trip = plan_trips[-1]
-            self.current_stop_id = last_plan_trip.leave_at_stop_id
-            self.current_time = last_plan_trip.arrival_time
-            self.time_at_destination = last_plan_trip.arrival_time + destination_walking_times[
-                last_plan_trip.leave_at_stop_id]
-            self.heuristic_time_at_destination = last_plan_trip.arrival_time + heuristic_times[
-                last_plan_trip.leave_at_stop_id]
+            self.last_plan_trip = plan_trips[-1]
+            self.current_stop_id = self.last_plan_trip.leave_at_stop_id
+            self.current_time = self.last_plan_trip.arrival_time
 
         # simple flag that distinguishes between potential terminal plans from ones in heuristic stage
         self.is_terminal = False
 
+    def compute_heuristic_time_at_destination(self):
+        if not self.plan_trips:
+            self.heuristic_time_at_destination = self.current_time + self.heuristic_times[self.current_stop_id]
+        else:
+            self.heuristic_time_at_destination = self.last_plan_trip.arrival_time + self.heuristic_times[self.current_stop_id]
+    
+    def __compute_actual_time_at_destination(self):
+        if not self.plan_trips:
+            self.time_at_destination = self.current_time + self.destination_walking_times[self.current_stop_id]
+        else:
+            self.time_at_destination = self.last_plan_trip.arrival_time + self.destination_walking_times[self.current_stop_id]
+
     def set_as_terminal(self):
+        self.__compute_actual_time_at_destination()
         self.is_terminal = True
 
     def get_informed_time_at_destination(self):
         """Gets time at destination, taking into account if plan is terminal"""
+        if self.heuristic_time_at_destination is None:
+            raise Exception('heuristic_time_at_destination must be computed first')
+        if self.is_terminal and self.time_at_destination is None:
+            raise Exception('time_at_destination must be computed first')
         return self.time_at_destination if self.is_terminal else self.heuristic_time_at_destination
 
     def get_absolute_arrival_time_difference(self, other):
-        """
-        returns difference in seconds between arrival times of this and other plan, considering the date
-        """
-        if self.arrival_date == other.arrival_date:
-            difference = self.get_informed_time_at_destination() - other.get_informed_time_at_destination()
-        elif self.arrival_date == get_previous_day(other.arrival_date):
-            difference = self.get_informed_time_at_destination() - (
-                        other.get_informed_time_at_destination() + time_to_seconds('24:00:00'))
-        elif self.arrival_date == get_next_day(other.arrival_date):
-            difference = self.get_informed_time_at_destination() - (
-                        other.get_informed_time_at_destination() - time_to_seconds('24:00:00'))
-        else:
-            raise ValueError(f"Dates of arrival are too far apart: {self.arrival_date} and {other.arrival_date}")
-        return difference
+        return self.get_informed_time_at_destination() - other.get_informed_time_at_destination()
 
     def __str__(self):
         starting_stop_id = self.current_stop_id if len(self.plan_trips) == 0 else self.plan_trips[0].start_from_stop_id
-        stops = initialized_dataloader_singleton.get_stops()
-        start = stops[starting_stop_id]
-        result = f"start at: {str(start)} on {seconds_to_time(self.start_time)}\n"
+        start = Data.instance().stops[starting_stop_id]
+        result = f"start at: {start.name} ({start.code}) on {seconds_to_time(self.start_time)}\n"
         for plan_trip in self.plan_trips:
             result += "\t" + str(plan_trip).replace("\n", "\n\t") + "\n"
+        self.__compute_actual_time_at_destination()
         result += f"reach destination at: {seconds_to_time(self.time_at_destination)}"
         return result
 

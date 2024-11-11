@@ -1,10 +1,3 @@
-create type services as struct (
-  yesterday int4[],
-  today int4[],
-  tomorrow int4[]
-);
-
-
 create table agency (
   id int4 not null,
   name text not null,
@@ -24,9 +17,15 @@ create table stop (
     lon float4
   ) not null,
 
-  within_walking struct (
-    id int4,
+  walks struct (
+    to_stop int4,
     distance int2
+  )[] not null,
+
+  trips struct (
+    trip int4,
+    seq int2,
+    departure int4
   )[] not null,
 );
 
@@ -60,23 +59,27 @@ create sequence seq_route_id minvalue 0 start 0;
 create table trip (
   id int4 not null,
   route int4 not null,
-  service int4 not null,
   shape int4,
-  wheelchair_accessible bool,
+  headsign text,
+  first_departure int4 not null,
+  last_departure int4 not null,
+
+  instances struct (
+    services int4[],
+    start_times int4[],
+    wheelchair_accessible int1
+  )[] not null,
+
+  stops struct (
+    stop int4,
+    arrival int4, -- in seconds after midnight (can be over 86400)
+    departure int4, -- also
+    pickup_type int1,
+    drop_off_type int1
+  )[] not null,
 );
 
 create sequence seq_trip_id minvalue 0 start 0;
-
-
-create table stop_time (
-  trip int4 not null,
-  sequence int2 not null,
-  stop int4 not null,
-  arrival int4 not null, -- in seconds after midnight (can be over 86400)
-  departure int4 not null, -- also
-  pickup_type int1,
-  drop_off_type int1,
-);
 
 
 create sequence seq_service_id minvalue 0 start 0;
@@ -95,14 +98,15 @@ create table exceptional_service (
 );
 
 
-create sequence seq_shape_id minvalue 0 start 0;
-
-create table shape_point (
-  shape int4 not null,
-  sequence int4 not null,
-  lat float4 not null,
-  lon float4 not null,
+create table shape (
+  id int4 not null,
+  points struct (
+    lat float4,
+    lon float4
+  )[] not null,
 );
+
+create sequence seq_shape_id minvalue 0 start 0;
 
 
 create macro parse_time(str) as
@@ -111,6 +115,13 @@ create macro parse_time(str) as
 
 create macro fmt_time(s) as
   format('{:02d}:{:02d}', s // (60*60), (s // 60) % 60);
+
+
+create type services as struct (
+  yesterday int4[],
+  today int4[],
+  tomorrow int4[]
+);
 
 
 create macro get_services(date) as table
