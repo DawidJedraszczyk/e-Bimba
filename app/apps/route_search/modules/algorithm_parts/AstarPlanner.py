@@ -456,9 +456,6 @@ def get_next_trips(
         if start_time == INF_TIME:
             continue
 
-        if start_time + stop_departure - time > 900:
-            continue
-
         for to_stop, stop_arrival, _ in trips.get_stops_after(trip_id, from_seq):
             if to_stop in visited_stops:
                 continue
