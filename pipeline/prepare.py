@@ -91,12 +91,12 @@ def osrm_data(osm_url: str, folder: Path):
   osrm_backend(f"osrm-customize /data/map.osrm")
 
 
-def prepare_city(city):
+def prepare_city(city, name):
   for k, url in city["gtfs"].items():
     download_if_missing(url, DATA_FOLDER / f"{k}.zip")
 
   try:
-    with TransitDb(DATA_FOLDER / "transit.db") as tdb:
+    with TransitDb(DATA_FOLDER / "transit.db", run_on_load = False) as tdb:
       tdb.init_schema()
 
       for gtfs in city["gtfs"].keys():
@@ -111,6 +111,8 @@ def prepare_city(city):
         osrm = OsrmClient(f"http://localhost:{OSRM_PORT}")
         asyncio.run(tdb.calculate_stop_walks(osrm))
 
+      tdb.set_variable("PROJECTION", city["projection"])
+      tdb.set_variable("CITY", name)
       tdb.finalize()
 
   except:
@@ -128,4 +130,4 @@ if __name__ == "__main__":
       print(f"  \"{city}\"")
   else:
     city_name = args[1]
-    prepare_city(cities[city_name])
+    prepare_city(cities[city_name], city_name)

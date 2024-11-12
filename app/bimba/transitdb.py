@@ -27,14 +27,16 @@ class TransitDb(Db):
     "frequencies.txt",
   ]
 
-  def __init__(self, path: Path):
+  def __init__(self, path: Path, run_on_load: bool = True):
     scripts = Path(__file__).parent / "sql"
     variables = {
       "MAX_STOP_WALK": WALKING_SETTINGS["TIME_WITHIN_WALKING"] * WALKING_SETTINGS["PACE"]
     }
 
     super().__init__(path, scripts, variables)
-    self.db.sql("install spatial; load spatial")
+
+    if run_on_load:
+      self.script("on-load")
 
 
   def get_services(self, date: datetime.date) -> Services:
@@ -81,8 +83,9 @@ class TransitDb(Db):
 
   def get_stops(self) -> Stops:
     a = self.sql("select * from stop order by id").arrow()
-    ids, codes, names, zones, coords, walks, trips = a.flatten()
+    ids, codes, names, zones, coords, positions, walks, trips = a.flatten()
     lats, lons = coords.flatten()
+    xs, ys = positions.flatten()
     walks_off = walks.offsets
     walks_stop_ids, walks_distances = walks.values.flatten()
     trips_off = trips.offsets
@@ -95,6 +98,8 @@ class TransitDb(Db):
       zones.tolist(),
       lats.to_numpy(),
       lons.to_numpy(),
+      xs.to_numpy(),
+      ys.to_numpy(),
       walks_off.to_numpy(),
       walks_stop_ids.to_numpy(),
       walks_distances.to_numpy(),

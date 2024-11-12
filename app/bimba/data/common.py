@@ -8,6 +8,10 @@ DAY = 24*60*60
 INF_TIME = 0x1FFFFFFF
 
 
+class Point(NamedTuple):
+  x: float
+  y: float
+
 class Coords(NamedTuple):
   lat: float
   lon: float
