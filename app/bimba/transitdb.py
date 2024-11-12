@@ -164,7 +164,7 @@ class TransitDb(Db):
     self.script("gtfs/clean-up")
 
     t3 = time.time()
-    print(f"Time: {_t(t2, t0)}"
+    print(f"Time: {_t(t2, t0)} "
       f"(parsing: {_t(t1, t0)}, processing: {_t(t2, t1)}, inserting: {_t(t3, t2)})")
 
 
