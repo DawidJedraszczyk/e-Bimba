@@ -107,6 +107,18 @@ class AStarPlanner():
             for stop_id, walking_time in self.start_walking_times.items()
             if walking_time <= WALKING_SETTINGS['TIME_WITHIN_WALKING']
         }
+
+        if len(start_within_walking) < 5:
+            all_stops = [
+                (walking_time, stop_id)
+                for stop_id, walking_time in self.start_walking_times.items()
+            ]
+
+            all_stops.sort()
+
+            for walking_time, stop_id in all_stops[:5]:
+                start_within_walking[stop_id] = walking_time
+
         custom_print(f'(start_within_walking - {time.time() - t0:.4f}s)', 'ALGORITHM_PREPROCESSING_TIMES')
         return start_within_walking
 
