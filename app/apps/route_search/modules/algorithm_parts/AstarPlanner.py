@@ -256,7 +256,8 @@ class AStarPlanner():
                                      self.destination_walking_times,
                                      self.heuristic_times,
                                      fastest_known_plan.start_time,
-                                     plan_trips=fastest_known_plan.plan_trips + [extending_plan_trip])
+                                     plan_trips=fastest_known_plan.plan_trips + [extending_plan_trip],
+                                     prev_inconvenience=fastest_known_plan.inconvenience)
                 start_time_heuristic = time.time()
                 extended_plan.compute_heuristic_time_at_destination()
                 end_time_heuristic = time.time()
