@@ -155,7 +155,7 @@ class AStarPlanner():
                 stop_id: haversine(
                     (stop.coords.lat, stop.coords.lon), self.DESTINATION,
                     unit=Unit.METERS
-                ) / WALKING_SETTINGS['PACE'] + HEURISTIC_SETTINGS['ALWAYS_WALKING_TIME_CONSTANT']
+                ) / HEURISTIC_SETTINGS['MAX_SPEED']
                 for stop_id, stop in self.data.stops.enumerate()
             }
         elif self.distance_metric == 'manhattan':
@@ -163,7 +163,7 @@ class AStarPlanner():
                 stop_id: manhattan_distance(
                     stop.coords.lat, stop.coords.lon,
                     self.DESTINATION[0], self.DESTINATION[1]
-                ) / HEURISTIC_SETTINGS['MAX_SPEED'] + HEURISTIC_SETTINGS['ALWAYS_WALKING_TIME_CONSTANT']
+                ) / HEURISTIC_SETTINGS['MAX_SPEED']
                 for stop_id, stop in self.data.stops.enumerate()
             }
         else:
@@ -224,6 +224,12 @@ class AStarPlanner():
             # from stop we're currently at after following fastest known plan yet
             start_time_get_trips = time.time()
 
+            transfer_time = self.waiting_time_constant
+
+            if not fastest_known_plan.plan_trips:
+                # Don't add transfer time before first trip
+                transfer_time = 0
+
             fastest_ways = get_next_trips(
                 stops = self.data.stops,
                 trips = self.data.trips,
@@ -232,9 +238,8 @@ class AStarPlanner():
                 time = fastest_known_plan.current_time,
                 used_trips = fastest_known_plan.used_trips,
                 visited_stops = fastest_known_plan.used_stops,
-                transfer_time = self.waiting_time_constant,
+                transfer_time = transfer_time,
                 pace = WALKING_SETTINGS["PACE"],
-                walk_time_constant = HEURISTIC_SETTINGS['ALWAYS_WALKING_TIME_CONSTANT'],
             )
 
             end_time_get_trips = time.time()
@@ -413,7 +418,6 @@ _COMPILATION_T0 = time.time()
         nbt.Set(nb.int64, True),
         nb.int64,
         nb.float64,
-        nb.int64,
     ),
 )
 def get_next_trips(
@@ -426,7 +430,6 @@ def get_next_trips(
     visited_stops: set,
     transfer_time: int,
     pace: float,
-    walk_time_constant: int,
 ) -> dict[int, PlanTrip]:
     fastest_ways = nb.typed.Dict.empty(nb.int32, _NB_PLAN_TRIP_TYPE)
     from_stop = nb.int32(from_stop)
@@ -436,7 +439,7 @@ def get_next_trips(
         if to_stop in visited_stops:
             continue
 
-        time_at_stop = time + nb.int32(distance / pace) + walk_time_constant
+        time_at_stop = time + nb.int32(distance / pace)
 
         fastest_ways[to_stop] = PlanTrip(
             trip_id = nb.int32(-1),

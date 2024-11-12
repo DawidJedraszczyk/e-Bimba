@@ -2,5 +2,6 @@
 __pycache__
 /data
 /benchmark_results
+/data_analysis_results
 /.env
 /.venv
