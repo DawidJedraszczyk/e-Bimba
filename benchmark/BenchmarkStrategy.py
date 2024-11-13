@@ -1,10 +1,17 @@
 from abc import abstractmethod
 from datetime import datetime
-from time import time
 import os
+from time import time
+from typing import NamedTuple
 
 from algorithm_parts.utils import time_to_seconds, seconds_to_time, custom_print, plans_to_string
 from algorithm_parts.AstarPlanner import AStarPlanner
+
+
+class PlannerResult(NamedTuple):
+    found_plans: list
+    metrics: dict
+
 
 class BenchmarkStrategy():
     benchmark_type = None
@@ -43,7 +50,7 @@ class BenchmarkStrategy():
                 total_time += time()-t0
 
             self.total_times.append(total_time)
-            self.planners.append(planner)
+            self.planners.append(PlannerResult(planner.found_plans, planner.metrics))
 
     def print_found_routes(self):
         for i, route in enumerate(self.sample_routes):
