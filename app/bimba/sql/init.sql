@@ -1,3 +1,13 @@
+create table metadata (
+  name text not null,
+  projection text not null,
+  center struct (
+    x float4,
+    y float4
+  ) not null,
+);
+
+
 create table agency (
   id int4 not null,
   name text not null,
@@ -15,6 +25,11 @@ create table stop (
   coords struct (
     lat float4,
     lon float4
+  ) not null,
+
+  position struct ( -- in meters, relative to metadata.center
+    x float4,
+    y float4
   ) not null,
 
   walks struct (

@@ -1,5 +1,6 @@
 from .data import Data
 from .PlanTrip import PlanTrip
+from .inconvenience import inconvenience
 from .utils import time_to_seconds, seconds_to_time
 
 
@@ -26,6 +27,7 @@ class Plan():
             # date of a last trip in the plan. If the plan spans over midnight, the date may be the next day
             starting_stop_id: int = None,
             plan_trips: list[PlanTrip] = None,
+            prev_inconvenience = 0,
     ):
         if starting_stop_id is None and plan_trips is None:
             raise Exception('either starting_stop_id or plan_trips must be specified')
@@ -36,13 +38,15 @@ class Plan():
         self.time_at_destination = None
 
         if starting_stop_id is not None and start_time is not None:
+            walk_time = int(start_walking_times[starting_stop_id])
             # initialization
             self.plan_trips = list()
             self.used_trips = {-1} # numba can't handle an empty set
             self.used_stops = {starting_stop_id}
             self.current_stop_id = starting_stop_id
-            self.start_time = start_time + int(start_walking_times[starting_stop_id])
+            self.start_time = start_time + walk_time
             self.current_time = self.start_time
+            self.inconvenience = inconvenience(walk_time=walk_time)
 
         if plan_trips is not None:
             # extended plan
@@ -53,6 +57,22 @@ class Plan():
             self.last_plan_trip = plan_trips[-1]
             self.current_stop_id = self.last_plan_trip.leave_at_stop_id
             self.current_time = self.last_plan_trip.arrival_time
+
+            if plan_trips[-1].trip_id == -1:
+                wait_time = None
+                walk_time = plan_trips[-1].arrival_time - plan_trips[-1].departure_time
+            elif len(plan_trips) > 1:
+                wait_time = plan_trips[-1].departure_time - plan_trips[-2].arrival_time
+                walk_time = None
+            else:
+                wait_time = None
+                walk_time = None
+
+            self.inconvenience = prev_inconvenience + inconvenience(
+                transfer=(len(self.used_stops) > 2 and plan_trips[-1].trip_id != -1),
+                wait_time=wait_time,
+                walk_time=walk_time,
+            )
 
         # simple flag that distinguishes between potential terminal plans from ones in heuristic stage
         self.is_terminal = False
@@ -98,19 +118,6 @@ class Plan():
         return f"Plan({';'.join(map(str, [self.plan_trips, self.used_trips, self.current_stop_id, self.current_time, self.time_at_destination]))})"
 
     def __lt__(self, other):
-        return self.get_absolute_arrival_time_difference(other) < 0
-
-    def __le__(self, other):
-        return self.get_absolute_arrival_time_difference(other) <= 0
-
-    def __eq__(self, other):
-        return self.get_absolute_arrival_time_difference(other) == 0
-
-    def __ne__(self, other):
-        return self.get_absolute_arrival_time_difference(other) != 0
-
-    def __gt__(self, other):
-        return self.get_absolute_arrival_time_difference(other) > 0
-
-    def __ge__(self, other):
-        return self.get_absolute_arrival_time_difference(other) >= 0
+        self_val = (self.get_informed_time_at_destination(), self.inconvenience)
+        other_val = (other.get_informed_time_at_destination(), other.inconvenience)
+        return self_val < other_val

@@ -3,12 +3,14 @@
     "gtfs": {
       "ztm": "https://www.ztm.poznan.pl/pl/dla-deweloperow/getGTFSFile"
     },
+    "projection": "EPSG:2180",
     "map": "http://download.geofabrik.de/europe/poland/wielkopolskie-latest.osm.pbf"
   },
   "Poznań (wrzesień)": {
     "gtfs": {
       "ztm": "https://www.ztm.poznan.pl/pl/dla-deweloperow/getGTFSFile/?file=20240905_20240930.zip"
     },
+    "projection": "EPSG:2180",
     "map": "http://download.geofabrik.de/europe/poland/wielkopolskie-latest.osm.pbf"
   },
   "Warszawa": {
@@ -16,6 +18,7 @@
       "wtp": "https://mkuran.pl/gtfs/warsaw.zip",
       "wkd": "https://mkuran.pl/gtfs/wkd.zip"
     },
+    "projection": "EPSG:2180",
     "map": "http://download.geofabrik.de/europe/poland/mazowieckie-latest.osm.pbf"
   }
 }

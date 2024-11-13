@@ -7,9 +7,10 @@ import heapq
 from itertools import chain
 import numba as nb # type: ignore
 from numba.experimental import jitclass # type: ignore
+import numba.types as nbt
 import pyarrow
 import time as timer
-from typing import Optional
+from typing import NamedTuple, Optional
 
 from .data.common import *
 from .data.stops import Stops
@@ -19,12 +20,15 @@ from .params import *
 from .transitdb import *
 
 
-EARTH_RADIUS = get_avg_earth_radius(Unit.METERS)
+class PathSegment(NamedTuple):
+  from_stop: int
+  trip_id: int
+  details: int # departure if trip_id != -1, walk distance otherwise
 
 
-@nb.jit
-def nb_haversine(a_lat, a_lon, b_lat, b_lon):
-  return EARTH_RADIUS * _haversine_kernel(a_lat, a_lon, b_lat, b_lon)
+class Plan(NamedTuple):
+  arrival: int
+  path: list[PathSegment]
 
 
 class Router:
@@ -53,7 +57,7 @@ class Router:
       to_lon: float,
       date: datetime.date,
       time: datetime.time,
-  ):
+  ) -> Plan:
     if self.debug:
       print(f"Routing ({from_lat}, {from_lon}) -> ({to_lat}, {to_lon}) on {date} {time}")
 
@@ -82,7 +86,7 @@ class Router:
       print(f"  from: {list(zip(stop_ids(from_stops), walks_from))}")
       print(f"  to: {list(zip(stop_ids(to_stops), walks_to))}")
 
-    RouterTask(
+    return RouterTask(
       self.debug,
       self.stop_coords.astype(np.float32),
       self.stops,
@@ -95,19 +99,12 @@ class Router:
     ).solve()
 
 
-@jitclass([
-  ("from_stop", nb.int32),
-  ("trip_id", nb.int32),
-  ("details", nb.int32), # departure if trip_id != -1, walk distance otherwise
-])
-class PathSegment:
-  def __init__(self, from_stop, trip_id, details):
-    self.from_stop = from_stop
-    self.trip_id = trip_id
-    self.details = details
+_NB_PATH_SEGMENT_TYPE = nbt.NamedUniTuple(nb.int32, 3, PathSegment)
+_EARTH_RADIUS = get_avg_earth_radius(Unit.METERS)
 
-  def __str__(self):
-    return f"({self.from_stop}, {self.trip_id}, {self.details})"
+@nb.jit
+def nb_haversine(a_lat, a_lon, b_lat, b_lon):
+  return _EARTH_RADIUS * _haversine_kernel(a_lat, a_lon, b_lat, b_lon)
 
 
 @jitclass([
@@ -116,7 +113,7 @@ class PathSegment:
   ("arrival", nb.int32),
   ("destination_arrival", nb.int32),
   ("walk_distance", nb.int32), # to destination, -1 if too far
-  ("came_from", nb.optional(PathSegment.class_type.instance_type)),
+  ("came_from", _NB_PATH_SEGMENT_TYPE),
   ("is_candidate", nb.boolean),
 ])
 class Node:
@@ -131,7 +128,7 @@ class Node:
     self.arrival = INF_TIME
     self.destination_arrival = INF_TIME
     self.walk_distance = walk_distance
-    self.came_from = None
+    self.came_from = PathSegment(nb.int32(-1), nb.int32(-1), nb.int32(-1))
     self.is_candidate = False
 
   def __lt__(self, other):
@@ -150,7 +147,7 @@ class NearStops:
     self.distances = distances.astype(np.float32)
 
 
-node_type = Node.class_type.instance_type
+_NB_NODE_TYPE = Node.class_type.instance_type
 
 @jitclass([
   ("debug", nb.boolean),
@@ -161,14 +158,14 @@ node_type = Node.class_type.instance_type
   ("to_stops", NearStops.class_type.instance_type),
 
   ("arrival", nb.int32),
-  ("came_from", nb.optional(PathSegment.class_type.instance_type)),
+  ("came_from", _NB_PATH_SEGMENT_TYPE),
   ("improved", nb.boolean),
 
-  ("nodes", nb.types.ListType(node_type)),
-  ("candidates", nb.types.ListType(node_type)),
+  ("nodes", nbt.DictType(nb.int32, _NB_NODE_TYPE)),
+  ("candidates", nbt.ListType(_NB_NODE_TYPE)),
 
   ("candidate_improved", nb.boolean),
-  ("new_candidates", nb.types.ListType(node_type)),
+  ("new_candidates", nbt.ListType(_NB_NODE_TYPE)),
   ("arrival_to_beat", nb.int32),
   ("iteration", nb.int32),
 ])
@@ -193,17 +190,13 @@ class RouterTask:
     self.to_stops = to_stops
 
     self.arrival = INF_TIME
-    self.came_from = None
+    self.came_from = PathSegment(nb.int32(-1), nb.int32(-1), nb.int32(-1))
     self.improved = False
 
-    self.nodes = nb.typed.List.empty_list(node_type)
-
-    for _ in range(0, len(stop_coords)):
-      self.nodes.append(Node(-1, -1, -1))
-
-    self.candidates = nb.typed.List.empty_list(node_type)
+    self.nodes = nb.typed.Dict.empty(nb.int32, _NB_NODE_TYPE)
+    self.candidates = nb.typed.List.empty_list(_NB_NODE_TYPE)
     self.candidate_improved = False
-    self.new_candidates = nb.typed.List.empty_list(node_type)
+    self.new_candidates = nb.typed.List.empty_list(_NB_NODE_TYPE)
     self.arrival_to_beat = INF_TIME
     self.iteration = 0
 
@@ -215,23 +208,21 @@ class RouterTask:
       arrival = start_time + int(dst / WALK_SPEED)
       n.arrival = arrival
       n.destination_arrival = arrival + n.estimate
-      n.came_from = PathSegment(-1, -1, int(dst))
+      n.came_from = PathSegment(nb.int32(-1), nb.int32(-1), nb.int32(dst))
       n.is_candidate = True
       self.candidates.append(n)
 
-    if walk_distance <= MAX_DESTINATION_WALK:
-      self.arrival = start_time + int(walk_distance / WALK_SPEED)
-      self.came_from = PathSegment(-1, -1, int(walk_distance))
-
+    self.arrival = start_time + int(walk_distance / WALK_SPEED)
+    self.came_from = PathSegment(nb.int32(-1), nb.int32(-1), nb.int32(walk_distance))
     heapq.heapify(self.candidates)
 
 
   def get_node(self, stop_id: int) -> Node:
-    node = self.nodes[stop_id]
+    node = self.nodes.get(stop_id, None)
 
-    if node.stop_id == -1:
-      node.stop_id = stop_id
-      node.estimate = self.estimate(stop_id)
+    if node is None:
+      node = Node(stop_id, self.estimate(stop_id), -1)
+      self.nodes[stop_id] = node
 
     return node
 
@@ -247,8 +238,7 @@ class RouterTask:
     return result
 
 
-  def update_node(self, node: Node, came_from: PathSegment):
-    arrival = self.arrival_to_beat
+  def update_node(self, node: Node, arrival: int, came_from: PathSegment):
     destination_arrival = arrival + node.estimate
 
     if destination_arrival >= self.arrival:
@@ -269,10 +259,10 @@ class RouterTask:
     if node.walk_distance != -1:
       self.improved = True
       self.arrival = destination_arrival
-      self.came_from = PathSegment(node.stop_id, -1, node.walk_distance)
+      self.came_from = PathSegment(node.stop_id, nb.int32(-1), nb.int32(node.walk_distance))
 
 
-  def solve(self):
+  def solve(self) -> Plan:
     while len(self.candidates) > 0:
       self.iteration += 1
       candidate = heapq.heappop(self.candidates)
@@ -283,18 +273,12 @@ class RouterTask:
 
       for stop_walk in self.stops.get_stop_walks(candidate.stop_id):
         node = self.get_node(stop_walk.stop_id)
-
-        if node.arrival is None or node.arrival > self.arrival:
-          self.arrival_to_beat = self.arrival
-        else:
-          self.arrival_to_beat = node.arrival
-
         walk_time = int(stop_walk.distance / WALK_SPEED)
+        walk_arrival = candidate.arrival + walk_time
 
-        if candidate.arrival + walk_time < self.arrival_to_beat:
-          self.arrival_to_beat = candidate.arrival + walk_time
-          came_from = PathSegment(candidate.stop_id, -1, stop_walk.distance)
-          self.update_node(node, came_from)
+        if walk_arrival < min(node.arrival, self.arrival):
+          came_from = PathSegment(candidate.stop_id, nb.int32(-1), nb.int32(stop_walk.distance))
+          self.update_node(node, walk_arrival, came_from)
 
       for trip_id, stop_seq, departure in self.stops.get_stop_trips(candidate.stop_id):
         time = candidate.arrival + TRANSFER_TIME - departure
@@ -305,26 +289,16 @@ class RouterTask:
 
         for to_stop, stop_arrival, _ in self.trips.get_stops_after(trip_id, stop_seq):
           node = self.get_node(to_stop)
-
-          if node.arrival is None or node.arrival > self.arrival:
-            self.arrival_to_beat = self.arrival
-          else:
-            self.arrival_to_beat = node.arrival
-          
           arrival = start_time + stop_arrival
 
-          if arrival < self.arrival_to_beat:
-            self.arrival_to_beat = arrival
-            path = PathSegment(candidate.stop_id, trip_id, start_time + departure)
-            self.update_node(node, path)
+          if arrival < min(node.arrival, self.arrival):
+            path = PathSegment(candidate.stop_id, trip_id, nb.int32(start_time + departure))
+            self.update_node(node, arrival, path)
 
       candidate.is_candidate = False
       self.add_candidates()
 
-    print(f"arrival: {self.arrival}, iterations: {self.iteration}")
-
-    if self.came_from is not None:
-      self.print_path(self.came_from)
+    return Plan(self.arrival, self.gather_path(self.came_from))
 
 
   def add_candidates(self):
@@ -332,7 +306,7 @@ class RouterTask:
       if self.improved:
         self.improved = False
         old = self.candidates
-        self.candidates = nb.typed.List.empty_list(node_type)
+        self.candidates = nb.typed.List.empty_list(_NB_NODE_TYPE)
 
         for c in old:
           if c.destination_arrival < self.arrival:
@@ -357,16 +331,16 @@ class RouterTask:
     self.new_candidates.clear()
 
 
-  def print_path(self, came_from: PathSegment):
+  def gather_path(self, came_from: PathSegment) -> list[PathSegment]:
+    result = []
+
     while True:
+      result.append(came_from)
+
       if came_from.from_stop == -1:
-        print(f"Walk from start ({came_from.details}m)")
-        return
-      elif came_from.trip_id == -1:
-        print(f"Walk from stop {self.stop_name(came_from.from_stop)} ({came_from.details}m)")
-        came_from = self.nodes[came_from.from_stop].came_from
+        result.reverse()
+        return result
       else:
-        print(f"Take trip {came_from.trip_id} at {came_from.details} from stop {self.stop_name(came_from.from_stop)}")
         came_from = self.nodes[came_from.from_stop].came_from
 
 
