@@ -68,11 +68,10 @@ class BenchmarkStrategy():
     
     def get_csv_filename(self):
         current_time = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-        directory = f"benchmark_results/{current_time}"
+        directory = os.path.join("benchmark_results", current_time)
         os.makedirs(directory, exist_ok=True)
-        filename = os.path.join(directory, f"{self.benchmark_type}_results{current_time}.csv")
+        filename = os.path.join(directory, f"{self.benchmark_type}_results_{current_time}.csv")
         return filename
-    
     # There are different types of benchmark, but some metrics are common for all of them
     # and here they are computed and returned as dictionary
     def get_common_metrics_csv_row_dict(self, route, route_index, algorithm_metrics_dict):
