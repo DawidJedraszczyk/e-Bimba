@@ -11,10 +11,10 @@ sys.path.extend([
 ])
 
 from benchmark.components.SampleRoute import SampleRoute
-from benchmark.BenchmarkStrategy import BenchmarkStrategy
-from benchmark.CustomBenchmark import CustomBenchmark
-from benchmark.SmallAutoBenchmark import SmallAutoBenchmark
-from benchmark.FullAutoBenchmark import FullAutoBenchmark
+from benchmark.strategies.BenchmarkStrategy import BenchmarkStrategy
+from benchmark.strategies.CustomBenchmark import CustomBenchmark
+from benchmark.strategies.SmallAutoBenchmark import SmallAutoBenchmark
+from benchmark.strategies.FullAutoBenchmark import FullAutoBenchmark
 
 # Warm up numba
 b = BenchmarkStrategy()
