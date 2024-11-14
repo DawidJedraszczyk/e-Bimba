@@ -2,15 +2,15 @@ import asyncio
 import cProfile
 from dataclasses import dataclass
 import datetime
-from haversine.haversine import get_avg_earth_radius, _haversine_kernel, Unit # type: ignore
 import heapq
 from itertools import chain
+import math
 import numba as nb # type: ignore
 from numba.experimental import jitclass # type: ignore
 import numba.types as nbt
 import pyarrow
 import time as timer
-from typing import NamedTuple, Optional
+from typing import NamedTuple, Optional, Union
 
 from .data.common import *
 from .data.stops import Stops
@@ -29,88 +29,143 @@ class PathSegment(NamedTuple):
 class Plan(NamedTuple):
   arrival: int
   path: list[PathSegment]
+  iterations: int
+
+
+class NearStops(NamedTuple):
+  ids: NDArray
+  distances: NDArray
+
+  @staticmethod
+  def single(id: int):
+    return NearStops(
+      np.array([id], dtype=np.int32),
+      np.array([0.0], dtype=np.float32),
+    )
 
 
 class Router:
   tdb: TransitDb
   osrm: OsrmClient
-  debug: bool
-  max_stop_id: int
-  stop_coords: NDArray
   stops: Stops
   trips: Trips
 
-  def __init__(self, tdb: TransitDb, osrm: OsrmClient, debug: bool = False):
+  def __init__(
+    self,
+    tdb: TransitDb,
+    osrm: OsrmClient,
+    stops = None,
+    trips = None,
+  ):
     self.tdb = tdb
     self.osrm = osrm
-    self.debug = debug
-    self.max_stop_id = tdb.sql("select max(id) from stop").scalar()
-    self.stop_coords = get_stop_coords(self.max_stop_id, tdb)
-    self.stops = tdb.get_stops()
-    self.trips = tdb.get_trips()
+    self.stops = stops or tdb.get_stops()
+    self.trips = trips or tdb.get_trips()
 
-  async def find_route(
+  def copy():
+    return Router(
+      self.tdb.cursor(),
+      self.osrm,
+      self.stops,
+      self.trips,
+    )
+
+  def find_route(
       self,
-      from_lat: float,
-      from_lon: float,
-      to_lat: float,
-      to_lon: float,
+      start: Coords|int,
+      destination: Coords|int,
       date: datetime.date,
       time: datetime.time,
   ) -> Plan:
-    if self.debug:
-      print(f"Routing ({from_lat}, {from_lon}) -> ({to_lat}, {to_lon}) on {date} {time}")
-
     start_time = time.hour * 60*60 + time.minute * 60 + time.second
     services = self.tdb.get_services(date)
-    from_stops = self.tdb.nearest_stops(from_lat, from_lon)
-    to_stops = self.tdb.nearest_stops(to_lat, to_lon)
 
-    walks_from, walks_to = await asyncio.gather(
-      self.osrm.distance_to_many(
-        from_lat, from_lon,
-        chain(stop_coords(from_stops), [(to_lat, to_lon)]),
-      ),
-      self.osrm.distance_to_many(
-        to_lat, to_lon,
-        stop_coords(to_stops),
-      ),
+    walk_distance, near_start, near_destination = asyncio.run(
+      self.get_walking_distances(start, destination)
     )
 
-    walk_distance = walks_from[-1]
-
-    if self.debug:
-      print(f"  {start_time=}")
-      print(f"  {services=}")
-      print(f"  {walk_distance=}")
-      print(f"  from: {list(zip(stop_ids(from_stops), walks_from))}")
-      print(f"  to: {list(zip(stop_ids(to_stops), walks_to))}")
-
-    return RouterTask(
-      self.debug,
-      self.stop_coords.astype(np.float32),
+    return find_route(
       self.stops,
       self.trips,
-      services,
-      NearStops(stop_ids(from_stops), stop_coords(from_stops), walks_from[:-1]),
-      NearStops(stop_ids(to_stops), stop_coords(to_stops), walks_to),
+      near_start,
+      near_destination,
       walk_distance,
       start_time,
-    ).solve()
+      services,
+    )
 
 
+  async def get_walking_distances(self, start, destination):
+    if isinstance(start, Coords):
+      start_coords = start
+      near_start = None
+    else:
+      start_coords = self.stops[start].coords
+      near_start = NearStops.single(start)
+
+    if isinstance(destination, Coords):
+      destination_coords = destination
+      near_destination = None
+    else:
+      destination_coords = self.stops[destination].coords
+      near_destination = NearStops.single(destination)
+
+    walk_distance = None
+    coroutines = []
+
+    if near_start is None:
+      ns_ids = self.tdb.nearest_stops(start_coords)
+
+      async def get_near_start():
+        nonlocal near_start, walk_distance
+
+        distances = await self.osrm.distance_to_many(
+          start_coords,
+          chain((self.stops[id].coords for id in ns_ids), (destination_coords,)),
+        )
+
+        near_start = NearStops(ns_ids, distances[:-1])
+        walk_distance = distances[-1]
+
+      coroutines.append(get_near_start())
+
+    if near_destination is None:
+      nd_ids = self.tdb.nearest_stops(destination_coords)
+
+      async def get_near_destination(and_walk_distance: bool):
+        nonlocal near_destination, walk_distance
+        to_coords = [self.stops[id].coords for id in nd_ids]
+
+        if and_walk_distance:
+          to_coords.append(start_coords)
+
+        distances = await self.osrm.distance_to_many(destination_coords, to_coords)
+        near_destination = NearStops(nd_ids, distances[:len(nd_ids)])
+
+        if and_walk_distance:
+          walk_distance = distances[-1]
+
+      coroutines.append(get_near_destination(near_start is not None))
+    
+    if near_start is not None and near_destination is not None:
+      async def get_walk_distance():
+        nonlocal walk_distance
+        distances = await self.osrm.distance_to_many(start_coords, [destination_coords])
+        walk_distance = distances[0]
+
+      coroutines.append(get_walk_distance())
+
+    await asyncio.gather(*coroutines)
+    return walk_distance, near_start, near_destination
+
+
+_NB_NEAR_STOPS_TYPE = nbt.NamedTuple([nb.int32[::1], nb.float32[::1]], NearStops)
 _NB_PATH_SEGMENT_TYPE = nbt.NamedUniTuple(nb.int32, 3, PathSegment)
+_NB_PLAN_TYPE = nbt.NamedTuple([nb.int32, nbt.ListType(_NB_PATH_SEGMENT_TYPE), nb.int32], Plan)
 
 @nb.jit
 def empty_segment():
   return PathSegment(nb.int32(-1), nb.int32(-1), nb.int32(-1))
-
-
-_EARTH_RADIUS = get_avg_earth_radius(Unit.METERS)
-
-@nb.jit
-def nb_haversine(a_lat, a_lon, b_lat, b_lon):
-  return _EARTH_RADIUS * _haversine_kernel(a_lat, a_lon, b_lat, b_lon)
 
 
 @jitclass([
@@ -143,27 +198,13 @@ class Node:
     return self.destination_arrival < other.destination_arrival
 
 
-@jitclass([
-  ("ids", nb.int32[:]),
-  ("coords", nb.float32[:, :]),
-  ("distances", nb.float32[:]),
-])
-class NearStops:
-  def __init__(self, ids, coords, distances):
-    self.ids = ids
-    self.coords = coords.astype(np.float32)
-    self.distances = distances.astype(np.float32)
-
-
 _NB_NODE_TYPE = Node.class_type.instance_type
 
 @jitclass([
-  ("debug", nb.boolean),
-  ("stop_coords", nb.float32[:, :]),
   ("stops", Stops.class_type.instance_type),
   ("trips", Trips.class_type.instance_type),
   ("services", Services.class_type.instance_type),
-  ("to_stops", NearStops.class_type.instance_type),
+  ("to_stops", _NB_NEAR_STOPS_TYPE),
 
   ("arrival", nb.int32),
   ("path_tail", _NB_PATH_SEGMENT_TYPE),
@@ -180,22 +221,18 @@ _NB_NODE_TYPE = Node.class_type.instance_type
 class RouterTask:
   def __init__(
     self,
-    debug: bool,
-    stop_coords: NDArray,
     stops: Stops,
     trips: Trips,
-    services: Services,
-    from_stops: NearStops,
-    to_stops: NearStops,
+    near_start: NearStops,
+    near_destination: NearStops,
     walk_distance: float,
     start_time: int,
+    services: Services,
   ):
-    self.debug = debug
-    self.stop_coords = stop_coords
     self.stops = stops
     self.trips = trips
     self.services = services
-    self.to_stops = to_stops
+    self.to_stops = near_destination
 
     self.improved = False
     self.arrival = start_time + int(walk_distance / WALK_SPEED)
@@ -208,10 +245,10 @@ class RouterTask:
     self.arrival_to_beat = INF_TIME
     self.iteration = 0
 
-    for id, dst in zip(to_stops.ids, to_stops.distances):
+    for id, dst in zip(near_destination.ids, near_destination.distances):
       self.nodes[id] = Node(id, int(dst / WALK_SPEED), int(dst))
 
-    for id, dst in zip(from_stops.ids, from_stops.distances):
+    for id, dst in zip(near_start.ids, near_start.distances):
       n = self.get_node(id)
       arrival = start_time + int(dst / WALK_SPEED)
       n.arrival = arrival
@@ -234,11 +271,12 @@ class RouterTask:
 
 
   def estimate(self, stop_id: int) -> int:
-    coords = self.stop_coords[stop_id]
+    pos = self.stops[stop_id].position
     result = INF_TIME
 
-    for target_coords, target_walk in zip(self.to_stops.coords, self.to_stops.distances):
-      distance = nb_haversine(coords[0], coords[1], target_coords[0], target_coords[1])
+    for target_id, target_walk in zip(self.to_stops.ids, self.to_stops.distances):
+      target_pos = self.stops[target_id].position
+      distance = math.sqrt((pos.x - target_pos.x)**2 + (pos.y - target_pos.y)**2)
       result = min(result, int(distance / TRAM_SPEED + target_walk / WALK_SPEED))
 
     return result
@@ -312,7 +350,7 @@ class RouterTask:
       candidate.is_candidate = False
       self.add_candidates()
 
-    return Plan(self.arrival, self.gather_path(self.path_tail))
+    return Plan(self.arrival, self.gather_path(self.path_tail), self.iteration)
 
 
   def add_candidates(self):
@@ -358,18 +396,35 @@ class RouterTask:
         segment = self.nodes[segment.from_stop].path_tail
 
 
-  def stop_name(self, id):
-    return self.stops[id].name
-
-
-def get_stop_coords(max_stop_id: int, tdb: TransitDb) -> NDArray:
-  res = tdb.sql("select unnest(coords) from stop order by id").arrow()
-  return np.stack([res.field(0), res.field(1)], axis=-1)
-
-def stop_ids(arr: pyarrow.StructArray) -> NDArray:
-  return arr.field("id").to_numpy()
-
-def stop_coords(arr: pyarrow.StructArray) -> NDArray:
-  lat = arr.field("lat").to_numpy()
-  lon = arr.field("lon").to_numpy()
-  return np.stack([lat, lon], axis=-1)
+@nb.jit(
+  _NB_PLAN_TYPE
+  (
+    Stops.class_type.instance_type,
+    Trips.class_type.instance_type,
+    _NB_NEAR_STOPS_TYPE,
+    _NB_NEAR_STOPS_TYPE,
+    nb.float32,
+    nb.int64,
+    Services.class_type.instance_type,
+  ),
+  nogil = True,
+  cache = True,
+)
+def find_route(
+  stops: Stops,
+  trips: Trips,
+  near_start: NearStops,
+  near_destination: NearStops,
+  walk_distance: float,
+  start_time: int,
+  services: Services,
+):
+  return RouterTask(
+    stops,
+    trips,
+    near_start,
+    near_destination,
+    walk_distance,
+    start_time,
+    services,
+  ).solve()

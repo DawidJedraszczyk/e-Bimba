@@ -4,12 +4,14 @@ import datetime
 import duckdb
 import functools
 import numpy as np
+from numpy.typing import NDArray
 import os
 from pathlib import Path
 import pyarrow
 import time
+from typing import Iterable
 
-from .data.common import Services
+from .data.common import Coords, Services
 from .data.routes import Routes
 from .data.shapes import Shapes
 from .data.stops import Stops
@@ -49,8 +51,9 @@ class TransitDb(Db):
     )
 
 
-  def nearest_stops(self, lat: float, lon: float) -> pyarrow.StructArray:
-    return self.script("get-nearest-stops", {"lat":lat, "lon":lon}).arrow()
+  def nearest_stops(self, coords: Coords) -> NDArray:
+    params = {"lat": coords.lat, "lon": coords.lon}
+    return self.script("get-nearest-stops", params).np()["id"]
 
 
   def get_routes(self) -> Routes:
