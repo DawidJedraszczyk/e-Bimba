@@ -120,14 +120,26 @@ def prepare_city(city, name):
     raise
 
 
-if __name__ == "__main__":
+def main():
   args = sys.argv
   cities = json.loads(CITIES_FILE.read_bytes())
 
   if len(args) == 1:
-    print(f"Usage: {args[0]} CITY\nAvailable cities:")
-    for city in cities.keys():
-      print(f"  \"{city}\"")
+    print(f"Usage: {args[0]} CITY")
   else:
-    city_name = args[1]
-    prepare_city(cities[city_name], city_name)
+    city_name = " ".join(args[1:])
+
+    if city_name not in cities:
+      print(f"Unknown city '{city_name}'")
+    else:
+      prepare_city(cities[city_name], city_name)
+      return
+
+  print("Available cities:")
+
+  for city in cities.keys():
+    print(f"  {city}")
+
+
+if __name__ == "__main__":
+  main()
