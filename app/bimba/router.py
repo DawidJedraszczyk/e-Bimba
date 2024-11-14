@@ -8,7 +8,7 @@ import math
 import numba as nb # type: ignore
 from numba.experimental import jitclass # type: ignore
 import numba.types as nbt
-import pyarrow
+import pyproj
 import time as timer
 from typing import NamedTuple, Optional, Union
 
@@ -47,27 +47,35 @@ class NearStops(NamedTuple):
 class Router:
   tdb: TransitDb
   osrm: OsrmClient
+  md: Metadata
   stops: Stops
   trips: Trips
+  transformer: pyproj.Transformer
 
   def __init__(
     self,
     tdb: TransitDb,
     osrm: OsrmClient,
+    md = None,
     stops = None,
     trips = None,
+    transformer = None,
   ):
     self.tdb = tdb
     self.osrm = osrm
+    self.md = md or tdb.get_metadata()
     self.stops = stops or tdb.get_stops()
     self.trips = trips or tdb.get_trips()
+    self.transformer = transformer or pyproj.Transformer.from_proj('WGS84', self.md.projection)
 
   def copy():
     return Router(
       self.tdb.cursor(),
       self.osrm,
+      self.md,
       self.stops,
       self.trips,
+      self.transformer,
     )
 
   def find_route(
@@ -95,6 +103,11 @@ class Router:
     )
 
 
+  def project(self, c: Coords) -> Point:
+    x, y = self.transformer.transform(c.lat, c.lon)
+    return Point(x - self.md.center.x, y - self.md.center.y)
+
+
   async def get_walking_distances(self, start, destination):
     if isinstance(start, Coords):
       start_coords = start
@@ -114,7 +127,7 @@ class Router:
     coroutines = []
 
     if near_start is None:
-      ns_ids = self.tdb.nearest_stops(start_coords)
+      ns_ids = self.tdb.nearest_stops(self.project(start_coords))
 
       async def get_near_start():
         nonlocal near_start, walk_distance
@@ -130,7 +143,7 @@ class Router:
       coroutines.append(get_near_start())
 
     if near_destination is None:
-      nd_ids = self.tdb.nearest_stops(destination_coords)
+      nd_ids = self.tdb.nearest_stops(self.project(destination_coords))
 
       async def get_near_destination(and_walk_distance: bool):
         nonlocal near_destination, walk_distance

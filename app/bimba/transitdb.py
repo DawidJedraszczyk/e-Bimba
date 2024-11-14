@@ -11,7 +11,7 @@ import pyarrow
 import time
 from typing import Iterable
 
-from .data.common import Coords, Services
+from .data.common import Point, Coords, Metadata, Services
 from .data.routes import Routes
 from .data.shapes import Shapes
 from .data.stops import Stops
@@ -51,9 +51,14 @@ class TransitDb(Db):
     )
 
 
-  def nearest_stops(self, coords: Coords) -> NDArray:
-    params = {"lat": coords.lat, "lon": coords.lon}
+  def nearest_stops(self, position: Point) -> NDArray:
+    params = {"x": position.x, "y": position.y}
     return self.script("get-nearest-stops", params).np()["id"]
+
+
+  def get_metadata(self) -> Metadata:
+    name, proj, center = self.sql("select * from metadata").one()
+    return Metadata(name, proj, Point(center["x"], center["y"]))
 
 
   def get_routes(self) -> Routes:

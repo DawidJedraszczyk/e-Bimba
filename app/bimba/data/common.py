@@ -20,6 +20,11 @@ class Range(NamedTuple):
   beg: int
   end: int
 
+class Metadata(NamedTuple):
+  name: str
+  projection: str
+  center: Point
+
 
 @jitclass([
   ("today", nb.int32[:]),

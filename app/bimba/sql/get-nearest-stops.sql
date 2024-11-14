@@ -2,9 +2,9 @@ with
   distances as (
     select
       id,
-      ST_Distance_Sphere(
-        ST_Point2D($lat, $lon),
-        ST_Point2D(s.coords.lat, s.coords.lon)
+      ST_Distance(
+        ST_Point2D($x, $y),
+        ST_Point2D(s.position.x, s.position.y)
       ) as distance,
     from stop s
     order by distance
