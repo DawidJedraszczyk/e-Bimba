@@ -38,6 +38,9 @@ docker-compose up --build
 
 This will build whole project, including postgres database.
 
+## Benchmarks
+
+To run the benchmark go to benchmark folder and run run.py file from there. The results of the benchmark will be  saved in the benchmark/benchamrk_results with the corresponding date and time. To perform analysis or comparison of the results open one the corresponding jupiter notebooks in the folder and follow instructions. The required packages to run the notebooks are in the data_analysis_requirements.txt file 
 
 ## Contributing
 
