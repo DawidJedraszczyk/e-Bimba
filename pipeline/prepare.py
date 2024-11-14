@@ -103,7 +103,7 @@ def prepare_city(city, name):
         gtfs_zip = DATA_FOLDER / f"{gtfs}.zip"
         folder = gtfs_zip.parent / gtfs_zip.name.replace(".zip", "")
         unzip(gtfs_zip, folder)
-        tdb.import_gtfs(folder)
+        tdb.import_gtfs(gtfs, folder)
 
       osrm_data(city["map"], OSRM_FOLDER)
 

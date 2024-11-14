@@ -1,6 +1,17 @@
+set variable SOURCE_ID = nextval('seq_source_id');
+
+insert into source values (
+  getvariable('SOURCE_ID'),
+  getvariable('SOURCE_NAME'),
+  (select min(date) from covered_days),
+  (select max(date) from covered_days),
+);
+
+
 insert into agency select
   id,
   agency_name,
+  getvariable('SOURCE_ID'),
 from gtfs_agency
 order by id;
 

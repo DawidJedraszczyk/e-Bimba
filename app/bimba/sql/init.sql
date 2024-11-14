@@ -8,9 +8,20 @@ create table metadata (
 );
 
 
+create table source (
+  id int4 not null,
+  name text not null,
+  min_date date,
+  max_date date,
+);
+
+create sequence seq_source_id minvalue 0 start 0;
+
+
 create table agency (
   id int4 not null,
   name text not null,
+  source int4 not null,
 );
 
 create sequence seq_agency_id minvalue 0 start 0;
@@ -139,26 +150,26 @@ create type services as struct (
 );
 
 
-create macro get_services(date) as table
+create macro get_services(p_date) as table
   select id
   from regular_service
-  where date >= start_date
-    and date <= end_date
-    and weekday[(dayofweek(date::date) + 6) % 7 + 1]
+  where p_date >= start_date
+    and p_date <= end_date
+    and weekday[(dayofweek(p_date::date) + 6) % 7 + 1]
     and not exists (
       select * from exceptional_service e
-      where e.date = date
+      where e.date = p_date
         and not available
     )
   union
   select id
   from exceptional_service e
-  where e.date = date
+  where e.date = p_date
     and available;
 
 
-create macro get_service_list(day) as (
-  select coalesce(list(id), []) from get_services(day::date)
+create macro get_service_list(p_day) as (
+  select coalesce(list(id order by id), []) from get_services(p_day::date)
 );
 
 

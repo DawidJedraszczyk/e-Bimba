@@ -146,8 +146,9 @@ class TransitDb(Db):
     self.script("init")
 
 
-  def import_gtfs(self, gtfs_folder: Path):
-    print(f"Importing GTFS from '{gtfs_folder}'")
+  def import_gtfs(self, source_name: str, gtfs_folder: Path):
+    print(f"Importing GTFS '{source_name}' from '{gtfs_folder}'")
+    self.set_variable('SOURCE_NAME', source_name)
     self.set_variable('GTFS_FOLDER', str(gtfs_folder))
 
     t0 = time.time()
