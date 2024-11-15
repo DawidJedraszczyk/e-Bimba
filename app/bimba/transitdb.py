@@ -192,12 +192,13 @@ class TransitDb(Db):
   async def calculate_stop_walks(self, osrm: OsrmClient):
     t0 = time.time()
     print("Calculating walking distances between stops")
+    self.script("project-stop-coords")
     inputs = self.script("init-stop-walk").arrow()
     sem = asyncio.Semaphore(os.cpu_count())
 
     async def task(row):
       async with sem:
-        from_id = row["id"]
+        from_id = row["from_stop"]
         from_lat = row["lat"]
         from_lon = row["lon"]
         to_stops = row["to_stops"].values
@@ -225,7 +226,7 @@ class TransitDb(Db):
           )
         },
       )
-    
+
     t1 = time.time()
     print(f"Time: {_t(t1, t0)}")
 
