@@ -38,8 +38,6 @@ class AStarPlanner():
         self.plans_queue = []
         self.found_plans = list()
         self.iterations = 0
-        end_init_time = time.time()
-        init_time = end_init_time - start_init_time
         self.metrics = {
             'iterations': 0, #i
             'unique_stops_visited': 0, #i
@@ -51,10 +49,13 @@ class AStarPlanner():
             'plan_compute_heurstic_time_total': 0, #i
             'plan_compute_actual_time_total': 0, #i
             'find_plans_time_total': 0, #i
-            'planner_initialization_time': init_time, #i
+            'planner_initialization_time': 0, #i
             'start_walking_times_time': start_walking_times_time,
             'destination_walking_times_time' : destination_walking_times_time,
             'precomputed_heurisitc_times_time': precomputed_heurisitc_times_time,
+            'plans_queue_operations_time': 0,
+            'plan_accepting_time': 0,
+            'extended_plans_initialization_time': 0,
         }
         for stop_id in self.start_within_walking.keys():
             plan = Plan(
@@ -67,9 +68,16 @@ class AStarPlanner():
             plan.compute_heuristic_time_at_destination()
             end_time_heuristic = time.time()
             self.metrics['plan_compute_heurstic_time_total'] += (end_time_heuristic - start_time_heuristic)
+            start_time_heappush = time.time()
             heapq.heappush(self.plans_queue, plan)
+            end_time_heappush = time.time()
+            self.metrics['plans_queue_operations_time'] += (end_time_heappush-start_time_heappush)
         self.found_plans = list()
         self.iterations = 0
+        end_init_time = time.time()
+        init_time = end_init_time - start_init_time
+        self.metrics['planner_initialization_time'] = init_time - start_walking_times_time - destination_walking_times_time - precomputed_heurisitc_times_time - self.metrics['plan_compute_heurstic_time_total'] - self.metrics['plans_queue_operations_time']
+        self.metrics['find_plans_time_total'] += init_time
 
     # TODO: This methods that will be used every time new route is searched,
     # and thus should be optimized for time perfomance
@@ -181,6 +189,7 @@ class AStarPlanner():
             if not self.plans_queue:
                 raise Exception('no more plans')
 
+            start_plan_accepting_time = time.time()
             # remove fastest known plan yet from queue
             plan_accepted = False
             while not plan_accepted:
@@ -207,6 +216,8 @@ class AStarPlanner():
                 if last_stop_id not in visited_stops:
                     plan_accepted = True
                     visited_stops.add(last_stop_id)
+            end_plan_accepting_time = time.time()
+            self.metrics['plan_accepting_time'] += (end_plan_accepting_time - start_plan_accepting_time)
 
             # make this plan potential subject for terminal
             # (it was the best option so far and if remains so after we consider its
@@ -216,7 +227,10 @@ class AStarPlanner():
             end_time_destinaiton_walking = time.time()
             self.metrics['plan_compute_actual_time_total'] += (end_time_destinaiton_walking - start_time_destinaiton_walking)
             # push it back to the queue
+            start_time_heappush = time.time()
             heapq.heappush(self.plans_queue, fastest_known_plan)
+            end_time_heappush = time.time()
+            self.metrics['plans_queue_operations_time'] += (end_time_heappush-start_time_heappush)
 
             # print(f'visited {fastest_known_plan.current_stop_id}, on {seconds_to_time(fastest_known_plan.current_time)} - time at destination: {seconds_to_time(fastest_known_plan.heuristic_time_at_destination)}, [{fastest_known_plan.arrival_date}]')
 
@@ -247,6 +261,8 @@ class AStarPlanner():
 
             walking_trips_found = 0
 
+            start_extensions_init_time = time.time()
+            extended_plans = []
             ## create extended plans and add them to the queue
             for stop_id, extending_plan_trip in fastest_ways.items():
                 if extending_plan_trip.trip_id == -1:
@@ -262,8 +278,17 @@ class AStarPlanner():
                 extended_plan.compute_heuristic_time_at_destination()
                 end_time_heuristic = time.time()
                 self.metrics['plan_compute_heurstic_time_total'] += (end_time_heuristic - start_time_heuristic)
-                heapq.heappush(self.plans_queue, extended_plan)
+                extended_plans.append(extended_plan)
+            end_extensions_init_time = time.time()
+            
 
+            start_time_heappush = time.time()
+            for plan in extended_plans:
+                heapq.heappush(self.plans_queue, plan)
+            end_time_heappush = time.time()
+          
+            self.metrics['extended_plans_initialization_time'] += (end_extensions_init_time-start_extensions_init_time) - compute_heurstic_time
+            self.metrics['plans_queue_operations_time'] += (end_time_heappush-start_time_heappush)
             if METRICS_SETTINGS['EXPANSIONS']:
                 self.metrics['trasnit_expansions_total'] += len(fastest_ways) - walking_trips_found
                 self.metrics['walking_expansions_total'] += walking_trips_found
