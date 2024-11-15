@@ -68,9 +68,10 @@ class Router:
     self.trips = trips or tdb.get_trips()
     self.transformer = transformer or pyproj.Transformer.from_proj('WGS84', self.md.projection)
 
-  def copy():
+
+  def clone(self):
     return Router(
-      self.tdb.cursor(),
+      self.tdb.clone(),
       self.osrm,
       self.md,
       self.stops,
@@ -78,26 +79,32 @@ class Router:
       self.transformer,
     )
 
-  def find_route(
+
+  async def find_route(
       self,
       start: Coords|int,
       destination: Coords|int,
-      date: datetime.date,
-      time: datetime.time,
+      date_or_services: datetime.date|Services,
+      time: datetime.time|int,
   ) -> Plan:
-    start_time = time.hour * 60*60 + time.minute * 60 + time.second
-    services = self.tdb.get_services(date)
+    if isinstance(time, int):
+      start_time = time
+    else:
+      start_time = time.hour * 60*60 + time.minute * 60 + time.second
 
-    walk_distance, near_start, near_destination = asyncio.run(
-      self.get_walking_distances(start, destination)
-    )
+    if isinstance(date_or_services, Services):
+      services = date_or_services
+    else:
+      services = self.tdb.get_services(date_or_services)
+
+    walk_dst, near_start, near_destination = await self.get_walking_distances(start, destination)
 
     return find_route(
       self.stops,
       self.trips,
       near_start,
       near_destination,
-      walk_distance,
+      walk_dst,
       start_time,
       services,
     )
@@ -421,7 +428,6 @@ class RouterTask:
     Services.class_type.instance_type,
   ),
   nogil = True,
-  cache = True,
 )
 def find_route(
   stops: Stops,

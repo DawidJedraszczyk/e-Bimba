@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
-import contextlib
-import docker # type: ignore
+import docker
 import json
 from pathlib import Path
 import requests
@@ -9,19 +8,16 @@ import sys
 import time
 from typing import Iterable
 
-SCRIPT_FOLDER = Path(__file__).parent
-sys.path.append(str(SCRIPT_FOLDER.parent / "app"))
+sys.path.append(str(Path(__file__).parents[1] / "app"))
+sys.path.append(str(Path(__file__).parent))
 
+from common import *
+from bimba.osrm import *
 from bimba.transitdb import *
 from bimba.unzip import *
 
 
-DATA_FOLDER = SCRIPT_FOLDER.parent / "data" / "main"
-OSRM_FOLDER = DATA_FOLDER / "osrm"
-CITIES_FILE = SCRIPT_FOLDER / "cities.json"
-
-OSRM_IMAGE = "ghcr.io/project-osrm/osrm-backend"
-OSRM_PORT = 53909
+CITIES_FILE = PIPELINE / "cities.json"
 
 
 def download_if_missing(url, path):
@@ -36,43 +32,11 @@ def download_if_missing(url, path):
     file.write(content)
 
 
-@contextlib.contextmanager
-def start_osrm(data: Path):
-  print(f"Starting osrm-routed on port {OSRM_PORT} (data: {data})")
-
-  container = docker.from_env().containers.run(
-    image=OSRM_IMAGE,
-    command=f"osrm-routed --algorithm mld /data/map.osrm",
-    volumes={str(data.absolute()): {"bind": "/data", "mode": "ro"}},
-    ports={"5000/tcp": OSRM_PORT},
-    detach=True,
-    remove=True,
-  )
-
-  try:
-    asyncio.run(osrm_healthcheck())
-    yield
-  finally:
-    print("Stopping osrm-routed")
-    container.stop()
-
-
-async def osrm_healthcheck():
-  osrm = OsrmClient(f"http://localhost:{OSRM_PORT}")
-
-  # Wait for up to 30 seconds, check every 0.25 seconds
-  for _ in range(30 * 4):
-    if await osrm.healthcheck():
-      return
-    else:
-      time.sleep(0.25)
-
-
-def osrm_data(osm_url: str, folder: Path):
-  if (folder / f"map.osrm.mldgr").exists():
+def osrm_data(osm_url: str):
+  if (OSRM_FOLDER / f"map.osrm.mldgr").exists():
     return
 
-  osm_file = folder / "map.osm.pbf"
+  osm_file = OSRM_FOLDER / "map.osm.pbf"
   download_if_missing(osm_url, osm_file)
   dc = docker.from_env()
 
@@ -82,7 +46,7 @@ def osrm_data(osm_url: str, folder: Path):
     dc.containers.run(
       image=OSRM_IMAGE,
       command=cmd,
-      volumes={str(folder.absolute()): {"bind": "/data", "mode": "rw"}},
+      volumes={str(OSRM_FOLDER.absolute()): {"bind": "/data", "mode": "rw"}},
       remove=True,
     )
 
@@ -105,9 +69,9 @@ def prepare_city(city, name):
         unzip(gtfs_zip, folder)
         tdb.import_gtfs(gtfs, folder)
 
-      osrm_data(city["map"], OSRM_FOLDER)
+      osrm_data(city["map"])
 
-      with start_osrm(OSRM_FOLDER):
+      with start_osrm():
         osrm = OsrmClient(f"http://localhost:{OSRM_PORT}")
         asyncio.run(tdb.calculate_stop_walks(osrm))
 

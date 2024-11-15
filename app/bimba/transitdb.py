@@ -41,6 +41,13 @@ class TransitDb(Db):
       self.script("on-load")
 
 
+  def clone(self):
+    c = TransitDb.__new__(TransitDb)
+    c.db = self.db.cursor()
+    c.scripts = self.scripts
+    return c
+
+
   def get_services(self, date: datetime.date) -> Services:
     s = self.sql("select get_service_lists(?)", [date]).scalar()
 
@@ -198,7 +205,11 @@ class TransitDb(Db):
         to_lats = to_stops.field("lat").to_numpy()
         to_lons = to_stops.field("lon").to_numpy()
 
-        distances = await osrm.distance_to_many(from_lat, from_lon, zip(to_lats, to_lons))
+        distances = await osrm.distance_to_many(
+          Coords(from_lat, from_lon),
+          (Coords(lat, lon) for lat, lon in zip(to_lats, to_lons)),
+        )
+
         return from_id, to_ids, distances
 
     for task in [asyncio.create_task(task(row)) for row in inputs]:
