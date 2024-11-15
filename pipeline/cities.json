@@ -15,7 +15,8 @@
   },
   "Warszawa": {
     "gtfs": {
-      "wtp": "https://mkuran.pl/gtfs/warsaw.zip",
+      "ztm": "https://mkuran.pl/gtfs/warsaw.zip",
+      "metro": "https://mkuran.pl/gtfs/warsaw/metro.zip",
       "wkd": "https://mkuran.pl/gtfs/wkd.zip"
     },
     "projection": "EPSG:2180",

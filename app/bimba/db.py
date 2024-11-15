@@ -9,8 +9,11 @@ import pyarrow
 class Result:
   rel: duckdb.DuckDBPyRelation
 
+  def one(self):
+    return self.rel.fetchone()
+
   def scalar(self):
-    return self.rel.fetchone()[0]
+    return self.one()[0]
 
   def arrow(self) -> pyarrow.StructArray:
     return self.rel.arrow().to_struct_array().combine_chunks() # type: ignore

@@ -77,6 +77,10 @@ class Stops:
     self.trips_departures = trips_departures
 
 
+  def count(self) -> int:
+    return len(self.lats)
+
+
   def enumerate(self) -> Iterator[tuple[int, Stop]]:
     for i in range(len(self.lats)):
       yield (i, self[i])

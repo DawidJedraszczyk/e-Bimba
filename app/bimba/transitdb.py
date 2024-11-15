@@ -4,12 +4,14 @@ import datetime
 import duckdb
 import functools
 import numpy as np
+from numpy.typing import NDArray
 import os
 from pathlib import Path
 import pyarrow
 import time
+from typing import Iterable
 
-from .data.common import Services
+from .data.common import Point, Coords, Metadata, Services
 from .data.routes import Routes
 from .data.shapes import Shapes
 from .data.stops import Stops
@@ -39,6 +41,13 @@ class TransitDb(Db):
       self.script("on-load")
 
 
+  def clone(self):
+    c = TransitDb.__new__(TransitDb)
+    c.db = self.db.cursor()
+    c.scripts = self.scripts
+    return c
+
+
   def get_services(self, date: datetime.date) -> Services:
     s = self.sql("select get_service_lists(?)", [date]).scalar()
 
@@ -49,8 +58,14 @@ class TransitDb(Db):
     )
 
 
-  def nearest_stops(self, lat: float, lon: float) -> pyarrow.StructArray:
-    return self.script("get-nearest-stops", {"lat":lat, "lon":lon}).arrow()
+  def nearest_stops(self, position: Point) -> NDArray:
+    params = {"x": position.x, "y": position.y}
+    return self.script("get-nearest-stops", params).np()["id"]
+
+
+  def get_metadata(self) -> Metadata:
+    name, proj, center = self.sql("select * from metadata").one()
+    return Metadata(name, proj, Point(center["x"], center["y"]))
 
 
   def get_routes(self) -> Routes:
@@ -146,8 +161,9 @@ class TransitDb(Db):
     self.script("init")
 
 
-  def import_gtfs(self, gtfs_folder: Path):
-    print(f"Importing GTFS from '{gtfs_folder}'")
+  def import_gtfs(self, source_name: str, gtfs_folder: Path):
+    print(f"Importing GTFS '{source_name}' from '{gtfs_folder}'")
+    self.set_variable('SOURCE_NAME', source_name)
     self.set_variable('GTFS_FOLDER', str(gtfs_folder))
 
     t0 = time.time()
@@ -189,7 +205,11 @@ class TransitDb(Db):
         to_lats = to_stops.field("lat").to_numpy()
         to_lons = to_stops.field("lon").to_numpy()
 
-        distances = await osrm.distance_to_many(from_lat, from_lon, zip(to_lats, to_lons))
+        distances = await osrm.distance_to_many(
+          Coords(from_lat, from_lon),
+          (Coords(lat, lon) for lat, lon in zip(to_lats, to_lons)),
+        )
+
         return from_id, to_ids, distances
 
     for task in [asyncio.create_task(task(row)) for row in inputs]:

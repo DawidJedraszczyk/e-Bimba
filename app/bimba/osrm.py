@@ -5,6 +5,8 @@ import numpy as np
 from numpy.typing import NDArray
 from typing import Iterable
 
+from .data.common import Coords
+
 
 class OsrmClient:
   base_url: str
@@ -16,16 +18,15 @@ class OsrmClient:
 
 
   async def distance_to_many(
-      self,
-      from_lat: float,
-      from_lon: float,
-      to_pts: Iterable[tuple[float, float]],
-    ) -> NDArray:
+    self,
+    a: Coords,
+    bs: Iterable[Coords],
+  ) -> NDArray:
     def coords_parts():
-      yield f"{from_lon},{from_lat}"
+      yield f"{a.lon},{a.lat}"
 
-      for lat, lon in to_pts:
-        yield f";{lon},{lat}"
+      for b in bs:
+        yield f";{b.lon},{b.lat}"
 
     params = {"annotations": "distance", "sources": "0"}
 
