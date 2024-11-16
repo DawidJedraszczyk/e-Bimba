@@ -59,7 +59,7 @@ class TransitDb(Db):
 
 
   def nearest_stops(self, position: Point) -> NDArray:
-    params = {"x": position.x, "y": position.y}
+    params = {"x": float(position.x), "y": float(position.y)}
     return self.script("get-nearest-stops", params).np()["id"]
 
 

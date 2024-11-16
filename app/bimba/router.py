@@ -33,12 +33,14 @@ class Plan(NamedTuple):
 
 
 class NearStops(NamedTuple):
+  position: Point
   ids: NDArray
   distances: NDArray
 
   @staticmethod
-  def single(id: int):
+  def single(pos: Point, id: int):
     return NearStops(
+      pos,
       np.array([id], dtype=np.int32),
       np.array([0.0], dtype=np.float32),
     )
@@ -112,7 +114,7 @@ class Router:
 
   def project(self, c: Coords) -> Point:
     x, y = self.transformer.transform(c.lat, c.lon)
-    return Point(x - self.md.center.x, y - self.md.center.y)
+    return Point(nb.float32(x - self.md.center.x), nb.float32(y - self.md.center.y))
 
 
   async def get_walking_distances(self, start, destination):
@@ -120,21 +122,24 @@ class Router:
       start_coords = start
       near_start = None
     else:
-      start_coords = self.stops[start].coords
-      near_start = NearStops.single(start)
+      s = self.stops[start]
+      start_coords = s.coords
+      near_start = NearStops.single(s.position, start)
 
     if isinstance(destination, Coords):
       destination_coords = destination
       near_destination = None
     else:
-      destination_coords = self.stops[destination].coords
-      near_destination = NearStops.single(destination)
+      s = self.stops[destination]
+      destination_coords = s.coords
+      near_destination = NearStops.single(s.position, destination)
 
     walk_distance = None
     coroutines = []
 
     if near_start is None:
-      ns_ids = self.tdb.nearest_stops(self.project(start_coords))
+      pos = self.project(start_coords)
+      ns_ids = self.tdb.nearest_stops(pos)
 
       async def get_near_start():
         nonlocal near_start, walk_distance
@@ -144,13 +149,14 @@ class Router:
           chain((self.stops[id].coords for id in ns_ids), (destination_coords,)),
         )
 
-        near_start = NearStops(ns_ids, distances[:-1])
+        near_start = NearStops(pos, ns_ids, distances[:-1])
         walk_distance = distances[-1]
 
       coroutines.append(get_near_start())
 
     if near_destination is None:
-      nd_ids = self.tdb.nearest_stops(self.project(destination_coords))
+      pos = self.project(destination_coords)
+      nd_ids = self.tdb.nearest_stops(pos)
 
       async def get_near_destination(and_walk_distance: bool):
         nonlocal near_destination, walk_distance
@@ -160,13 +166,13 @@ class Router:
           to_coords.append(start_coords)
 
         distances = await self.osrm.distance_to_many(destination_coords, to_coords)
-        near_destination = NearStops(nd_ids, distances[:len(nd_ids)])
+        near_destination = NearStops(pos, nd_ids, distances[:len(nd_ids)])
 
         if and_walk_distance:
           walk_distance = distances[-1]
 
       coroutines.append(get_near_destination(near_start is not None))
-    
+
     if near_start is not None and near_destination is not None:
       async def get_walk_distance():
         nonlocal walk_distance
@@ -179,7 +185,8 @@ class Router:
     return walk_distance, near_start, near_destination
 
 
-_NB_NEAR_STOPS_TYPE = nbt.NamedTuple([nb.int32[::1], nb.float32[::1]], NearStops)
+_NB_POINT_TYPE = nbt.NamedUniTuple(nb.float32, 2, Point)
+_NB_NEAR_STOPS_TYPE = nbt.NamedTuple([_NB_POINT_TYPE, nb.int32[::1], nb.float32[::1]], NearStops)
 _NB_PATH_SEGMENT_TYPE = nbt.NamedUniTuple(nb.int32, 3, PathSegment)
 _NB_PLAN_TYPE = nbt.NamedTuple([nb.int32, nbt.ListType(_NB_PATH_SEGMENT_TYPE), nb.int32], Plan)
 
@@ -191,11 +198,9 @@ def empty_segment():
 @jitclass([
   ("stop_id", nb.int32),
   ("estimate", nb.int32),
+  ("walk_time", nb.int32),
   ("arrival", nb.int32),
-  ("destination_arrival", nb.int32),
-  ("walk_distance", nb.int32), # to destination, -1 if too far
   ("path_tail", _NB_PATH_SEGMENT_TYPE),
-  ("trip_count", nb.int32),
   ("is_candidate", nb.boolean),
 ])
 class Node:
@@ -203,19 +208,17 @@ class Node:
     self,
     stop_id: int,
     estimate: int,
-    walk_distance: int,
+    walk_time: int,
   ):
     self.stop_id = stop_id
     self.estimate = estimate
+    self.walk_time = walk_time
     self.arrival = INF_TIME
-    self.destination_arrival = INF_TIME
-    self.walk_distance = walk_distance
     self.path_tail = empty_segment()
-    self.trip_count = 0
     self.is_candidate = False
 
   def __lt__(self, other):
-    return self.destination_arrival < other.destination_arrival
+    return self.arrival + self.estimate < other.arrival + other.estimate
 
 
 _NB_NODE_TYPE = Node.class_type.instance_type
@@ -224,7 +227,7 @@ _NB_NODE_TYPE = Node.class_type.instance_type
   ("stops", Stops.class_type.instance_type),
   ("trips", Trips.class_type.instance_type),
   ("services", Services.class_type.instance_type),
-  ("to_stops", _NB_NEAR_STOPS_TYPE),
+  ("near_destination", _NB_NEAR_STOPS_TYPE),
 
   ("arrival", nb.int32),
   ("path_tail", _NB_PATH_SEGMENT_TYPE),
@@ -252,7 +255,7 @@ class RouterTask:
     self.stops = stops
     self.trips = trips
     self.services = services
-    self.to_stops = near_destination
+    self.near_destination = near_destination
 
     self.improved = False
     self.arrival = start_time + int(walk_distance / WALK_SPEED)
@@ -266,13 +269,12 @@ class RouterTask:
     self.iteration = 0
 
     for id, dst in zip(near_destination.ids, near_destination.distances):
-      self.nodes[id] = Node(id, int(dst / WALK_SPEED), int(dst))
+      walk_time = int(dst / WALK_SPEED)
+      self.nodes[id] = Node(id, walk_time, walk_time)
 
     for id, dst in zip(near_start.ids, near_start.distances):
       n = self.get_node(id)
-      arrival = start_time + int(dst / WALK_SPEED)
-      n.arrival = arrival
-      n.destination_arrival = arrival + n.estimate
+      n.arrival = start_time + int(dst / WALK_SPEED)
       n.path_tail = PathSegment(nb.int32(-1), nb.int32(-1), nb.int32(dst))
       n.is_candidate = True
       self.candidates.append(n)
@@ -284,7 +286,7 @@ class RouterTask:
     node = self.nodes.get(stop_id, None)
 
     if node is None:
-      node = Node(stop_id, self.estimate(stop_id), -1)
+      node = Node(stop_id, self.estimate(stop_id), self.estimate_walk_time(stop_id))
       self.nodes[stop_id] = node
 
     return node
@@ -294,7 +296,7 @@ class RouterTask:
     pos = self.stops[stop_id].position
     result = INF_TIME
 
-    for target_id, target_walk in zip(self.to_stops.ids, self.to_stops.distances):
+    for target_id, target_walk in zip(self.near_destination.ids, self.near_destination.distances):
       target_pos = self.stops[target_id].position
       distance = math.sqrt((pos.x - target_pos.x)**2 + (pos.y - target_pos.y)**2)
       result = min(result, int(distance / TRAM_SPEED + target_walk / WALK_SPEED))
@@ -302,15 +304,18 @@ class RouterTask:
     return result
 
 
-  def update_node(self, node: Node, arrival: int, came_from: Node, trip_id: int, details: int):
-    destination_arrival = arrival + node.estimate
+  def estimate_walk_time(self, stop_id) -> int:
+    a = self.stops[stop_id].position
+    b = self.near_destination.position
+    t = np.sqrt((a.x - b.x)**2 + (a.y - b.y)**2) * WALK_DISTANCE_MULTIPLIER / WALK_SPEED
+    return nb.int32(t)
 
-    if destination_arrival >= self.arrival:
+
+  def update_node(self, node: Node, arrival: int, came_from: Node, trip_id: int, details: int):
+    if arrival + node.estimate >= self.arrival:
       return
 
     node.arrival = arrival
-    node.destination_arrival = destination_arrival
-    node.trip_count = came_from.trip_count + (trip_id != -1)
     node.path_tail = PathSegment(came_from.stop_id, nb.int32(trip_id), nb.int32(details))
 
     if node.is_candidate:
@@ -320,11 +325,10 @@ class RouterTask:
 
     node.is_candidate = True
 
-    # Earlier arrival check ensures this solution is better than the last one
-    if node.walk_distance != -1:
+    if arrival + node.walk_time < self.arrival:
       self.improved = True
-      self.arrival = destination_arrival
-      self.path_tail = PathSegment(node.stop_id, nb.int32(-1), nb.int32(node.walk_distance))
+      self.arrival = arrival + node.walk_time
+      self.path_tail = PathSegment(node.stop_id, nb.int32(-1), nb.int32(node.walk_time*WALK_SPEED))
 
 
   def solve(self) -> Plan:
@@ -333,7 +337,7 @@ class RouterTask:
       candidate = heapq.heappop(self.candidates)
       self.any_improved = False
 
-      if candidate.destination_arrival >= self.arrival:
+      if candidate.arrival + candidate.estimate >= self.arrival:
         break
 
       for stop_walk in self.stops.get_stop_walks(candidate.stop_id):
@@ -347,7 +351,7 @@ class RouterTask:
       for trip_id, stop_seq, departure in self.stops.get_stop_trips(candidate.stop_id):
         time = candidate.arrival - departure
 
-        if candidate.trip_count > 0:
+        if candidate.path_tail.from_stop != -1:
           time += TRANSFER_TIME
 
         start_time = self.trips.get_next_start(trip_id, self.services, time)
@@ -381,13 +385,13 @@ class RouterTask:
         self.candidates = nb.typed.List.empty_list(_NB_NODE_TYPE)
 
         for c in old:
-          if c.destination_arrival < self.arrival:
+          if c.arrival + c.estimate < self.arrival:
             self.candidates.append(c)
           else:
             c.is_candidate = False
 
         for c in self.new_candidates:
-          if c.destination_arrival < self.arrival:
+          if c.arrival + c.estimate < self.arrival:
             self.candidates.append(c)
           else:
             c.is_candidate = False
