@@ -1,20 +1,17 @@
 import asyncio
-import cProfile
-from dataclasses import dataclass
 import datetime
-import heapq
 from itertools import chain
 import math
-import numba as nb # type: ignore
-from numba.experimental import jitclass # type: ignore
+import numba as nb
+from numba.experimental import jitclass
 import numba.types as nbt
 import pyproj
-import time as timer
-from typing import NamedTuple, Optional, Union
+from typing import NamedTuple
 
 from .data.misc import *
 from .data.stops import Stops
 from .data.trips import Trips
+from .heapq import *
 from .osrm import *
 from .params import *
 from .transitdb import *
@@ -196,10 +193,11 @@ def empty_segment():
 
 
 @jitclass([
-  ("stop_id", nb.int32),
-  ("estimate", nb.int32),
-  ("walk_time", nb.int32),
   ("arrival", nb.int32),
+  ("estimate", nb.int32),
+  ("heap_pos", nb.int32),
+  ("stop_id", nb.int32),
+  ("walk_time", nb.int32),
   ("path_tail", _NB_PATH_SEGMENT_TYPE),
 ])
 class Node:
@@ -209,34 +207,17 @@ class Node:
     estimate: int,
     walk_time: int,
   ):
-    self.stop_id = stop_id
-    self.estimate = estimate
-    self.walk_time = walk_time
     self.arrival = INF_TIME
+    self.estimate = estimate
+    self.heap_pos = -1
+    self.stop_id = stop_id
+    self.walk_time = walk_time
     self.path_tail = empty_segment()
 
   def __lt__(self, other):
     return self.arrival + self.estimate < other.arrival + other.estimate
 
-  def __ne__(self, other):
-    return self.arrival + self.estimate != other.arrival + other.estimate
-
 _NB_NODE_TYPE = Node.class_type.instance_type
-
-
-@jitclass([
-  ("score", nb.int32),
-  ("node", _NB_NODE_TYPE),
-])
-class QueueEntry:
-  def __init__(self, node):
-    self.score = node.arrival + node.estimate
-    self.node = node
-  
-  def __lt__(self, other):
-    return self.score < other.score
-
-_NB_QUEUE_ENTRY_TYPE = QueueEntry.class_type.instance_type
 
 
 @jitclass([
@@ -250,7 +231,7 @@ _NB_QUEUE_ENTRY_TYPE = QueueEntry.class_type.instance_type
   ("path_tail", _NB_PATH_SEGMENT_TYPE),
 
   ("nodes", nbt.DictType(nb.int32, _NB_NODE_TYPE)),
-  ("queue", nbt.ListType(_NB_QUEUE_ENTRY_TYPE)),
+  ("queue", nbt.ListType(_NB_NODE_TYPE)),
 ])
 class RouterTask:
   def __init__(
@@ -273,7 +254,7 @@ class RouterTask:
     self.path_tail = PathSegment(nb.int32(-1), nb.int32(-1), nb.int32(walk_distance))
 
     self.nodes = nb.typed.Dict.empty(nb.int32, _NB_NODE_TYPE)
-    self.queue = nb.typed.List.empty_list(_NB_QUEUE_ENTRY_TYPE)
+    self.queue = nb.typed.List.empty_list(_NB_NODE_TYPE)
 
     for id, dst in zip(near_destination.ids, near_destination.distances):
       walk_time = int(dst / WALK_SPEED)
@@ -283,9 +264,9 @@ class RouterTask:
       n = self.get_node(id)
       n.arrival = start_time + int(dst / WALK_SPEED)
       n.path_tail = PathSegment(nb.int32(-1), nb.int32(-1), nb.int32(dst))
-      self.queue.append(QueueEntry(n))
+      self.queue.append(n)
 
-    heapq.heapify(self.queue)
+    heapify(self.queue)
 
 
   def get_node(self, stop_id: int) -> Node:
@@ -323,7 +304,7 @@ class RouterTask:
 
     node.arrival = arrival
     node.path_tail = PathSegment(came_from.stop_id, nb.int32(trip_id), nb.int32(details))
-    heapq.heappush(self.queue, QueueEntry(node))
+    heappush(self.queue, node)
 
     if arrival + node.walk_time < self.arrival:
       self.arrival = arrival + node.walk_time
@@ -332,11 +313,7 @@ class RouterTask:
 
   def solve(self) -> Plan:
     while len(self.queue) > 0:
-      entry = heapq.heappop(self.queue)
-      from_node = entry.node
-
-      if entry.score != from_node.arrival + from_node.estimate:
-        continue
+      from_node = heappop(self.queue)
 
       if from_node.arrival + from_node.estimate >= self.arrival:
         break
