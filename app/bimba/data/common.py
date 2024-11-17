@@ -8,6 +8,10 @@ DAY = 24*60*60
 INF_TIME = 0x1FFFFFFF
 
 
+class Point(NamedTuple):
+  x: float
+  y: float
+
 class Coords(NamedTuple):
   lat: float
   lon: float
@@ -15,6 +19,11 @@ class Coords(NamedTuple):
 class Range(NamedTuple):
   beg: int
   end: int
+
+class Metadata(NamedTuple):
+  name: str
+  projection: str
+  center: Point
 
 
 @jitclass([

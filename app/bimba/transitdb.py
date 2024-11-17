@@ -4,12 +4,14 @@ import datetime
 import duckdb
 import functools
 import numpy as np
+from numpy.typing import NDArray
 import os
 from pathlib import Path
 import pyarrow
 import time
+from typing import Iterable
 
-from .data.common import Services
+from .data.common import Point, Coords, Metadata, Services
 from .data.routes import Routes
 from .data.shapes import Shapes
 from .data.stops import Stops
@@ -27,14 +29,23 @@ class TransitDb(Db):
     "frequencies.txt",
   ]
 
-  def __init__(self, path: Path):
+  def __init__(self, path: Path, run_on_load: bool = True):
     scripts = Path(__file__).parent / "sql"
     variables = {
       "MAX_STOP_WALK": WALKING_SETTINGS["TIME_WITHIN_WALKING"] * WALKING_SETTINGS["PACE"]
     }
 
     super().__init__(path, scripts, variables)
-    self.db.sql("install spatial; load spatial")
+
+    if run_on_load:
+      self.script("on-load")
+
+
+  def clone(self):
+    c = TransitDb.__new__(TransitDb)
+    c.db = self.db.cursor()
+    c.scripts = self.scripts
+    return c
 
 
   def get_services(self, date: datetime.date) -> Services:
@@ -47,8 +58,14 @@ class TransitDb(Db):
     )
 
 
-  def nearest_stops(self, lat: float, lon: float) -> pyarrow.StructArray:
-    return self.script("get-nearest-stops", {"lat":lat, "lon":lon}).arrow()
+  def nearest_stops(self, position: Point) -> NDArray:
+    params = {"x": position.x, "y": position.y}
+    return self.script("get-nearest-stops", params).np()["id"]
+
+
+  def get_metadata(self) -> Metadata:
+    name, proj, center = self.sql("select * from metadata").one()
+    return Metadata(name, proj, Point(center["x"], center["y"]))
 
 
   def get_routes(self) -> Routes:
@@ -81,8 +98,9 @@ class TransitDb(Db):
 
   def get_stops(self) -> Stops:
     a = self.sql("select * from stop order by id").arrow()
-    ids, codes, names, zones, coords, walks, trips = a.flatten()
+    ids, codes, names, zones, coords, positions, walks, trips = a.flatten()
     lats, lons = coords.flatten()
+    xs, ys = positions.flatten()
     walks_off = walks.offsets
     walks_stop_ids, walks_distances = walks.values.flatten()
     trips_off = trips.offsets
@@ -95,6 +113,8 @@ class TransitDb(Db):
       zones.tolist(),
       lats.to_numpy(),
       lons.to_numpy(),
+      xs.to_numpy(),
+      ys.to_numpy(),
       walks_off.to_numpy(),
       walks_stop_ids.to_numpy(),
       walks_distances.to_numpy(),
@@ -141,8 +161,9 @@ class TransitDb(Db):
     self.script("init")
 
 
-  def import_gtfs(self, gtfs_folder: Path):
-    print(f"Importing GTFS from '{gtfs_folder}'")
+  def import_gtfs(self, source_name: str, gtfs_folder: Path):
+    print(f"Importing GTFS '{source_name}' from '{gtfs_folder}'")
+    self.set_variable('SOURCE_NAME', source_name)
     self.set_variable('GTFS_FOLDER', str(gtfs_folder))
 
     t0 = time.time()
@@ -164,7 +185,7 @@ class TransitDb(Db):
     self.script("gtfs/clean-up")
 
     t3 = time.time()
-    print(f"Time: {_t(t2, t0)}"
+    print(f"Time: {_t(t2, t0)} "
       f"(parsing: {_t(t1, t0)}, processing: {_t(t2, t1)}, inserting: {_t(t3, t2)})")
 
 
@@ -184,7 +205,11 @@ class TransitDb(Db):
         to_lats = to_stops.field("lat").to_numpy()
         to_lons = to_stops.field("lon").to_numpy()
 
-        distances = await osrm.distance_to_many(from_lat, from_lon, zip(to_lats, to_lons))
+        distances = await osrm.distance_to_many(
+          Coords(from_lat, from_lon),
+          (Coords(lat, lon) for lat, lon in zip(to_lats, to_lons)),
+        )
+
         return from_id, to_ids, distances
 
     for task in [asyncio.create_task(task(row)) for row in inputs]:

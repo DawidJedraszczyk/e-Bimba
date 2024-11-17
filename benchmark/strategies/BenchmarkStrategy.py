@@ -1,10 +1,17 @@
 from abc import abstractmethod
 from datetime import datetime
-from time import time
 import os
+from time import time
+from typing import NamedTuple
 
 from algorithm_parts.utils import time_to_seconds, seconds_to_time, custom_print, plans_to_string
 from algorithm_parts.AstarPlanner import AStarPlanner
+
+
+class PlannerResult(NamedTuple):
+    found_plans: list
+    metrics: dict
+
 
 class BenchmarkStrategy():
     benchmark_type = None
@@ -43,7 +50,7 @@ class BenchmarkStrategy():
                 total_time += time()-t0
 
             self.total_times.append(total_time)
-            self.planners.append(planner)
+            self.planners.append(PlannerResult(planner.found_plans, planner.metrics))
 
     def print_found_routes(self):
         for i, route in enumerate(self.sample_routes):
@@ -68,11 +75,10 @@ class BenchmarkStrategy():
     
     def get_csv_filename(self):
         current_time = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-        directory = f"benchmark_results/{current_time}"
+        directory = os.path.join("benchmark_results", current_time)
         os.makedirs(directory, exist_ok=True)
-        filename = os.path.join(directory, f"{self.benchmark_type}_results{current_time}.csv")
+        filename = os.path.join(directory, f"{self.benchmark_type}_results_{current_time}.csv")
         return filename
-    
     # There are different types of benchmark, but some metrics are common for all of them
     # and here they are computed and returned as dictionary
     def get_common_metrics_csv_row_dict(self, route, route_index, algorithm_metrics_dict):

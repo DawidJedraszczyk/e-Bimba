@@ -54,6 +54,7 @@ class BaseView(TemplateView):
 
 
 class FindRouteView(View):
+
     def post(self, request, *args, **kwargs):
         city = request.POST.get('city')
         print(city)

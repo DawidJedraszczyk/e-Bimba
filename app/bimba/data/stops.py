@@ -11,6 +11,7 @@ class Stop(NamedTuple):
   name: str
   zone: Optional[str]
   coords: Coords
+  position: Point
   walks: Range
   trips: Range
 
@@ -32,6 +33,8 @@ class StopTrip(NamedTuple):
   ("zones", nbt.List(nbt.string)),
   ("lats", nb.float32[:]),
   ("lons", nb.float32[:]),
+  ("xs", nb.float32[:]),
+  ("ys", nb.float32[:]),
   ("walks_off", nb.int32[:]),
   ("walks_stop_ids", nb.int32[:]),
   ("walks_distances", nb.int16[:]),
@@ -48,6 +51,8 @@ class Stops:
     zones,
     lats,
     lons,
+    xs,
+    ys,
     walks_off,
     walks_stop_ids,
     walks_distances,
@@ -61,6 +66,8 @@ class Stops:
     self.zones = zones
     self.lats = lats
     self.lons = lons
+    self.xs = xs
+    self.ys = ys
     self.walks_off = walks_off
     self.walks_stop_ids = walks_stop_ids
     self.walks_distances = walks_distances
@@ -68,6 +75,10 @@ class Stops:
     self.trips_ids = trips_ids
     self.trips_seqs = trips_seqs
     self.trips_departures = trips_departures
+
+
+  def count(self) -> int:
+    return len(self.lats)
 
 
   def enumerate(self) -> Iterator[tuple[int, Stop]]:
@@ -81,6 +92,7 @@ class Stops:
       self.names[id],
       self.zones[id],
       Coords(self.lats[id], self.lons[id]),
+      Point(self.xs[id], self.ys[id]),
       Range(self.walks_off[id], self.walks_off[id+1]),
       Range(self.trips_off[id], self.trips_off[id+1]),
     )

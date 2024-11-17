@@ -38,8 +38,6 @@ class AStarPlanner():
         self.plans_queue = []
         self.found_plans = list()
         self.iterations = 0
-        end_init_time = time.time()
-        init_time = end_init_time - start_init_time
         self.metrics = {
             'iterations': 0, #i
             'unique_stops_visited': 0, #i
@@ -51,10 +49,13 @@ class AStarPlanner():
             'plan_compute_heurstic_time_total': 0, #i
             'plan_compute_actual_time_total': 0, #i
             'find_plans_time_total': 0, #i
-            'planner_initialization_time': init_time, #i
+            'planner_initialization_time': 0, #i
             'start_walking_times_time': start_walking_times_time,
             'destination_walking_times_time' : destination_walking_times_time,
             'precomputed_heurisitc_times_time': precomputed_heurisitc_times_time,
+            'plans_queue_operations_time': 0,
+            'plan_accepting_time': 0,
+            'extended_plans_initialization_time': 0,
         }
         for stop_id in self.start_within_walking.keys():
             plan = Plan(
@@ -67,9 +68,18 @@ class AStarPlanner():
             plan.compute_heuristic_time_at_destination()
             end_time_heuristic = time.time()
             self.metrics['plan_compute_heurstic_time_total'] += (end_time_heuristic - start_time_heuristic)
+            start_time_heappush = time.time()
             heapq.heappush(self.plans_queue, plan)
+            end_time_heappush = time.time()
+            self.metrics['plans_queue_operations_time'] += (end_time_heappush-start_time_heappush)
         self.found_plans = list()
+        self.visited_stops = {}
+        self.discovered_stops = {}
         self.iterations = 0
+        end_init_time = time.time()
+        init_time = end_init_time - start_init_time
+        self.metrics['planner_initialization_time'] = init_time - start_walking_times_time - destination_walking_times_time - precomputed_heurisitc_times_time - self.metrics['plan_compute_heurstic_time_total'] - self.metrics['plans_queue_operations_time']
+        self.metrics['find_plans_time_total'] += init_time
 
     # TODO: This methods that will be used every time new route is searched,
     # and thus should be optimized for time perfomance
@@ -107,6 +117,18 @@ class AStarPlanner():
             for stop_id, walking_time in self.start_walking_times.items()
             if walking_time <= WALKING_SETTINGS['TIME_WITHIN_WALKING']
         }
+
+        if len(start_within_walking) < 5:
+            all_stops = [
+                (walking_time, stop_id)
+                for stop_id, walking_time in self.start_walking_times.items()
+            ]
+
+            all_stops.sort()
+
+            for walking_time, stop_id in all_stops[:5]:
+                start_within_walking[stop_id] = walking_time
+
         custom_print(f'(start_within_walking - {time.time() - t0:.4f}s)', 'ALGORITHM_PREPROCESSING_TIMES')
         return start_within_walking
 
@@ -143,7 +165,7 @@ class AStarPlanner():
                 stop_id: haversine(
                     (stop.coords.lat, stop.coords.lon), self.DESTINATION,
                     unit=Unit.METERS
-                ) / WALKING_SETTINGS['PACE'] + HEURISTIC_SETTINGS['ALWAYS_WALKING_TIME_CONSTANT']
+                ) / HEURISTIC_SETTINGS['MAX_SPEED']
                 for stop_id, stop in self.data.stops.enumerate()
             }
         elif self.distance_metric == 'manhattan':
@@ -151,7 +173,7 @@ class AStarPlanner():
                 stop_id: manhattan_distance(
                     stop.coords.lat, stop.coords.lon,
                     self.DESTINATION[0], self.DESTINATION[1]
-                ) / HEURISTIC_SETTINGS['MAX_SPEED'] + HEURISTIC_SETTINGS['ALWAYS_WALKING_TIME_CONSTANT']
+                ) / HEURISTIC_SETTINGS['MAX_SPEED']
                 for stop_id, stop in self.data.stops.enumerate()
             }
         else:
@@ -162,13 +184,13 @@ class AStarPlanner():
     # Mere algorithm
     def find_next_plan(self):
         start_time_find_next_plan = time.time()
-        visited_stops = set()
         while len(self.plans_queue) != 0:
             self.iterations += 1
 
             if not self.plans_queue:
                 raise Exception('no more plans')
 
+            start_plan_accepting_time = time.time()
             # remove fastest known plan yet from queue
             plan_accepted = False
             while not plan_accepted:
@@ -180,7 +202,7 @@ class AStarPlanner():
                     self.found_plans.append(fastest_known_plan)
                     custom_print(self.iterations, 'ALGORITHM_ITERATIONS')
                     self.metrics['iterations'] = self.iterations
-                    self.metrics['unique_stops_visited'] = len(visited_stops)
+                    self.metrics['unique_stops_visited'] = len(self.visited_stops)
                     end_time_find_next_plan = time.time()
                     time_find_next_plan = end_time_find_next_plan - start_time_find_next_plan
                     self.metrics['find_plans_time_total'] += time_find_next_plan
@@ -192,9 +214,11 @@ class AStarPlanner():
                 # TODO: WARNING - this should to be tested, Most certainly it is wrong for neural network heuristic
                 # there may be more effecitive way to the node.
                 # The plan should be rejected, only if if it gets to visited stop in longer time
-                if last_stop_id not in visited_stops:
+                if last_stop_id not in self.visited_stops.keys() or self.visited_stops[last_stop_id] > fastest_known_plan.current_time:
                     plan_accepted = True
-                    visited_stops.add(last_stop_id)
+                    self.visited_stops[last_stop_id] = fastest_known_plan.current_time
+            end_plan_accepting_time = time.time()
+            self.metrics['plan_accepting_time'] += (end_plan_accepting_time - start_plan_accepting_time)
 
             # make this plan potential subject for terminal
             # (it was the best option so far and if remains so after we consider its
@@ -204,13 +228,22 @@ class AStarPlanner():
             end_time_destinaiton_walking = time.time()
             self.metrics['plan_compute_actual_time_total'] += (end_time_destinaiton_walking - start_time_destinaiton_walking)
             # push it back to the queue
+            start_time_heappush = time.time()
             heapq.heappush(self.plans_queue, fastest_known_plan)
+            end_time_heappush = time.time()
+            self.metrics['plans_queue_operations_time'] += (end_time_heappush-start_time_heappush)
 
             # print(f'visited {fastest_known_plan.current_stop_id}, on {seconds_to_time(fastest_known_plan.current_time)} - time at destination: {seconds_to_time(fastest_known_plan.heuristic_time_at_destination)}, [{fastest_known_plan.arrival_date}]')
 
             # try extending queue with fastest ways to all reachable stops
             # from stop we're currently at after following fastest known plan yet
             start_time_get_trips = time.time()
+
+            transfer_time = self.waiting_time_constant
+
+            if not fastest_known_plan.plan_trips:
+                # Don't add transfer time before first trip
+                transfer_time = 0
 
             fastest_ways = get_next_trips(
                 stops = self.data.stops,
@@ -220,9 +253,8 @@ class AStarPlanner():
                 time = fastest_known_plan.current_time,
                 used_trips = fastest_known_plan.used_trips,
                 visited_stops = fastest_known_plan.used_stops,
-                transfer_time = self.waiting_time_constant,
+                transfer_time = transfer_time,
                 pace = WALKING_SETTINGS["PACE"],
-                walk_time_constant = HEURISTIC_SETTINGS['ALWAYS_WALKING_TIME_CONSTANT'],
             )
 
             end_time_get_trips = time.time()
@@ -230,22 +262,37 @@ class AStarPlanner():
 
             walking_trips_found = 0
 
+            start_extensions_init_time = time.time()
+            extended_plans = []
+            compute_heurstic_time = 0
             ## create extended plans and add them to the queue
             for stop_id, extending_plan_trip in fastest_ways.items():
                 if extending_plan_trip.trip_id == -1:
                     walking_trips_found += 1
+                if stop_id not in self.discovered_stops.keys() or self.discovered_stops[stop_id] >= extending_plan_trip.arrival_time:
+                    self.discovered_stops[stop_id] = extending_plan_trip.arrival_time
+                    extended_plan = Plan(self.start_walking_times,
+                                        self.destination_walking_times,
+                                        self.heuristic_times,
+                                        fastest_known_plan.start_time,
+                                        plan_trips=fastest_known_plan.plan_trips + [extending_plan_trip],
+                                        prev_inconvenience=fastest_known_plan.inconvenience)
+                    start_time_heuristic = time.time()
+                    extended_plan.compute_heuristic_time_at_destination()
+                    end_time_heuristic = time.time()
+                    compute_heurstic_time += (end_time_heuristic - start_time_heuristic)
+                    extended_plans.append(extended_plan)
+            end_extensions_init_time = time.time()
+            
 
-                extended_plan = Plan(self.start_walking_times,
-                                     self.destination_walking_times,
-                                     self.heuristic_times,
-                                     fastest_known_plan.start_time,
-                                     plan_trips=fastest_known_plan.plan_trips + [extending_plan_trip])
-                start_time_heuristic = time.time()
-                extended_plan.compute_heuristic_time_at_destination()
-                end_time_heuristic = time.time()
-                self.metrics['plan_compute_heurstic_time_total'] += (end_time_heuristic - start_time_heuristic)
-                heapq.heappush(self.plans_queue, extended_plan)
+            start_time_heappush = time.time()
+            for plan in extended_plans:
+                heapq.heappush(self.plans_queue, plan)
+            end_time_heappush = time.time()
 
+            self.metrics['plan_compute_heurstic_time_total'] += compute_heurstic_time
+            self.metrics['extended_plans_initialization_time'] += (end_extensions_init_time-start_extensions_init_time) - compute_heurstic_time
+            self.metrics['plans_queue_operations_time'] += (end_time_heappush-start_time_heappush)
             if METRICS_SETTINGS['EXPANSIONS']:
                 self.metrics['trasnit_expansions_total'] += len(fastest_ways) - walking_trips_found
                 self.metrics['walking_expansions_total'] += walking_trips_found
@@ -401,7 +448,6 @@ _COMPILATION_T0 = time.time()
         nbt.Set(nb.int64, True),
         nb.int64,
         nb.float64,
-        nb.int64,
     ),
 )
 def get_next_trips(
@@ -414,7 +460,6 @@ def get_next_trips(
     visited_stops: set,
     transfer_time: int,
     pace: float,
-    walk_time_constant: int,
 ) -> dict[int, PlanTrip]:
     fastest_ways = nb.typed.Dict.empty(nb.int32, _NB_PLAN_TRIP_TYPE)
     from_stop = nb.int32(from_stop)
@@ -424,7 +469,7 @@ def get_next_trips(
         if to_stop in visited_stops:
             continue
 
-        time_at_stop = time + nb.int32(distance / pace) + walk_time_constant
+        time_at_stop = time + nb.int32(distance / pace)
 
         fastest_ways[to_stop] = PlanTrip(
             trip_id = nb.int32(-1),
@@ -442,9 +487,6 @@ def get_next_trips(
         start_time = trips.get_next_start(trip_id, services, min_start)
 
         if start_time == INF_TIME:
-            continue
-
-        if start_time + stop_departure - time > 900:
             continue
 
         for to_stop, stop_arrival, _ in trips.get_stops_after(trip_id, from_seq):

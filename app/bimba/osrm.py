@@ -5,6 +5,8 @@ import numpy as np
 from numpy.typing import NDArray
 from typing import Iterable
 
+from .data.common import Coords
+
 
 class OsrmClient:
   base_url: str
@@ -14,17 +16,17 @@ class OsrmClient:
     self.base_url = url
     self.profile = profile
 
-  async def distance_to_many(
-      self,
-      from_lat: float,
-      from_lon: float,
-      to_pts: Iterable[tuple[float, float]],
-    ) -> NDArray:
-    def coords_parts():
-      yield f"{from_lon},{from_lat}"
 
-      for lat, lon in to_pts:
-        yield f";{lon},{lat}"
+  async def distance_to_many(
+    self,
+    a: Coords,
+    bs: Iterable[Coords],
+  ) -> NDArray:
+    def coords_parts():
+      yield f"{a.lon},{a.lat}"
+
+      for b in bs:
+        yield f";{b.lon},{b.lat}"
 
     params = {"annotations": "distance", "sources": "0"}
 
@@ -47,3 +49,13 @@ class OsrmClient:
       np.float32,
       count,
     )
+
+
+  async def healthcheck(self) -> bool:
+    try:
+      async with aiohttp.ClientSession(self.base_url) as session:
+        async with session.get(f"/nearest/v1/{self.profile}/0,0.json") as res:
+          await res.json()
+          return True
+    except:
+      return False

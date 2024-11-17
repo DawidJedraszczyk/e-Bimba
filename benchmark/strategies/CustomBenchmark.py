@@ -1,7 +1,7 @@
 import csv
 import os
 
-from benchmark.BenchmarkStrategy import BenchmarkStrategy
+from benchmark.strategies.BenchmarkStrategy import BenchmarkStrategy
 from benchmark.routes_generating.custom_routes import get_custom_sample_routes
 from algorithm_parts.utils import seconds_to_time, plans_to_string, custom_print
 
