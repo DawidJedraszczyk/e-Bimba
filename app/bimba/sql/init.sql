@@ -90,10 +90,9 @@ create table trip (
   first_departure int4 not null,
   last_departure int4 not null,
 
-  instances struct (
+  starts struct (
     services int4[],
-    start_times int4[],
-    wheelchair_accessible int1
+    times int4[]
   )[] not null,
 
   stops struct (
@@ -106,6 +105,15 @@ create table trip (
 );
 
 create sequence seq_trip_id minvalue 0 start 0;
+
+
+create table trip_instance (
+  trip int4 not null,
+  service int4 not null,
+  start_time int4 not null,
+  wheelchair_accessible int1 not null,
+  gtfs_trip_id text not null,
+);
 
 
 create sequence seq_service_id minvalue 0 start 0;

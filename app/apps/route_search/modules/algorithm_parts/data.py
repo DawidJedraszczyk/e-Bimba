@@ -3,7 +3,7 @@ from functools import lru_cache
 from pathlib import Path
 from time import time
 
-from bimba.data.common import Services
+from bimba.data.misc import Services
 from bimba.data.routes import Routes
 from bimba.data.shapes import Shapes
 from bimba.data.stops import Stops

@@ -20,6 +20,12 @@ class Range(NamedTuple):
   beg: int
   end: int
 
+
+class TripInstance(NamedTuple):
+  wheelchair_accessible: int
+  gtfs_trip_id: str
+
+
 class Metadata(NamedTuple):
   name: str
   projection: str

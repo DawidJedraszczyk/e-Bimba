@@ -5,6 +5,8 @@ from .utils import seconds_to_time
 
 class PlanTrip(NamedTuple):
     trip_id: int
+    service_id: int
+    trip_start: int
     start_from_stop_id: int
     departure_time: int
     leave_at_stop_id: int

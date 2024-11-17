@@ -12,7 +12,7 @@ import pyproj
 import time as timer
 from typing import NamedTuple, Optional, Union
 
-from .data.common import *
+from .data.misc import *
 from .data.stops import Stops
 from .data.trips import Trips
 from .osrm import *
@@ -40,7 +40,7 @@ class NearStops(NamedTuple):
   @staticmethod
   def single(pos: Point, id: int):
     return NearStops(
-      pos,
+      Point(nb.float32(pos.x), nb.float32(pos.y)),
       np.array([id], dtype=np.int32),
       np.array([0.0], dtype=np.float32),
     )
@@ -354,7 +354,7 @@ class RouterTask:
         if candidate.path_tail.from_stop != -1:
           time += TRANSFER_TIME
 
-        start_time = self.trips.get_next_start(trip_id, self.services, time)
+        start_time = self.trips.get_next_start(trip_id, self.services, time).time
 
         if start_time == INF_TIME:
           continue

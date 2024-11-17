@@ -41,3 +41,10 @@ insert into metadata values (
     y := getvariable('Y0')
   ),
 );
+
+
+create index idx_trip_instance_start_time_service_trip
+  on trip_instance (start_time, service, trip);
+
+
+analyze;

@@ -3,8 +3,6 @@ import numba.types as nbt
 from numba.experimental import jitclass
 from typing import NamedTuple
 
-from .common import *
-
 
 class Route(NamedTuple):
   agency_id: int
