@@ -201,7 +201,6 @@ def empty_segment():
   ("walk_time", nb.int32),
   ("arrival", nb.int32),
   ("path_tail", _NB_PATH_SEGMENT_TYPE),
-  ("is_candidate", nb.boolean),
 ])
 class Node:
   def __init__(
@@ -215,13 +214,30 @@ class Node:
     self.walk_time = walk_time
     self.arrival = INF_TIME
     self.path_tail = empty_segment()
-    self.is_candidate = False
 
   def __lt__(self, other):
     return self.arrival + self.estimate < other.arrival + other.estimate
 
+  def __ne__(self, other):
+    return self.arrival + self.estimate != other.arrival + other.estimate
 
 _NB_NODE_TYPE = Node.class_type.instance_type
+
+
+@jitclass([
+  ("score", nb.int32),
+  ("node", _NB_NODE_TYPE),
+])
+class QueueEntry:
+  def __init__(self, node):
+    self.score = node.arrival + node.estimate
+    self.node = node
+  
+  def __lt__(self, other):
+    return self.score < other.score
+
+_NB_QUEUE_ENTRY_TYPE = QueueEntry.class_type.instance_type
+
 
 @jitclass([
   ("stops", Stops.class_type.instance_type),
@@ -229,17 +245,12 @@ _NB_NODE_TYPE = Node.class_type.instance_type
   ("services", Services.class_type.instance_type),
   ("near_destination", _NB_NEAR_STOPS_TYPE),
 
+  ("iteration", nb.int32),
   ("arrival", nb.int32),
   ("path_tail", _NB_PATH_SEGMENT_TYPE),
-  ("improved", nb.boolean),
 
   ("nodes", nbt.DictType(nb.int32, _NB_NODE_TYPE)),
-  ("candidates", nbt.ListType(_NB_NODE_TYPE)),
-
-  ("any_improved", nb.boolean),
-  ("new_candidates", nbt.ListType(_NB_NODE_TYPE)),
-  ("arrival_to_beat", nb.int32),
-  ("iteration", nb.int32),
+  ("queue", nbt.ListType(_NB_QUEUE_ENTRY_TYPE)),
 ])
 class RouterTask:
   def __init__(
@@ -257,16 +268,12 @@ class RouterTask:
     self.services = services
     self.near_destination = near_destination
 
-    self.improved = False
+    self.iteration = 0
     self.arrival = start_time + int(walk_distance / WALK_SPEED)
     self.path_tail = PathSegment(nb.int32(-1), nb.int32(-1), nb.int32(walk_distance))
 
     self.nodes = nb.typed.Dict.empty(nb.int32, _NB_NODE_TYPE)
-    self.candidates = nb.typed.List.empty_list(_NB_NODE_TYPE)
-    self.any_improved = False
-    self.new_candidates = nb.typed.List.empty_list(_NB_NODE_TYPE)
-    self.arrival_to_beat = INF_TIME
-    self.iteration = 0
+    self.queue = nb.typed.List.empty_list(_NB_QUEUE_ENTRY_TYPE)
 
     for id, dst in zip(near_destination.ids, near_destination.distances):
       walk_time = int(dst / WALK_SPEED)
@@ -276,10 +283,9 @@ class RouterTask:
       n = self.get_node(id)
       n.arrival = start_time + int(dst / WALK_SPEED)
       n.path_tail = PathSegment(nb.int32(-1), nb.int32(-1), nb.int32(dst))
-      n.is_candidate = True
-      self.candidates.append(n)
+      self.queue.append(QueueEntry(n))
 
-    heapq.heapify(self.candidates)
+    heapq.heapify(self.queue)
 
 
   def get_node(self, stop_id: int) -> Node:
@@ -317,41 +323,38 @@ class RouterTask:
 
     node.arrival = arrival
     node.path_tail = PathSegment(came_from.stop_id, nb.int32(trip_id), nb.int32(details))
-
-    if node.is_candidate:
-      self.any_improved = True
-    else:
-      self.new_candidates.append(node)
-
-    node.is_candidate = True
+    heapq.heappush(self.queue, QueueEntry(node))
 
     if arrival + node.walk_time < self.arrival:
-      self.improved = True
       self.arrival = arrival + node.walk_time
       self.path_tail = PathSegment(node.stop_id, nb.int32(-1), nb.int32(node.walk_time*WALK_SPEED))
 
 
   def solve(self) -> Plan:
-    while len(self.candidates) > 0:
-      self.iteration += 1
-      candidate = heapq.heappop(self.candidates)
-      self.any_improved = False
+    while len(self.queue) > 0:
+      entry = heapq.heappop(self.queue)
+      from_node = entry.node
 
-      if candidate.arrival + candidate.estimate >= self.arrival:
+      if entry.score != from_node.arrival + from_node.estimate:
+        continue
+
+      if from_node.arrival + from_node.estimate >= self.arrival:
         break
 
-      for stop_walk in self.stops.get_stop_walks(candidate.stop_id):
-        node = self.get_node(stop_walk.stop_id)
+      self.iteration += 1
+
+      for stop_walk in self.stops.get_stop_walks(from_node.stop_id):
+        to_node = self.get_node(stop_walk.stop_id)
         walk_time = int(stop_walk.distance / WALK_SPEED)
-        walk_arrival = candidate.arrival + walk_time
+        walk_arrival = from_node.arrival + walk_time
 
-        if walk_arrival < min(node.arrival, self.arrival):
-          self.update_node(node, walk_arrival, candidate, -1, stop_walk.distance)
+        if walk_arrival < min(to_node.arrival, self.arrival):
+          self.update_node(to_node, walk_arrival, from_node, -1, stop_walk.distance)
 
-      for trip_id, stop_seq, departure in self.stops.get_stop_trips(candidate.stop_id):
-        time = candidate.arrival - departure
+      for trip_id, stop_seq, departure in self.stops.get_stop_trips(from_node.stop_id):
+        time = from_node.arrival - departure
 
-        if candidate.path_tail.from_stop != -1:
+        if from_node.path_tail.from_stop != -1:
           time += TRANSFER_TIME
 
         start_time = self.trips.get_next_start(trip_id, self.services, time).time
@@ -359,52 +362,19 @@ class RouterTask:
         if start_time == INF_TIME:
           continue
 
-        if start_time + departure + candidate.estimate >= self.arrival:
+        if start_time + departure + from_node.estimate >= self.arrival:
           continue
 
         for to_stop, stop_arrival, _ in self.trips.get_stops_after(trip_id, stop_seq):
-          node = self.get_node(to_stop)
+          to_node = self.get_node(to_stop)
           arrival = start_time + stop_arrival
 
-          if arrival < min(node.arrival, self.arrival):
-            self.update_node(node, arrival, candidate, trip_id, start_time + departure)
-          elif arrival >= node.arrival + TRANSFER_TIME:
+          if arrival < min(to_node.arrival, self.arrival):
+            self.update_node(to_node, arrival, from_node, trip_id, start_time + departure)
+          elif arrival >= to_node.arrival + TRANSFER_TIME:
             break
 
-      candidate.is_candidate = False
-      self.add_candidates()
-
     return Plan(self.arrival, self.gather_path(self.path_tail), self.iteration)
-
-
-  def add_candidates(self):
-    if self.any_improved:
-      if self.improved:
-        self.improved = False
-        old = self.candidates
-        self.candidates = nb.typed.List.empty_list(_NB_NODE_TYPE)
-
-        for c in old:
-          if c.arrival + c.estimate < self.arrival:
-            self.candidates.append(c)
-          else:
-            c.is_candidate = False
-
-        for c in self.new_candidates:
-          if c.arrival + c.estimate < self.arrival:
-            self.candidates.append(c)
-          else:
-            c.is_candidate = False
-
-      else:
-        self.candidates.extend(self.new_candidates)
-
-      heapq.heapify(self.candidates)
-    else:
-      for nc in self.new_candidates:
-        heapq.heappush(self.candidates, nc)
-
-    self.new_candidates.clear()
 
 
   def gather_path(self, segment):
