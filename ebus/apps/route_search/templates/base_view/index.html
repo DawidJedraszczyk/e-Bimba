@@ -22,4 +22,39 @@
     {% include './sections/map.html' %}
     <script src="{% static 'base_view/js/index.js' %}"></script>
   </body>
+
+    <script>
+        const ws_vehicle_positions = new WebSocket('ws://127.0.0.1:8000/ws/vehicle_positions/');
+
+        ws_vehicle_positions.onopen = () => {
+            console.log("Connected to WebSocket Vehicle Positions");
+        };
+
+        ws_vehicle_positions.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            console.log("Vehicle Positions:", data);
+        };
+
+        ws_vehicle_positions.onclose = () => {
+            console.log("WebSocket Vehicle Positions closed");
+        };
+
+
+
+        const ws_trip_updates = new WebSocket('ws://127.0.0.1:8000/ws/trip_updates/');
+
+        ws_trip_updates.onopen = () => {
+            console.log("Connected to WebSocket Trip Updates");
+        };
+
+        ws_trip_updates.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            console.log("Trip updates:", data);
+        };
+
+        ws_trip_updates.onclose = () => {
+            console.log("WebSocket Trip Updates closed");
+        };
+
+    </script>
 </html>

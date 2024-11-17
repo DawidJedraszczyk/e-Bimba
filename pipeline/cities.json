@@ -11,6 +11,9 @@
     "gtfs": {
       "ztm": "https://www.ztm.poznan.pl/pl/dla-deweloperow/getGTFSFile/?file=20240905_20240930.zip"
     },
+    "gtfs_realtime" : {
+      "ztm": "https://www.ztm.poznan.pl/pl/dla-deweloperow/getGtfsRtFile?file=trip_updates.pb"
+    },
     "projection": "EPSG:2180",
     "map": "http://download.geofabrik.de/europe/poland/wielkopolskie-latest.osm.pbf",
     "center_coordinates": {"lng": 52.403499, "lat": 16.923179}
