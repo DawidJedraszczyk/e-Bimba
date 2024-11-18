@@ -37,11 +37,12 @@ from apps.route_search.modules.algorithm_parts.utils import seconds_to_time
 from bimba.data.misc import *
 from bimba.transitdb import *
 from bimba.osrm import *
+from bimba.prospector import *
 from bimba.router import *
 
 
 BATCH_SIZE = 1000
-NUM_BATCHES = 12
+NUM_BATCHES = 128
 
 
 class Row(NamedTuple):
@@ -57,13 +58,13 @@ class Row(NamedTuple):
 thread_local = threading.local()
 tdb = TransitDb(DATA_CITIES / city["database"])
 osrm = OsrmClient(f"http://localhost:{OSRM_PORT}")
-router = Router(tdb, osrm)
-stops = router.stops
+prospector = Prospector(tdb, osrm)
+stops = prospector.stops
+router = Router(tdb, stops=stops)
 stop_count = stops.count()
-routes = tdb.get_routes()
 
 
-md = router.md
+md = prospector.md
 transformer = pyproj.Transformer.from_proj(md.projection, 'WGS84')
 x_d = np.std(stops.xs) / 2
 y_d = np.std(stops.ys) / 2
@@ -97,9 +98,12 @@ def random_time():
 
 
 def make_batch():
+  local_prospector = getattr(thread_local, "prospector", None)
   local_router = getattr(thread_local, "router", None)
 
   if local_router is None:
+    local_prospector = prospector.clone()
+    thread_local.prospector = local_prospector
     local_router = router.clone()
     thread_local.router = local_router
 
@@ -110,10 +114,8 @@ def make_batch():
     to_coords = random_coords()
     day_type = random_day_type()
     start_time = random_time()
-
-    plan = asyncio.run(
-      local_router.find_route(from_stop, to_coords, dt_services[day_type], start_time)
-    )
+    prospect = local_prospector.prospect(from_stop, to_coords)
+    plan = local_router.find_route(prospect, dt_services[day_type], start_time)
 
     rows.append(Row(
       np.float32(stops[from_stop].coords.lat),

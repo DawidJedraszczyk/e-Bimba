@@ -3,6 +3,7 @@ import contextlib
 from itertools import chain
 import numpy as np
 from numpy.typing import NDArray
+import requests
 from typing import Iterable
 
 from .data.misc import Coords
@@ -17,11 +18,33 @@ class OsrmClient:
     self.profile = profile
 
 
-  async def distance_to_many(
+  def call(self, url, params={}):
+    return requests.get(self.base_url + url, params).json()
+
+
+  async def call_async(self, url, params={}):
+    async with aiohttp.ClientSession(self.base_url) as session:
+      async with session.get(url, params=params) as res:
+        return await res.json()
+
+
+  def distance_to_many(
     self,
     a: Coords,
     bs: Iterable[Coords],
   ) -> NDArray:
+    return self.dtm_end(self.call(*self.dtm_beg(a, bs)))
+
+
+  async def distance_to_many_async(
+    self,
+    a: Coords,
+    bs: Iterable[Coords],
+  ) -> NDArray:
+    return self.dtm_end(await self.call_async(*self.dtm_beg(a, bs)))
+
+
+  def dtm_beg(self, a, bs):
     def coords_parts():
       yield f"{a.lon},{a.lat}"
 
@@ -35,10 +58,10 @@ class OsrmClient:
       coords_parts(),
     ))
 
-    async with aiohttp.ClientSession(self.base_url) as session:
-      async with session.get(url, params=params) as res:
-        data = await res.json()
+    return (url, params)
 
+
+  def dtm_end(self, data):
     from_snap = data["sources"][0]["distance"]
     dst = data["distances"][0][1:]
     destinations = data["destinations"][1:]
@@ -51,11 +74,9 @@ class OsrmClient:
     )
 
 
-  async def healthcheck(self) -> bool:
+  def healthcheck(self) -> bool:
     try:
-      async with aiohttp.ClientSession(self.base_url) as session:
-        async with session.get(f"/nearest/v1/{self.profile}/0,0.json") as res:
-          await res.json()
-          return True
+      self.call(f"/nearest/v1/{self.profile}/0,0.json")
+      return True
     except:
       return False

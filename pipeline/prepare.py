@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import asyncio
 import docker
 import json
 import os
@@ -113,7 +114,7 @@ async def calculate_stop_walks(tdb, osrm: OsrmClient):
       to_lats = to_stops.field("lat").to_numpy()
       to_lons = to_stops.field("lon").to_numpy()
 
-      distances = await osrm.distance_to_many(
+      distances = await osrm.distance_to_many_async(
         Coords(from_lat, from_lon),
         (Coords(lat, lon) for lat, lon in zip(to_lats, to_lons)),
       )

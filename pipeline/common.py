@@ -1,8 +1,8 @@
-import asyncio
 import contextlib
 import docker
 import json
 from pathlib import Path
+import time
 
 from bimba.osrm import OsrmClient
 
@@ -41,17 +41,17 @@ def start_osrm(region: str):
 
   try:
     osrm = OsrmClient(f"http://localhost:{OSRM_PORT}")
-    asyncio.run(osrm_healthcheck(osrm))
+    osrm_healthcheck(osrm)
     yield osrm
   finally:
     print("Stopping osrm-routed")
     container.stop()
 
 
-async def osrm_healthcheck(osrm):
+def osrm_healthcheck(osrm):
   # Wait for up to 30 seconds, check every 0.25 seconds
   for _ in range(30 * 4):
-    if await osrm.healthcheck():
+    if osrm.healthcheck():
       return
     else:
       time.sleep(0.25)
