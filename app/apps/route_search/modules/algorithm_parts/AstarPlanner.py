@@ -21,16 +21,14 @@ from ebus.algorithm_settings import WALKING_SETTINGS, HEURISTIC_SETTINGS, PRINTI
 
 
 class AStarPlanner():
-    def __init__(self, start_time, START, DESTINATION, distance_metric, current_date,
-                 waiting_time_constant=time_to_seconds('00:03:00')):
+    def __init__(self, data: Data, start_time, START, DESTINATION, distance_metric, current_date):
         start_init_time = time.time()
-        self.data = Data.instance()
+        self.data = data
         self.services = self.data.services_around(current_date)
         self.start_time = start_time
         self.START = START
         self.DESTINATION = DESTINATION
         self.distance_metric = distance_metric
-        self.waiting_time_constant = waiting_time_constant
         self.start_walking_times, start_walking_times_time = self.__get_start_walking_times()
         self.destination_walking_times, destination_walking_times_time = self.__get_destination_walking_times()
         self.heuristic_times, precomputed_heurisitc_times_time = self.__get_destination_heurisitc_time()
@@ -239,7 +237,7 @@ class AStarPlanner():
             # from stop we're currently at after following fastest known plan yet
             start_time_get_trips = time.time()
 
-            transfer_time = self.waiting_time_constant
+            transfer_time = HEURISTIC_SETTINGS["TRANSFER_TIME"]
 
             if not fastest_known_plan.plan_trips:
                 # Don't add transfer time before first trip

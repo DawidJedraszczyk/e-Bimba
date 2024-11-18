@@ -4,6 +4,7 @@ import os
 from time import time
 from typing import NamedTuple
 
+from algorithm_parts.data import Data
 from algorithm_parts.utils import time_to_seconds, seconds_to_time, custom_print, plans_to_string
 from algorithm_parts.AstarPlanner import AStarPlanner
 
@@ -14,6 +15,7 @@ class PlannerResult(NamedTuple):
 
 
 class BenchmarkStrategy():
+    data: Data
     benchmark_type = None
     alternative_routes = 3
     planner_metric = 'manhattan' # at the end when we will use neural network this will be removed or serve other purpose
@@ -21,8 +23,8 @@ class BenchmarkStrategy():
     planners = []
     sample_routes = None
 
-    def __init__(self):
-        pass
+    def __init__(self, data):
+        self.data = data
 
     def run(self):
         self.total_times = []
@@ -34,7 +36,7 @@ class BenchmarkStrategy():
             start_date = route.date
             weekday = route.week_day
 
-            planner = AStarPlanner(start_time,start,destination,self.planner_metric,start_date)            
+            planner = AStarPlanner(self.data,start_time,start,destination,self.planner_metric,start_date)            
             total_time = 0
 
             custom_print(
@@ -57,7 +59,7 @@ class BenchmarkStrategy():
             print('##################################################')
             print('Route from: ', route.start_name, 'to: ', route.destination_name, 'at time: ', route.start_time, ' on: ', route.week_day)
             print('##################################################')
-            print(plans_to_string(self.planners[i].found_plans))
+            print(plans_to_string(self.planners[i].found_plans, self.data))
             route.print_comparison_plans()
 
     @abstractmethod
@@ -88,7 +90,7 @@ class BenchmarkStrategy():
             'Destination Name': route.destination_name,
             'Start Time': route.start_time,
             'Day of week': route.week_day,
-            'found route': plans_to_string(self.planners[route_index].found_plans),
+            'found route': plans_to_string(self.planners[route_index].found_plans, self.data),
             'found route duration': self.compute_travel_duration(
                 route.start_time,
                 seconds_to_time(self.planners[route_index].found_plans[0].time_at_destination)) if self.planners[route_index].found_plans else 'NA',

@@ -12,8 +12,7 @@ class PlanTrip(NamedTuple):
     leave_at_stop_id: int
     arrival_time: int
 
-    def __str__(self):
-        data = Data.instance()
+    def format(self, data: Data):
         start = data.stops[self.start_from_stop_id]
         leave = data.stops[self.leave_at_stop_id]
 

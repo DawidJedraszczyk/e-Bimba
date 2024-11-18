@@ -11,27 +11,21 @@ from bimba.data.trips import Trips
 from bimba.transitdb import TransitDb
 from .utils import custom_print
 
-try:
-    from django.conf import settings
-    _DB_PATH = Path(settings.BASE_DIR) / "transit.db"
-except:
-    _DB_PATH = Path(__file__).parents[5] / "data" / "main" / "transit.db"
-
 
 class Data:
-    _instance = None
+    _instances = dict()
 
     @staticmethod
-    def instance():
-        if Data._instance is None:
+    def instance(db_path):
+        if db_path not in Data._instances:
             t0 = time()
-            Data._instance = Data()
+            Data._instances[db_path] = Data(db_path)
             custom_print(f'(Data - {time() - t0:.4f}s)', 'SETUP_TIMES')
 
-        return Data._instance
+        return Data._instances[db_path]
 
-    def __init__(self):
-        self.tdb = TransitDb(_DB_PATH)
+    def __init__(self, db_path):
+        self.tdb = TransitDb(db_path)
         self.routes = self.tdb.get_routes()
         self.shapes = self.tdb.get_shapes()
         self.stops = self.tdb.get_stops()

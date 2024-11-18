@@ -104,12 +104,12 @@ class Plan():
     def get_absolute_arrival_time_difference(self, other):
         return self.get_informed_time_at_destination() - other.get_informed_time_at_destination()
 
-    def __str__(self):
+    def format(self, data: Data):
         starting_stop_id = self.current_stop_id if len(self.plan_trips) == 0 else self.plan_trips[0].start_from_stop_id
-        start = Data.instance().stops[starting_stop_id]
+        start = data.stops[starting_stop_id]
         result = f"start at: {start.name} ({start.code}) on {seconds_to_time(self.start_time)}\n"
         for plan_trip in self.plan_trips:
-            result += "\t" + str(plan_trip).replace("\n", "\n\t") + "\n"
+            result += "\t" + plan_trip.format(data).replace("\n", "\n\t") + "\n"
         self.__compute_actual_time_at_destination()
         result += f"reach destination at: {seconds_to_time(self.time_at_destination)}"
         return result

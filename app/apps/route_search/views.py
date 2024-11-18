@@ -3,6 +3,7 @@ from django.http import JsonResponse
 from geopy.geocoders import Nominatim
 from .modules.algorithm_parts.utils import *
 from .modules.algorithm_parts.AstarPlanner import *
+from .modules.algorithm_parts.data import *
 from django.http import HttpResponse
 from django.views import View
 import redis
@@ -33,7 +34,14 @@ class FindRouteView(View):
         start = geolocator.geocode(request.POST.get('start_location') + ', Poznań, województwo wielkopolskie, Polska')
         destination = geolocator.geocode(request.POST.get('goal_location') + ', Poznań, województwo wielkopolskie, Polska')
 
-        planner_straight = AStarPlanner(start_time, (start.latitude, start.longitude), (destination.latitude, destination.longitude), 'manhattan', '2024-09-05')
+        planner_straight = AStarPlanner(
+            data=Data.instance("../data/cities/poz-w.db"),
+            start_time=start_time,
+            START=(start.latitude, start.longitude),
+            DESTINATION=(destination.latitude, destination.longitude),
+            distance_metric='manhattan',
+            current_date='2024-09-05',
+        )
 
         for _ in range(20):
             planner_straight.find_next_plan()

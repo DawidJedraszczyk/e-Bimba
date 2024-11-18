@@ -20,6 +20,19 @@ sys.path.append(str(Path(__file__).parents[1] / "app"))
 sys.path.append(str(Path(__file__).parent))
 
 from common import *
+
+if len(sys.argv) == 1:
+  print(f"Usage: {sys.argv[0]} CITY")
+  sys.exit()
+else:
+  city_name = " ".join(sys.argv[1:])
+
+  if city_name not in CITIES:
+    print(f"Unknown city '{city_name}'")
+    sys.exit()
+  else:
+    city = CITIES[city_name]
+
 from apps.route_search.modules.algorithm_parts.utils import seconds_to_time
 from bimba.data.misc import *
 from bimba.transitdb import *
@@ -28,7 +41,7 @@ from bimba.router import *
 
 
 BATCH_SIZE = 1000
-NUM_BATCHES = 128
+NUM_BATCHES = 12
 
 
 class Row(NamedTuple):
@@ -42,7 +55,7 @@ class Row(NamedTuple):
 
 
 thread_local = threading.local()
-tdb = TransitDb(DATA_FOLDER / "transit.db")
+tdb = TransitDb(DATA_CITIES / city["database"])
 osrm = OsrmClient(f"http://localhost:{OSRM_PORT}")
 router = Router(tdb, osrm)
 stops = router.stops
@@ -120,8 +133,8 @@ def make_batch():
 
 tp = ThreadPoolExecutor(max_workers=os.cpu_count())
 
-with start_osrm():
+with start_osrm(city["region"]):
   batches = list(tp.map(lambda _: make_batch(), range(NUM_BATCHES)))
 
 table = pa.Table.from_struct_array(pa.chunked_array(batches))
-pq.write_table(table, DATA_FOLDER / "dataset.parquet")
+pq.write_table(table, TMP_CITIES / city["database"].replace(".db", "-dataset.parquet"))

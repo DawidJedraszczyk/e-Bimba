@@ -17,14 +17,14 @@ services:
     image: ghcr.io/project-osrm/osrm-backend
     command: osrm-routed --algorithm mld /data/map.osrm
     volumes:
-      ./data/main/osrm:/data
+      ./data/regions/pl-wielkopolskie:/data
 
   django:
     build:
       context: ./app
       dockerfile: Dockerfile
     volumes:
-      ./data/main/transit.db:/app/transit.db
+      ./data:/data
     ports:
       - "8000:8000"
     depends_on:

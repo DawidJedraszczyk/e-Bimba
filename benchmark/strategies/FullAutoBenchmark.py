@@ -5,8 +5,8 @@ from benchmark.strategies.BenchmarkStrategy import BenchmarkStrategy
 from benchmark.routes_generating.automatic_routes import get_all_automatic_sample_routes
 
 class FullAutoBenchmark(BenchmarkStrategy):
-    def __init__(self):
-        BenchmarkStrategy.__init__(self)
+    def __init__(self, data):
+        BenchmarkStrategy.__init__(self, data)
         self.benchmark_type = 'full_automatic_benchmark'
         self.sample_routes = get_all_automatic_sample_routes()
 

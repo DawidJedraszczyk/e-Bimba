@@ -1,25 +1,28 @@
 {
   "Poznań": {
+    "database": "poz.db",
     "gtfs": {
       "ztm": "https://www.ztm.poznan.pl/pl/dla-deweloperow/getGTFSFile"
     },
     "projection": "EPSG:2180",
-    "map": "http://download.geofabrik.de/europe/poland/wielkopolskie-latest.osm.pbf"
+    "region": "pl-wielkopolskie"
   },
   "Poznań (wrzesień)": {
+    "database": "poz-w.db",
     "gtfs": {
       "ztm": "https://www.ztm.poznan.pl/pl/dla-deweloperow/getGTFSFile/?file=20240905_20240930.zip"
     },
     "projection": "EPSG:2180",
-    "map": "http://download.geofabrik.de/europe/poland/wielkopolskie-latest.osm.pbf"
+    "region": "pl-wielkopolskie"
   },
   "Warszawa": {
+    "database": "waw.db",
     "gtfs": {
       "ztm": "https://mkuran.pl/gtfs/warsaw.zip",
       "metro": "https://mkuran.pl/gtfs/warsaw/metro.zip",
       "wkd": "https://mkuran.pl/gtfs/wkd.zip"
     },
     "projection": "EPSG:2180",
-    "map": "http://download.geofabrik.de/europe/poland/mazowieckie-latest.osm.pbf"
+    "region": "pl-mazowieckie"
   }
 }
