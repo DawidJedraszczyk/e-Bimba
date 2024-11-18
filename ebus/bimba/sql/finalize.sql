@@ -1,46 +1,18 @@
-install spatial;
-load spatial;
-
-
-create temp table stop_pos as
-  select
-    id,
-    x::float4 as x,
-    y::float4 as y,
-  from (
-    select
-      id,
-      unnest(ST_Transform(ST_Point2D(coords.lat, coords.lon), 'WGS84', getvariable('PROJECTION'))),
-    from imported_stop
-  )
-  order by id;
-
-set variable X0 = (select avg(x)::float4 from stop_pos);
-set variable Y0 = (select avg(y)::float4 from stop_pos);
-
-
 insert into stop by name select
   i.*,
   (
-    select
-      struct_pack(
-        x := x - getvariable('X0'),
-        y := y - getvariable('Y0')
-      )
+    select struct_pack(x, y)
     from stop_pos p
     where p.id = i.id
   ) as position,
   (
     select
-      coalesce(list(
-        struct_pack(to_stop := sw.id, distance)
+      list(
+        struct_pack(to_stop, distance)
         order by distance
-      ), [])
-    from (
-      select to_stop as id, distance from stop_walk where from_stop = i.id
-      union all
-      select from_stop as id, distance from stop_walk where to_stop = i.id
-    ) sw
+      ),
+    from stop_walk
+    where from_stop = i.id
   ) as walks,
   (
     select
@@ -69,3 +41,10 @@ insert into metadata values (
     y := getvariable('Y0')
   ),
 );
+
+
+create index idx_trip_instance_start_time_service_trip
+  on trip_instance (start_time, service, trip);
+
+
+analyze;

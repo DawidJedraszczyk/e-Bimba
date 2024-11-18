@@ -11,7 +11,7 @@ import pyarrow
 import time
 from typing import Iterable
 
-from .data.common import Point, Coords, Metadata, Services
+from .data.misc import *
 from .data.routes import Routes
 from .data.shapes import Shapes
 from .data.stops import Stops
@@ -59,7 +59,7 @@ class TransitDb(Db):
 
 
   def nearest_stops(self, position: Point) -> NDArray:
-    params = {"x": position.x, "y": position.y}
+    params = {"x": float(position.x), "y": float(position.y)}
     return self.script("get-nearest-stops", params).np()["id"]
 
 
@@ -127,13 +127,13 @@ class TransitDb(Db):
 
   def get_trips(self) -> Trips:
     a = self.sql("select * from trip order by id").arrow()
-    ids, routes, shapes, headsigns, first_departures, last_departures, instances, stops = a.flatten()
-    instances_off = instances.offsets
-    instances_services, instances_start_times, _ = instances.values.flatten()
-    instances_services_off = instances_services.offsets
-    instances_services = instances_services.values
-    instances_start_times_off = instances_start_times.offsets
-    instances_start_times = instances_start_times.values
+    ids, routes, shapes, headsigns, first_departures, last_departures, starts, stops = a.flatten()
+    starts_off = starts.offsets
+    starts_services, starts_times = starts.values.flatten()
+    starts_services_off = starts_services.offsets
+    starts_services = starts_services.values
+    starts_times_off = starts_times.offsets
+    starts_times = starts_times.values
     stops_off = stops.offsets
     stops_ids, stops_arrivals, stops_departures, _, _ = stops.values.flatten()
     assert np.array_equal(ids, np.arange(len(a)))
@@ -144,16 +144,26 @@ class TransitDb(Db):
       headsigns.tolist(),
       first_departures.to_numpy(),
       last_departures.to_numpy(),
-      instances_off.to_numpy(),
-      instances_services_off.to_numpy(),
-      instances_services.to_numpy(),
-      instances_start_times_off.to_numpy(),
-      instances_start_times.to_numpy(),
+      starts_off.to_numpy(),
+      starts_services_off.to_numpy(),
+      starts_services.to_numpy(),
+      starts_times_off.to_numpy(),
+      starts_times.to_numpy(),
       stops_off.to_numpy(),
       stops_ids.to_numpy(),
       stops_arrivals.to_numpy(),
       stops_departures.to_numpy(),
     )
+
+
+  def get_trip_instance(self, trip: int, service: int, start_time: int) -> TripInstance:
+    wa, id = self.sql("""
+      select wheelchair_accessible, gtfs_trip_id
+      from trip_instance
+      where trip = ? and service = ? and start_time = ?
+    """, [trip, service, start_time]).one()
+
+    return TripInstance(wa, id)
 
 
   def init_schema(self):
@@ -192,12 +202,13 @@ class TransitDb(Db):
   async def calculate_stop_walks(self, osrm: OsrmClient):
     t0 = time.time()
     print("Calculating walking distances between stops")
+    self.script("project-stop-coords")
     inputs = self.script("init-stop-walk").arrow()
     sem = asyncio.Semaphore(os.cpu_count())
 
     async def task(row):
       async with sem:
-        from_id = row["id"]
+        from_id = row["from_stop"]
         from_lat = row["lat"]
         from_lon = row["lon"]
         to_stops = row["to_stops"].values
@@ -225,7 +236,7 @@ class TransitDb(Db):
           )
         },
       )
-    
+
     t1 = time.time()
     print(f"Time: {_t(t1, t0)}")
 

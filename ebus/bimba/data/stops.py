@@ -3,7 +3,7 @@ import numba.types as nbt
 from numba.experimental import jitclass
 from typing import Iterator, NamedTuple, Optional
 
-from .common import *
+from .misc import *
 
 
 class Stop(NamedTuple):

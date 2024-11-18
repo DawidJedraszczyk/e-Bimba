@@ -4,7 +4,7 @@ from numba.experimental import jitclass
 import numpy as np
 from typing import Iterator, NamedTuple, Optional
 
-from .common import *
+from .misc import *
 
 
 class Trip(NamedTuple):
@@ -13,13 +13,14 @@ class Trip(NamedTuple):
   headsign: str
   first_departure: int
   last_departure: int
-  instances: Range
+  starts: Range
   stops: Range
 
 
-class TripInstance(NamedTuple):
-  services: Range
-  start_times: Range
+class TripStart(NamedTuple):
+  service: int
+  time: int
+  offset: int
 
 
 class TripStop(NamedTuple):
@@ -34,11 +35,11 @@ class TripStop(NamedTuple):
   ("headsigns", nbt.List(nbt.string)),
   ("first_departures", nb.int32[:]),
   ("last_departures", nb.int32[:]),
-  ("instances_off", nb.int32[:]),
-  ("instances_services_off", nb.int32[:]),
-  ("instances_services", nb.int32[:]),
-  ("instances_start_times_off", nb.int32[:]),
-  ("instances_start_times", nb.int32[:]),
+  ("starts_off", nb.int32[:]),
+  ("starts_services_off", nb.int32[:]),
+  ("starts_services", nb.int32[:]),
+  ("starts_times_off", nb.int32[:]),
+  ("starts_times", nb.int32[:]),
   ("stops_off", nb.int32[:]),
   ("stops_ids", nb.int32[:]),
   ("stops_arrivals", nb.int32[:]),
@@ -52,11 +53,11 @@ class Trips:
     headsigns,
     first_departures,
     last_departures,
-    instances_off,
-    instances_services_off,
-    instances_services,
-    instances_start_times_off,
-    instances_start_times,
+    starts_off,
+    starts_services_off,
+    starts_services,
+    starts_times_off,
+    starts_times,
     stops_off,
     stops_ids,
     stops_arrivals,
@@ -67,11 +68,11 @@ class Trips:
     self.headsigns = headsigns
     self.first_departures = first_departures
     self.last_departures = last_departures
-    self.instances_off = instances_off
-    self.instances_services_off = instances_services_off
-    self.instances_services = instances_services
-    self.instances_start_times_off = instances_start_times_off
-    self.instances_start_times = instances_start_times
+    self.starts_off = starts_off
+    self.starts_services_off = starts_services_off
+    self.starts_services = starts_services
+    self.starts_times_off = starts_times_off
+    self.starts_times = starts_times
     self.stops_off = stops_off
     self.stops_ids = stops_ids
     self.stops_arrivals = stops_arrivals
@@ -85,7 +86,7 @@ class Trips:
       self.headsigns[id],
       self.first_departures[id],
       self.last_departures[id],
-      Range(self.instances_off[id], self.instances_off[id+1]),
+      Range(self.starts_off[id], self.starts_off[id+1]),
       Range(self.stops_off[id], self.stops_off[id+1]),
     )
 
@@ -116,57 +117,72 @@ class Trips:
       )
 
 
-  def get_next_start(self, trip_id: int, services: Services, time: int) -> int:
-    i_end = self.instances_off[trip_id+1]
-    i_beg = self.instances_off[trip_id]
+  def get_next_start(self, trip_id: int, services: Services, earliest: int) -> TripStart:
+    starts_end = self.starts_off[trip_id+1]
+    starts_beg = self.starts_off[trip_id]
     first_departure = self.first_departures[trip_id]
     last_departure = self.last_departures[trip_id]
 
-    start_time = self._get_next_start(i_beg, i_end, services.today, time)
+    start = self._get_next_start(starts_beg, starts_end, services.today, earliest)
 
-    if time <= last_departure - DAY:
-      st = self._get_next_start(i_beg, i_end, services.yesterday, time + DAY) - DAY
-      start_time = min(start_time, st)
+    if earliest <= last_departure - DAY:
+      yts = self._get_next_start(starts_beg, starts_end, services.yesterday, earliest + DAY)
+      start = _ts_min(start, _ts_offset(yts, -DAY))
 
-    if start_time >= first_departure + DAY:
-      st = self._get_next_start(i_beg, i_end, services.tomorrow, time - DAY) + DAY
-      start_time = min(start_time, st)
+    if start.time >= first_departure + DAY:
+      tts = self._get_next_start(starts_beg, starts_end, services.tomorrow, earliest - DAY)
+      start = _ts_min(start, _ts_offset(tts, DAY))
 
-    return start_time
+    return start
 
 
-  def _get_next_start(self, i_beg, i_end, day_services, time: int) -> int:
-    start_time = nb.int32(INF_TIME)
+  def _get_next_start(self, starts_beg, starts_end, day_services, earliest: int) -> TripStart:
+    start = TripStart(nb.int32(-1), nb.int32(INF_TIME), nb.int32(0))
 
-    for instance in range(i_beg, i_end):
-      if not self._instance_and_day_have_common_service(instance, day_services):
+    for starts_i in range(starts_beg, starts_end):
+      service = self._common_service(starts_i, day_services)
+
+      if service == -1:
         continue
 
-      times_end = self.instances_start_times_off[instance+1]
-      times_beg = self.instances_start_times_off[instance]
-      times_i = times_beg + np.searchsorted(self.instances_start_times[times_beg:times_end], time)
+      times_end = self.starts_times_off[starts_i+1]
+      times_beg = self.starts_times_off[starts_i]
+      times_i = times_beg + np.searchsorted(self.starts_times[times_beg:times_end], earliest)
 
-      if times_i < times_end:
-        start_time = min(start_time, self.instances_start_times[times_i])
+      if times_i < times_end and self.starts_times[times_i] < start.time:
+        start = TripStart(service, self.starts_times[times_i], nb.int32(0))
 
-    return start_time
+    return start
 
 
-  def _instance_and_day_have_common_service(self, instance, day_services):
-    instance_service_end = self.instances_services_off[instance+1]
-    instance_service_i = self.instances_services_off[instance]
+  def _common_service(self, starts_i, day_services):
+    starts_service_end = self.starts_services_off[starts_i+1]
+    starts_service_i = self.starts_services_off[starts_i]
     day_service_end = len(day_services)
     day_service_i = 0
 
-    while instance_service_i < instance_service_end and day_service_i < day_service_end:
-      is_id = self.instances_services[instance_service_i]
-      id_id = day_services[day_service_i]
+    while starts_service_i < starts_service_end and day_service_i < day_service_end:
+      starts_service_id = self.starts_services[starts_service_i]
+      day_service_id = day_services[day_service_i]
 
-      if is_id == id_id:
-        return True
-      elif is_id > id_id:
+      if starts_service_id == day_service_id:
+        return starts_service_id
+      elif starts_service_id > day_service_id:
         day_service_i += 1
       else:
-        instance_service_i += 1
+        starts_service_i += 1
 
-    return False
+    return nb.int32(-1)
+
+
+@nb.jit
+def _ts_offset(ts, offset):
+  return TripStart(ts.service, nb.int32(ts.time + offset), nb.int32(offset))
+
+
+@nb.jit
+def _ts_min(a, b):
+  if a.time < b.time:
+    return a
+  else:
+    return b

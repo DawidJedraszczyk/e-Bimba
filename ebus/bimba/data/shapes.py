@@ -3,7 +3,7 @@ import math
 import numba as nb
 from numba.experimental import jitclass
 
-from .common import *
+from .misc import *
 
 
 @jitclass([

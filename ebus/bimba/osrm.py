@@ -5,7 +5,7 @@ import numpy as np
 from numpy.typing import NDArray
 from typing import Iterable
 
-from .data.common import Coords
+from .data.misc import Coords
 
 
 class OsrmClient:

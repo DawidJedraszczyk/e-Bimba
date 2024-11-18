@@ -61,6 +61,8 @@ def prepare_city(city, name):
 
   try:
     with TransitDb(DATA_FOLDER / "transit.db", run_on_load = False) as tdb:
+      tdb.set_variable("PROJECTION", city["projection"])
+      tdb.set_variable("CITY", name)
       tdb.init_schema()
 
       for gtfs in city["gtfs"].keys():
@@ -75,8 +77,6 @@ def prepare_city(city, name):
         osrm = OsrmClient(f"http://localhost:{OSRM_PORT}")
         asyncio.run(tdb.calculate_stop_walks(osrm))
 
-      tdb.set_variable("PROJECTION", city["projection"])
-      tdb.set_variable("CITY", name)
       tdb.finalize()
 
   except:

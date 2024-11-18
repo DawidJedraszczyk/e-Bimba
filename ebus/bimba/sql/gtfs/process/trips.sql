@@ -1,6 +1,7 @@
-create temp table processed_trip as with
-  agg_stops as (
+create temp table trip_with_stops as with
+  raw as (
     select
+      t.trip_id as id,
       (select id from gtfs_routes r where r.route_id = first(t.route_id)) as route,
       (select id from service_map s where s.service_id = first(t.service_id)) as service,
       (select id from shape_map s where s.shape_id = first(t.shape_id)) as shape,
@@ -14,22 +15,32 @@ create temp table processed_trip as with
           pickup_type := coalesce(st.pickup_type, 0),
           drop_off_type := coalesce(st.drop_off_type, 0)
         ) order by st.stop_sequence
-      ) as raw_stops,
-      raw_stops[1].departure as start_time,
-      [
-        struct_pack(
-          stop := s.stop,
-          arrival := s.arrival - start_time,
-          departure := s.departure - start_time,
-          pickup_type := s.pickup_type,
-          drop_off_type := s.drop_off_type
-        ) for s in raw_stops
-      ] as stops,
+      ) as stops,
     from gtfs_trips t
     join gtfs_stop_times st on (st.trip_id = t.trip_id)
     group by t.trip_id
-  ),
+  )
+select
+  id,
+  route,
+  service,
+  shape,
+  headsign,
+  wheelchair_accessible,
+  stops[1].departure as start_time,
+  [
+    struct_pack(
+      stop := s.stop,
+      arrival := s.arrival - start_time,
+      departure := s.departure - start_time,
+      pickup_type := s.pickup_type,
+      drop_off_type := s.drop_off_type
+    ) for s in stops
+  ] as stops,
+from raw;
 
+
+create temp table processed_trip as with
   agg_start_times as (
     select
       route,
@@ -38,8 +49,7 @@ create temp table processed_trip as with
       headsign,
       list(start_time order by start_time) as start_times,
       stops,
-      wheelchair_accessible,
-    from agg_stops
+    from trip_with_stops
     group by all
   ),
 
@@ -54,25 +64,30 @@ create temp table processed_trip as with
       ) as services,
       start_times,
       stops,
-      wheelchair_accessible,
     from agg_start_times
     group by all
+  ),
+
+  agg_starts as (
+    select
+      route,
+      shape,
+      headsign,
+      min(start_times[1]) as first_departure,
+      max(start_times[-1]) as last_departure,
+      list(
+        struct_pack(
+          services,
+          times := start_times
+        ) order by services
+      ) as starts,
+      stops,
+    from agg_services
+    group by all
+    order by route
   )
 
 select
-  route,
-  shape,
-  headsign,
-  min(start_times[1]) as first_departure,
-  max(start_times[-1]) as last_departure,
-  list(
-    struct_pack(
-      services,
-      start_times,
-      wheelchair_accessible
-    ) order by services
-  ) as instances,
-  stops,
-from agg_services
-group by all
-order by route;
+  nextval('seq_trip_id') as id,
+  *,
+from agg_starts;

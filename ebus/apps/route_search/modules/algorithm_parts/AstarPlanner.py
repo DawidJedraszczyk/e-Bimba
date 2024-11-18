@@ -10,7 +10,7 @@ try:
 except:
     pass
 
-from bimba.data.common import INF_TIME, Services
+from bimba.data.misc import INF_TIME, Services
 from bimba.data.stops import Stops
 from bimba.data.trips import Trips
 from .data import Data
@@ -433,7 +433,7 @@ class AStarPlanner():
         return response
 
 
-_NB_PLAN_TRIP_TYPE = nbt.NamedUniTuple(nb.int32, 5, PlanTrip)
+_NB_PLAN_TRIP_TYPE = nbt.NamedUniTuple(nb.int32, 7, PlanTrip)
 _COMPILATION_T0 = time.time()
 
 @nb.jit(
@@ -473,6 +473,8 @@ def get_next_trips(
 
         fastest_ways[to_stop] = PlanTrip(
             trip_id = nb.int32(-1),
+            service_id = nb.int32(-1),
+            trip_start = nb.int32(-1),
             start_from_stop_id = from_stop,
             departure_time = time,
             leave_at_stop_id = to_stop,
@@ -484,22 +486,24 @@ def get_next_trips(
             continue
 
         min_start = time + transfer_time - stop_departure
-        start_time = trips.get_next_start(trip_id, services, min_start)
+        start = trips.get_next_start(trip_id, services, min_start)
 
-        if start_time == INF_TIME:
+        if start.time == INF_TIME:
             continue
 
         for to_stop, stop_arrival, _ in trips.get_stops_after(trip_id, from_seq):
             if to_stop in visited_stops:
                 continue
 
-            arrival = start_time + stop_arrival
+            arrival = start.time + stop_arrival
 
             if to_stop not in fastest_ways or fastest_ways[to_stop].arrival_time > arrival:
                 fastest_ways[to_stop] = PlanTrip(
                     trip_id = trip_id,
+                    service_id = start.service,
+                    trip_start = nb.int32(start.time - start.offset),
                     start_from_stop_id = from_stop,
-                    departure_time = nb.int32(start_time + stop_departure),
+                    departure_time = nb.int32(start.time + stop_departure),
                     leave_at_stop_id = to_stop,
                     arrival_time = nb.int32(arrival),
                 )

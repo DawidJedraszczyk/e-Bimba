@@ -21,4 +21,4 @@ select
   id,
 from ranked r
 where rank <= 5
-  or distance <= 1000
+  or distance <= getvariable('MAX_STOP_WALK')

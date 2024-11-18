@@ -21,7 +21,7 @@ sys.path.append(str(Path(__file__).parent))
 
 from common import *
 from apps.route_search.modules.algorithm_parts.utils import seconds_to_time
-from bimba.data.common import *
+from bimba.data.misc import *
 from bimba.transitdb import *
 from bimba.osrm import *
 from bimba.router import *

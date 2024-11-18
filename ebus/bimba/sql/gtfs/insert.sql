@@ -41,9 +41,23 @@ order by id;
 
 
 insert into trip by name select
-  nextval('seq_trip_id') as id,
   *,
 from processed_trip;
+
+
+insert into trip_instance by name select
+  (
+    select id from processed_trip pt
+    where pt.route = tws.route
+      and pt.shape = tws.shape
+      and pt.headsign = tws.headsign
+      and pt.stops = tws.stops
+  ) as trip,
+  service,
+  start_time,
+  wheelchair_accessible,
+  id as gtfs_trip_id,
+from trip_with_stops tws;
 
 
 insert into regular_service select
