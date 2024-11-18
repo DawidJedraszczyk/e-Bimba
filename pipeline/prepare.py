@@ -8,7 +8,7 @@ import sys
 import time
 from typing import Iterable
 
-sys.path.append(str(Path(__file__).parents[1] / "app"))
+sys.path.append(str(Path(__file__).parents[1] / "ebus"))
 sys.path.append(str(Path(__file__).parent))
 
 from common import *

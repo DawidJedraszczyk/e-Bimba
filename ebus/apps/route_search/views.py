@@ -66,7 +66,7 @@ class FindRouteView(View):
         print(destination)
 
 
-        planner_straight = AStarPlanner(start_time, (start.latitude, start.longitude), (destination.latitude, destination.longitude), 'manhattan', datetime.date.today())
+        planner_straight = AStarPlanner(start_time, (start.latitude, start.longitude), (destination.latitude, destination.longitude), 'manhattan', '2024-11-19')
 
         for _ in range(20):
             planner_straight.find_next_plan()
