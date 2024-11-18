@@ -1,128 +1,126 @@
 {% load static %}
 
 <div id="foundRoutes">
-  <span id="loader"></span>
+    <span id="loader"></span>
 </div>
 
 <script>
+    let current_solution;
 
-  function getCookie(name) {
-      let cookieValue = null;
-      if (document.cookie && document.cookie !== '') {
-          const cookies = document.cookie.split(';');
-          for (let i = 0; i < cookies.length; i++) {
-              const cookie = cookies[i].trim();
-              // Does this cookie string begin with the name we want?
-              if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                  cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                  break;
-              }
-          }
-      }
-      return cookieValue;
-  }
-  document.addEventListener('DOMContentLoaded', () => {
-    document.body.addEventListener('click', function(event) {
-      if (event.target.classList.contains('solution')) {
-        handle_route_click(event.target.id)
-      }
-    });
-  });
-
-
-
-  const handle_route_click = (solution_id) => {
-    let coords, details;
-
-    const departureCoordinatesSessionStorage = sessionStorage.getItem('departureCoordinates');
-
-    // Check if data exists
-    if (departureCoordinatesSessionStorage) {
-        const departureCoordinates = JSON.parse(departureCoordinatesSessionStorage);
-
-        coords = departureCoordinates[solution_id];
-        draw_route(coords);
-    }
-
-    const departureDetailsSessionStorage = sessionStorage.getItem('departuresDetails');
-
-    if (departureDetailsSessionStorage) {
-        const departureDetails = JSON.parse(departureDetailsSessionStorage);
-
-        details = departureDetails[solution_id];
-        show_departure_details(details);
-
-    }
-  }
-
-  const show_departure_details = (details) => {
-
-      const departureDetailsContainer = document.getElementById('departureDetailsContent');
-      departureDetailsContainer.innerHTML = '';
-
-      // Append all departure details
-      Object.values(details).forEach(departureDiv => {
-        departureDetailsContainer.innerHTML += departureDiv;
-      });
-
-      document.getElementById('departureDetails').style.display = "flex";
-      document.getElementById("arrow-icon-hours").addEventListener("click", function () {
-        document.getElementById('departureDetails').style.display = "none";
-      });
-
-  }
-
-    const createDiv = (divClass, divId, divContent) => {
-        let div = document.createElement('div');
-        div.id = divId;
-        div.classList.add(divClass);
-        div.innerHTML = divContent;
-        return div;
-    }
-
-    const appendToDivElem = (div, element) => {
-        div.insertAdjacentElement('beforeend', element);
-    }
-
-    const show_departure_hours = (departures, buses) => {
-        const departureHours = document.getElementById('departureDetails');
-        departureHours.innerHTML = '<img id="arrow-icon-hours" class="arrow-icon" src="{% static 'base_view/img/arrow-icon.svg' %}"/>';
-
-        const first_bus_container = createDiv('firstBusContainer', 'firstBusContainer', '')
-
-        const first_bus = createDiv('busDetails', 'firstBus', ('<div class="busImgAndNumberSelectedRoute"><img id="id1" src="{% static 'base_view/img/bus.svg' %}" /><p class="busesP"> ' +
-        buses[0]['bus_name'] + ' ' + buses[0]['direction'] + '</p></div>'));
-
-
-        var stops = createDiv('busStations', '', '')
-        var ul = document.createElement('ul')
-        ul.classList.add('bus_stops')
-
-        for(var bus in departures){
-            var departure = departures[bus]
-            for(var stop in departure){
-                var bus_stop = departure[stop]
-                let li = document.createElement('li')
-                li.classList.add('bus_stop')
-                li.innerHTML = bus_stop['time'] + bus_stop['stop_name']
-                appendToDivElem(ul, li)
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
             }
         }
-        appendToDivElem(stops, ul)
-
-
-        appendToDivElem(first_bus_container, first_bus)
-        appendToDivElem(first_bus_container, stops)
-
-
-        {#const second_bus_container = createDiv('secondBusContainer', 'secondBusContainer', '')#}
-
-        appendToDivElem(departureHours, first_bus_container)
-        departureHours.style.display = "flex";
-
-        document.getElementById("arrow-icon-hours").addEventListener("click", function () {
-            departureHours.style.display = "none";
-          });
+        return cookieValue;
     }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        document.body.addEventListener('click', function (event) {
+            if (event.target.classList.contains('solution')) {
+                current_solution = event.target.id;
+                handle_route_click(event.target.id)
+            }
+        });
+    });
+
+    window.addEventListener("vehiclePositionsUpdated", (e) => {
+        const vehicles_data = e.detail;
+        show_vehicles(current_solution)
+    });
+
+    window.addEventListener("tripUpdatesUpdated", (e) => {
+        const trip_updates_data = e.detail;
+    });
+
+    const handle_route_click = (solution_id) => {
+        let coords, details;
+
+        const departureCoordinatesSessionStorage = sessionStorage.getItem('departureCoordinates');
+
+        // Check if data exists
+        if (departureCoordinatesSessionStorage) {
+            const departureCoordinates = JSON.parse(departureCoordinatesSessionStorage);
+
+            coords = departureCoordinates[solution_id];
+            draw_route(coords);
+        }
+
+        const departureDetailsSessionStorage = sessionStorage.getItem('departuresDetails');
+
+        if (departureDetailsSessionStorage) {
+            const departureDetails = JSON.parse(departureDetailsSessionStorage);
+
+            details = departureDetails[solution_id];
+            show_departure_details(details);
+        }
+
+
+        show_vehicles(solution_id)
+
+
+    }
+
+    const show_departure_details = (details) => {
+
+        const departureDetailsContainer = document.getElementById('departureDetailsContent');
+        departureDetailsContainer.innerHTML = '';
+
+        // Append all departure details
+        Object.values(details).forEach(departureDiv => {
+            departureDetailsContainer.innerHTML += departureDiv;
+        });
+
+        document.getElementById('departureDetails').style.display = "flex";
+        document.getElementById("arrow-icon-hours").addEventListener("click", function () {
+            document.getElementById('departureDetails').style.display = "none";
+        });
+
+    }
+
+    const show_vehicles = (solution_id) => {
+        const departureGTFSSessionStorage = sessionStorage.getItem('departuresGTFS');
+
+        if (departureGTFSSessionStorage) {
+            const departureGTFS = JSON.parse(departureGTFSSessionStorage);
+
+            let trip_ids = departureGTFS[solution_id];
+            removeVehiclesRoutingControl();
+
+            for (let trip_id in trip_ids) {
+                const filteredVehicles = GTFS_DATA.vehicles_data.filter(
+                    vehicle => vehicle.trip_id === trip_ids[trip_id]
+                );
+
+                filteredVehicles.forEach(vehicle => {
+                    const marker = L.marker([vehicle.latitude, vehicle.longitude], {
+                        icon: L.divIcon({
+                            className: 'custom-marker',
+                            html: `<div class="marker-circle">${vehicle.route_id || 'N/A'}</div>`,
+                            iconSize: [25, 25], // Icon size
+                            iconAnchor: [12.5, 12.5], // Center the icon
+                        }),
+                    }).bindPopup(
+                        `<b>ID pojazdu:</b> ${vehicle.vehicle_id}<br>
+                     <b>ID odjazdu:</b> ${vehicle.route_id}<br>
+                     <b>Data:</b> ${vehicle.timestamp}`
+                    );
+
+                    // Add the marker to the map
+                    marker.addTo(map);
+
+                    // Track the marker for removal later
+                    vehiclesControls.push(marker);
+                });
+            }
+        }
+    };
 
 </script>

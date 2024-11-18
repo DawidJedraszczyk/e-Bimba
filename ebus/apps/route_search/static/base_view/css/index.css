@@ -238,6 +238,19 @@ main {
   display: none;
 }
 
+.custom-marker .marker-circle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    background-color: #007bff; /* Same as fillColor */
+    color: white; /* Text color */
+    font-size: 12px;
+    font-weight: bold;
+}
+
 @media screen and (max-width: 1000px) {
   main {
     position: relative;

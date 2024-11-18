@@ -396,8 +396,16 @@ class AStarPlanner():
                 trip = self.data.trips[plan_trip.trip_id]
                 route = self.data.routes[trip.route_id].name
                 direction = trip.headsign
-                response[
-                    index + 1] = f'''<div style="display: flex; width: 90%; flex-direction: column; justify-content: center; margin: 10px 0;"><div style="display:flex; align-items: center; margin: 10px 0;"><img src="{static('base_view/img/BUS.svg')}" alt="bus icon"/><span style="margin-left: 10px;">{route} - {direction} ({departure_time} - {arrival_time})</span></div><div class="stops" style="font-size: 14px; text-align: left;">'''
+
+
+                response[index + 1] = f'''<div style="display: flex; width: 90%; flex-direction: column; justify-content: center; margin: 10px 0;">
+                                        <div style="display:flex; align-items: center; margin: 10px 0;">
+                                            <img src="{static('base_view/img/BUS.svg')}" alt="bus icon"/>
+                                                <span style="margin-left: 10px;">
+                                                    {route} - {direction} ({departure_time} - {arrival_time})
+                                                </span>
+                                            </div>
+                                            <div class="stops" style="font-size: 14px; text-align: left;">'''
 
                 in_our_trip_flag = False
                 time_offset = 0
@@ -432,6 +440,21 @@ class AStarPlanner():
 
         return response
 
+
+    def prepare_gtfs_trip_ids(self, plan_num: int):
+        response = {}
+
+        plan = self.found_plans[plan_num]
+
+        for index, plan_trip in enumerate(plan.plan_trips):
+            if plan_trip.trip_id != -1:
+                response[index] = self.data.tdb.get_trip_instance(
+                    plan_trip.trip_id,
+                    plan_trip.service_id,
+                    plan_trip.trip_start
+                ).gtfs_trip_id
+
+        return response
 
 _NB_PLAN_TRIP_TYPE = nbt.NamedUniTuple(nb.int32, 7, PlanTrip)
 _COMPILATION_T0 = time.time()

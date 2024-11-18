@@ -57,20 +57,16 @@ class FindRouteView(View):
 
     def post(self, request, *args, **kwargs):
         city = request.POST.get('city')
-        print(city)
         start_time = time_to_seconds(request.POST.get('time')+":00")
 
         start = geolocator.geocode(request.POST.get('start_location') + ',' + city +', Polska')
-        print(start)
         destination = geolocator.geocode(request.POST.get('goal_location') + ',' + city + ', Polska')
-        print(destination)
 
 
-        planner_straight = AStarPlanner(start_time, (start.latitude, start.longitude), (destination.latitude, destination.longitude), 'manhattan', '2024-11-19')
+        planner_straight = AStarPlanner(start_time, (start.latitude, start.longitude), (destination.latitude, destination.longitude), 'manhattan', '2024-11-18')
 
         for _ in range(20):
             planner_straight.find_next_plan()
-        print(planner_straight.found_plans)
         html = planner_straight.plans_to_html()
 
         coords = {}
@@ -78,13 +74,16 @@ class FindRouteView(View):
             coords[solution_id] = planner_straight.prepare_coords(solution_id)
 
         details = {}
+        gtfs = {}
         for solution_id in range(len(planner_straight.found_plans)):
             details[solution_id] = planner_straight.prepare_departure_details(solution_id, start,destination)
+            gtfs[solution_id] = planner_straight.prepare_gtfs_trip_ids(solution_id)
 
 
         response_data = {
             'html': html,
             'coords': coords,
-            'details': details
+            'details': details,
+            'gtfs': gtfs
         }
         return JsonResponse(response_data)

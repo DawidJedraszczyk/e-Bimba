@@ -36,9 +36,9 @@
     });
 
     let routingControls = [];
+    let vehiclesControls = [];
     let polylines = [];
 
-    // Function to remove all routing controls and polylines from the map
     const removeRoutingControl = () => {
         routingControls.forEach((control) => {
             map.removeControl(control);
@@ -50,6 +50,14 @@
         });
         polylines = [];
     };
+
+    const removeVehiclesRoutingControl = () => {
+        console.log('REMOVE VEHICLES CONTROLS')
+        vehiclesControls.forEach((control) => {
+            map.removeControl(control);
+        });
+        vehiclesControls = [];
+    }
 
     const draw_route = (array) => {
         removeRoutingControl();
@@ -87,7 +95,6 @@
 
                     routingControls.push(routingControl);
                 } else if (coords.length > 2) {
-                    // Use polyline for more than two coordinates
                     const polyline = L.polyline(coords, {
                         color: getColor(key),
                         weight: 2,
