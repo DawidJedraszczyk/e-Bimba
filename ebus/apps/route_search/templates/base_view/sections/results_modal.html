@@ -38,6 +38,7 @@
 
     window.addEventListener("tripUpdatesUpdated", (e) => {
         const trip_updates_data = e.detail;
+        show_delays()
     });
 
     const handle_route_click = (solution_id) => {
@@ -69,7 +70,6 @@
     }
 
     const show_departure_details = (details) => {
-
         const departureDetailsContainer = document.getElementById('departureDetailsContent');
         departureDetailsContainer.innerHTML = '';
 
@@ -122,5 +122,62 @@
             }
         }
     };
+
+    const show_delays = () => {
+        const departureGTFSSessionStorage = sessionStorage.getItem('departuresGTFS');
+
+        const departureDetailsSessionStorage = sessionStorage.getItem('departuresDetails');
+        let departureDetails = JSON.parse(departureDetailsSessionStorage);
+
+        if (departureGTFSSessionStorage) {
+            const departureGTFS = JSON.parse(departureGTFSSessionStorage);
+
+            for (let departure in departureGTFS) {
+                for (let gtfs in departureGTFS[departure]) {
+                    let trip_id = departureGTFS[departure][gtfs];
+
+                    const filteredDelays = GTFS_DATA.trip_updates_data.filter(
+                        trip => trip.trip_id === trip_id
+                    );
+
+                    filteredDelays.forEach(delay => {
+
+                        let departure_details = departureDetails[departure]
+                        const detailsWithClass = Object.entries(departure_details).filter(([key, value]) => value.includes('class="departure-details"'));
+
+                        const reindexedDetails = detailsWithClass.map(([_, value], index) => ({
+                            id: index,
+                            value: value
+                        }));
+
+
+                        reindexedDetails.forEach(detail => {
+                            if (detail.id == gtfs) {
+                                // Parse detail.value for data-sequence-number
+                                const parser = new DOMParser();
+                                const doc = parser.parseFromString(detail.value, "text/html");
+                                const elements = doc.querySelectorAll(`.departure-time`);
+
+                                // Check if any data-sequence-number <= delay.stop_sequence
+                                elements.forEach(element => {
+                                    const sequenceNumber = parseInt(element.getAttribute("data-sequence-number"), 10);
+                                    if (sequenceNumber <= delay.stop_sequence) {
+                                        // Log the delay
+                                        console.log(`Match found! Departure: ${departure}, GTFS: ${gtfs}, Trip ID: ${trip_id}`);
+                                        console.log(delay);
+                                        console.log(`Matching sequence number: ${sequenceNumber}`);
+                                        console.log(detail.value);
+                                        console.log("");
+                                    }
+                                });
+                            }
+                        });
+                    })
+                }
+            }
+
+
+        }
+    }
 
 </script>

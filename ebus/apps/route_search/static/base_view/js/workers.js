@@ -28,7 +28,6 @@ ws_trip_updates.onopen = () => {
 
 ws_trip_updates.onmessage = (event) => {
     GTFS_DATA.trip_updates_data = JSON.parse(event.data);
-    console.log("Trip updates:", GTFS_DATA.trip_updates_data);
     window.dispatchEvent(new CustomEvent("tripUpdatesUpdated", { detail: GTFS_DATA.trip_updates_data }));
 };
 

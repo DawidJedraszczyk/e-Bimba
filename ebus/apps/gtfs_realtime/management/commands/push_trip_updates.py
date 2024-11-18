@@ -6,4 +6,8 @@ class Command(BaseCommand):
     help = 'Runs shell with prepared algorithm'
 
     def handle(self, *args, **kwargs):
-        asyncio.run(push_trip_updates_to_clients())
+        counter = 1
+        while True:
+            asyncio.run(push_trip_updates_to_clients())
+            print(f"wysłałem {counter} turę trip_updates")
+            counter += 1

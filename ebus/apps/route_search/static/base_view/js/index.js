@@ -3,7 +3,7 @@ function setCurrentTime() {
   var warsawOffset = 1 * 60; // Warsaw is 1 hours ahead of UTC
   currentTime.setMinutes(currentTime.getMinutes() + warsawOffset);
   var dateString = currentTime.toISOString().slice(0, -8);
-  document.getElementById("hour").value = dateString;
+  document.getElementById("datetime").value = dateString;
 }
 document.addEventListener("DOMContentLoaded", function() {
   setCurrentTime()

@@ -6,10 +6,16 @@ import json
 
 redis_client = redis.StrictRedis(host=REDIS_HOST, port=REDIS_PORT, db=0)
 REDIS_VEHICLE_POSITIONS_KEY = "vehicle_positions"
+REDIS_TRIP_UPDATES_KEY = "trip_updates"
 
 def get_vehicle_positions():
     positions = redis_client.get(REDIS_VEHICLE_POSITIONS_KEY)
     return json.loads(positions) if positions else []
+
+
+def get_trip_updates():
+    updates = redis_client.get(REDIS_TRIP_UPDATES_KEY)
+    return json.loads(updates) if updates else []
 
 
 def fetch_gtfs_realtime_data(feed_url):
@@ -28,12 +34,12 @@ def save_vehicle_positions(feed):
         vehicle_data = entity.vehicle
 
         vehicle_position = {
-            "route_id": vehicle_data.trip.route_id if vehicle_data.trip.HasField("route_id") else None,
-            "trip_id": vehicle_data.trip.trip_id if vehicle_data.trip.HasField("trip_id") else None,
-            "vehicle_id": vehicle_data.vehicle.id if vehicle_data.vehicle.HasField("id") else None,
-            "latitude": vehicle_data.position.latitude if vehicle_data.position.HasField("latitude") else None,
-            "longitude": vehicle_data.position.longitude if vehicle_data.position.HasField("longitude") else None,
-            "timestamp": vehicle_data.timestamp if vehicle_data.HasField("timestamp") else None,
+            "route_id": vehicle_data.trip.route_id,
+            "trip_id": vehicle_data.trip.trip_id,
+            "vehicle_id": vehicle_data.vehicle.id,
+            "latitude": vehicle_data.position.latitude,
+            "longitude": vehicle_data.position.longitude,
+            "timestamp": vehicle_data.timestamp,
         }
         vehicle_positions.append(vehicle_position)
 
@@ -42,20 +48,19 @@ def save_vehicle_positions(feed):
 
 def save_trip_updates(feed):
     from .models import TripUpdate
-    TripUpdate.objects.all().delete()
-
+    trip_updates = []
     for entity in feed.entity:
-        trip_update = entity.trip_update
-
-        for stop_time_update in trip_update.stop_time_update:
-            vehicle = trip_update.vehicle
+        trip_update_data = entity.trip_update
 
 
-            TripUpdate.objects.create(
-                trip_id=trip_update.trip.trip_id,
-                route_id=trip_update.trip.route_id,
-                vehicle_id=vehicle.id,
-                stop_sequence=stop_time_update.stop_sequence,
-                delay=stop_time_update.arrival.delay,
-            )
+        for stop_time_update in trip_update_data.stop_time_update:
+            trip_update = {
+                "trip_id": trip_update_data.trip.trip_id,
+                "route_id": trip_update_data.trip.route_id,
+                "vehicle_id": trip_update_data.vehicle.id,
+                "stop_sequence": stop_time_update.stop_sequence,
+                "delay": stop_time_update.arrival.delay,
+            }
+            trip_updates.append(trip_update)
 
+    redis_client.set(REDIS_TRIP_UPDATES_KEY, json.dumps(trip_updates))

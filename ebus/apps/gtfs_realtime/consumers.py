@@ -2,7 +2,7 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 from .models import VehiclePosition, TripUpdate
 from asgiref.sync import sync_to_async
 import json
-from .utils import get_vehicle_positions
+from .utils import get_vehicle_positions, get_trip_updates
 
 
 class VehiclePositionConsumer(AsyncWebsocketConsumer):
@@ -41,15 +41,15 @@ class TripUpdatesConsumer(AsyncWebsocketConsumer):
         await self.channel_layer.group_discard(self.group_name, self.channel_name)
 
     async def send_trip_updates(self, event):
-        trip_updates = await sync_to_async(list)(TripUpdate.objects.all())
+        trip_updates = await sync_to_async(get_trip_updates)()
         data = [
             {
-                "trip_id": pos.trip_id,
-                "route_id": pos.route_id,
-                "vehicle_id": pos.vehicle_id,
-                "stop_sequence": float(pos.stop_sequence),
-                "delay": float(pos.delay),
+                "trip_id": update["trip_id"],
+                "route_id": update["route_id"],
+                "vehicle_id": update["vehicle_id"],
+                "stop_sequence": float(update["stop_sequence"]),
+                "delay": float(update["delay"]),
             }
-            for pos in trip_updates
+            for update in trip_updates
         ]
         await self.send(text_data=json.dumps(data))

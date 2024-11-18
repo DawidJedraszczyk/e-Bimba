@@ -7,6 +7,7 @@ from django.views import View
 import redis
 from ebus.settings import REDIS_HOST, REDIS_PORT
 from django.conf import settings
+from datetime import datetime
 import json
 
 r = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, db=0)
@@ -57,13 +58,14 @@ class FindRouteView(View):
 
     def post(self, request, *args, **kwargs):
         city = request.POST.get('city')
-        start_time = time_to_seconds(request.POST.get('time')+":00")
 
         start = geolocator.geocode(request.POST.get('start_location') + ',' + city +', Polska')
         destination = geolocator.geocode(request.POST.get('goal_location') + ',' + city + ', Polska')
 
+        _datetime = datetime.strptime(request.POST.get('datetime'), '%Y-%m-%dT%H:%M')
 
-        planner_straight = AStarPlanner(start_time, (start.latitude, start.longitude), (destination.latitude, destination.longitude), 'manhattan', '2024-11-18')
+
+        planner_straight = AStarPlanner(time_to_seconds(_datetime.strftime("%H:%M:%S")), (start.latitude, start.longitude), (destination.latitude, destination.longitude), 'manhattan', _datetime.strftime("%Y-%m-%d"))
 
         for _ in range(20):
             planner_straight.find_next_plan()

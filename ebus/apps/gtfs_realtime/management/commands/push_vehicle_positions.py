@@ -11,5 +11,5 @@ class Command(BaseCommand):
         counter = 1
         while True:
             asyncio.run(push_vehicle_positions_to_clients())
-            print(f"wysłałem {counter} turę danych")
+            print(f"wysłałem {counter} turę vehicle positions")
             counter += 1
