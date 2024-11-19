@@ -8,22 +8,23 @@ from bimba.osrm import OsrmClient
 
 
 PIPELINE = Path(__file__).parent
-DATA = PIPELINE.parent / "data"
+ROOT = PIPELINE.parent
+DATA = ROOT / "data"
 DATA_CITIES = DATA / "cities"
 DATA_REGIONS = DATA / "regions"
 TMP = PIPELINE / "tmp"
 TMP_CITIES = TMP / "cities"
 TMP_REGIONS = TMP / "regions"
 
-CITIES = json.loads((PIPELINE.parent / "cities.json").read_bytes())
-REGIONS = json.loads((PIPELINE.parent / "regions.json").read_bytes())
+CITIES = json.loads((ROOT / "cities.json").read_bytes())
+REGIONS = json.loads((ROOT / "regions.json").read_bytes())
 
 OSRM_IMAGE = "ghcr.io/project-osrm/osrm-backend"
 OSRM_PORT = 53909
 
 
 def fpath(path: Path):
-  return str(path.relative_to(Path.cwd()))
+  return str(path.relative_to(ROOT))
 
 
 @contextlib.contextmanager
