@@ -1,9 +1,9 @@
 from itertools import chain
 import numpy as np
 import pyproj
-from typing import NamedTuple
+from typing import NamedTuple, Optional
 
-from .data.misc import Metadata, Point
+from .data.misc import Coords, Metadata, Point
 from .data.stops import Stops
 from .osrm import *
 from .transitdb import TransitDb
@@ -28,13 +28,15 @@ class Prospector:
   md: Metadata
   stops: Stops
   transformer: pyproj.Transformer
+  untransformer: pyproj.Transformer
 
-  def __init__(self, tdb, osrm, md=None, stops=None, transformer=None):
+  def __init__(self, tdb, osrm, md=None, stops=None, transformer=None, untransformer=None):
     self.tdb = tdb
     self.osrm = osrm
     self.md = md or tdb.get_metadata()
     self.stops = stops or tdb.get_stops()
     self.transformer = transformer or pyproj.Transformer.from_proj('WGS84', self.md.projection)
+    self.untransformer = untransformer or pyproj.Transformer.from_proj(self.md.projection, 'WGS84')
 
   def clone(self):
     return Prospector(
@@ -43,34 +45,17 @@ class Prospector:
       self.md,
       self.stops,
       self.transformer,
+      self.untransformer,
   )
 
 
   def prospect(
     self,
-    start: Coords|int,
-    destination: Coords|int,
+    start: Coords|Point|int,
+    destination: Coords|Point|int,
   ) -> Prospect:
-    if isinstance(start, Coords):
-      start_coords = start
-      start_point = self.project(start)
-      near_start = None
-    else:
-      s = self.stops[start]
-      start_coords = s.coords
-      start_point = Point(np.float32(s.position.x), np.float32(s.position.y))
-      near_start = [NearStop(np.int32(start), np.float32(0))]
-
-    if isinstance(destination, Coords):
-      destination_coords = destination
-      destination_point = self.project(destination)
-      near_destination = None
-    else:
-      s = self.stops[destination]
-      destination_coords = s.coords
-      destination_point = Point(np.float32(s.position.x), np.float32(s.position.y))
-      near_destination = [NearStop(np.int32(destination), np.float32(0))]
-
+    start_coords, start_point, near_start = self.standardize(start)
+    destination_coords, destination_point, near_destination = self.standardize(destination)
     walk_distance = None
 
     if near_start is None:
@@ -113,3 +98,35 @@ class Prospector:
   def project(self, c: Coords) -> Point:
     x, y = self.transformer.transform(c.lat, c.lon)
     return Point(np.float32(x - self.md.center.x), np.float32(y - self.md.center.y))
+
+
+  def unproject(self, p: Point) -> Coords:
+    x = p.x + self.md.center.x
+    y = p.y + self.md.center.y
+    lat, lon = self.untransformer.transform(x, y)
+    return Coords(np.float32(lat), np.float32(lon))
+
+
+  def standardize(
+    self,
+    location: Coords|Point|int,
+  ) -> tuple[
+    Coords,
+    Point,
+    Optional[list[NearStop]]
+  ]:
+    if isinstance(location, Coords):
+      coords = location
+      point = self.project(location)
+      near = None
+    elif isinstance(location, Point):
+      coords = self.unproject(location)
+      point = location
+      near = None
+    else:
+      s = self.stops[location]
+      coords = Coords(np.float32(s.coords.lat), np.float32(s.coords.lon))
+      point = Point(np.float32(s.position.x), np.float32(s.position.y))
+      near = [NearStop(np.int32(location), np.float32(0))]
+
+    return coords, point, near

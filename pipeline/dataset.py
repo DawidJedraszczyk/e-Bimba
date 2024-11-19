@@ -46,13 +46,13 @@ NUM_BATCHES = 128
 
 
 class Row(NamedTuple):
-  stop_lat: float
-  stop_lon: float
-  point_lat: float
-  point_lon: float
-  day_type: int
-  start_time: int
-  arrival: int
+  from_x: np.float32
+  from_y: np.float32
+  to_x: np.float32
+  to_y: np.float32
+  day_type: np.int8
+  start: np.int32
+  time: np.int32
 
 
 thread_local = threading.local()
@@ -69,16 +69,15 @@ transformer = pyproj.Transformer.from_proj(md.projection, 'WGS84')
 x_d = np.std(stops.xs) / 2
 y_d = np.std(stops.ys) / 2
 
-@nb.jit
 def random_pos():
-  return Point(np.random.normal(0.0, x_d), np.random.normal(0.0, y_d))
+  return Point(
+    np.float32(np.random.normal(0.0, x_d)),
+    np.float32(np.random.normal(0.0, y_d)),
+  )
 
 def pos2coords(pos):
   lat, lon = transformer.transform(pos.x + md.center.x, pos.y + md.center.y)
   return Coords(lat, lon)
-
-def random_coords():
-  return pos2coords(random_pos())
 
 def random_stop():
   return random.randrange(0, stop_count)
@@ -111,24 +110,24 @@ def make_batch():
 
   for _ in range(BATCH_SIZE):
     from_stop = random_stop()
-    to_coords = random_coords()
+    to_pos = random_pos()
     day_type = random_day_type()
-    start_time = random_time()
-    prospect = local_prospector.prospect(from_stop, to_coords)
-    plan = local_router.find_route(prospect, dt_services[day_type], start_time)
+    start = random_time()
+    prospect = local_prospector.prospect(from_stop, to_pos)
+    plan = local_router.find_route(prospect, dt_services[day_type], start)
 
     rows.append(Row(
-      np.float32(stops[from_stop].coords.lat),
-      np.float32(stops[from_stop].coords.lon),
-      np.float32(to_coords.lat),
-      np.float32(to_coords.lon),
-      np.int8(day_type),
-      np.int32(start_time),
-      np.int32(plan.arrival),
+      stops[from_stop].position.x,
+      stops[from_stop].position.y,
+      to_pos.x,
+      to_pos.y,
+      day_type,
+      start,
+      plan.arrival - start,
     ))
 
   return pa.StructArray.from_arrays(
-    ([getattr(r, f) for r in rows] for f in Row._fields),
+    (np.array([getattr(r, f) for r in rows], Row.__annotations__[f]) for f in Row._fields),
     Row._fields,
   )
 
