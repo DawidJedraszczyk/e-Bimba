@@ -4,9 +4,11 @@ import os
 from time import time
 from typing import NamedTuple
 
+from algorithm_parts.data import Data
+from algorithm_parts.estimator import ManhattanEstimator
 from algorithm_parts.utils import time_to_seconds, seconds_to_time, custom_print, plans_to_string
 from algorithm_parts.AstarPlanner import AStarPlanner
-
+from bimba.data.misc import Coords
 
 class PlannerResult(NamedTuple):
     found_plans: list
@@ -14,28 +16,36 @@ class PlannerResult(NamedTuple):
 
 
 class BenchmarkStrategy():
+    data: Data
     benchmark_type = None
     alternative_routes = 3
-    planner_metric = 'manhattan' # at the end when we will use neural network this will be removed or serve other purpose
+    estimator_factory = ManhattanEstimator
     total_times = []
     planners = []
     sample_routes = None
 
-    def __init__(self):
-        pass
+    def __init__(self, data):
+        self.data = data
 
     def run(self):
         self.total_times = []
         self.planners = []
         for route in self.sample_routes:
-            start = route.start_cords
-            destination = route.destination_cords
+            start = Coords(*route.start_cords)
+            destination = Coords(*route.destination_cords)
             start_time = time_to_seconds(route.start_time)
             start_date = route.date
             weekday = route.week_day
-
-            planner = AStarPlanner(start_time,start,destination,self.planner_metric,start_date)            
             total_time = 0
+
+            planner = AStarPlanner(
+                self.data,
+                start,
+                destination,
+                start_date,
+                start_time,
+                self.estimator_factory,
+            )
 
             custom_print(
                 f'Searching for route from: {route.start_name} {start} '
@@ -57,7 +67,7 @@ class BenchmarkStrategy():
             print('##################################################')
             print('Route from: ', route.start_name, 'to: ', route.destination_name, 'at time: ', route.start_time, ' on: ', route.week_day)
             print('##################################################')
-            print(plans_to_string(self.planners[i].found_plans))
+            print(plans_to_string(self.planners[i].found_plans, self.data))
             route.print_comparison_plans()
 
     @abstractmethod
@@ -88,7 +98,7 @@ class BenchmarkStrategy():
             'Destination Name': route.destination_name,
             'Start Time': route.start_time,
             'Day of week': route.week_day,
-            'found route': plans_to_string(self.planners[route_index].found_plans),
+            'found route': plans_to_string(self.planners[route_index].found_plans, self.data),
             'found route duration': self.compute_travel_duration(
                 route.start_time,
                 seconds_to_time(self.planners[route_index].found_plans[0].time_at_destination)) if self.planners[route_index].found_plans else 'NA',

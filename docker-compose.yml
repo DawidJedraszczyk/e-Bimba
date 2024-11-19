@@ -17,14 +17,14 @@ services:
     image: ghcr.io/project-osrm/osrm-backend
     command: osrm-routed --algorithm mld /data/map.osrm
     volumes:
-      ./data/main/osrm:/data
+      ./data/regions/pl_wielkopolskie:/data
 
   django:
     build:
       context: ./app
       dockerfile: Dockerfile
     volumes:
-      ./data/main/transit.db:/app/transit.db
+      ./data:/data
     ports:
       - "8000:8000"
     depends_on:
@@ -33,6 +33,8 @@ services:
       - redis
     env_file:
       - .env
+    environment:
+      OSRM_URL_pl_wielkopolskie: "http://osrm:5000"
 
 volumes:
   postgres_data:

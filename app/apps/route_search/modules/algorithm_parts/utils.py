@@ -34,12 +34,12 @@ def manhattan_distance(
     return distance_across_latitude + distance_across_longitude
 
 
-def plans_to_string(found_plans):
+def plans_to_string(found_plans, data):
     result = ""
     for i, plan in enumerate(found_plans):
         result += '\t-----------------\n'
         result += f'\tPlan {i}\n'
-        result += "\t" + str(plan).replace("\n", "\n\t") + "\n"
+        result += "\t" + plan.format(data).replace("\n", "\n\t") + "\n"
     return result
 
 def get_lat_lon_sets(shapes_df, shape_id):
