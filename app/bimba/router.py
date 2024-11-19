@@ -131,7 +131,7 @@ _NB_NODE_TYPE = Node.class_type.instance_type
   ("services", Services.class_type.instance_type),
 
   ("destination", _NB_POINT_TYPE),
-  ("near_destination", nbt.ListType(_NB_NEAR_DESTINATION_TUPLE_TYPE)),
+  ("near_destination", nbt.List(_NB_NEAR_STOP_TYPE)),
 
   ("iteration", nb.int32),
   ("arrival", nb.int32),
@@ -154,7 +154,7 @@ class RouterTask:
     self.services = services
 
     self.destination = prospect.destination
-    self.near_destination = nb.typed.List.empty_list(_NB_NEAR_DESTINATION_TUPLE_TYPE)
+    self.near_destination = [n for n in prospect.near_destination]
 
     self.iteration = 0
     self.arrival = start_time + int(prospect.walk_distance / WALK_SPEED)
@@ -162,14 +162,6 @@ class RouterTask:
 
     self.nodes = nb.typed.Dict.empty(nb.int32, _NB_NODE_TYPE)
     self.queue = nb.typed.List.empty_list(_NB_NODE_TYPE)
-
-    all_near = [(ns.walk_distance, ns.id) for ns in prospect.near_destination]
-    all_near.sort()
-
-    for dst, id in all_near:
-      walk_time = nb.int32(dst / WALK_SPEED)
-      self.nodes[id] = Node(id, self.estimate(id, walk_time), walk_time)
-      self.near_destination.append((walk_time, id))
 
     for id, dst in prospect.near_start:
       n = self.get_node(id)
@@ -195,16 +187,20 @@ class RouterTask:
     pos = self.stops[stop_id].position
     result = walk_time
 
-    for target_walk_time, target_id in self.near_destination:
-      target_pos = self.stops[target_id].position
-      distance = math.sqrt((pos.x - target_pos.x)**2 + (pos.y - target_pos.y)**2)
-      time = nb.int32(int(distance / TRAM_SPEED) + target_walk_time)
+    for near in self.near_destination:
+      near_pos = self.stops[near.id].position
+      distance = math.sqrt((pos.x - near_pos.x)**2 + (pos.y - near_pos.y)**2)
+      time = nb.int32(distance / TRAM_SPEED + near.walk_distance / WALK_SPEED)
       result = min(result, time)
 
     return result
 
 
   def estimate_walk_time(self, stop_id) -> int:
+    for near in self.near_destination:
+      if near.id == stop_id:
+        return nb.int32(near.walk_distance / WALK_SPEED)
+
     a = self.stops[stop_id].position
     b = self.destination
     t = np.sqrt((a.x - b.x)**2 + (a.y - b.y)**2) * WALK_DISTANCE_MULTIPLIER / WALK_SPEED
