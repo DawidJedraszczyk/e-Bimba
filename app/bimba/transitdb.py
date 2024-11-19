@@ -49,8 +49,8 @@ class TransitDb(Db):
 
 
   def get_metadata(self) -> Metadata:
-    name, proj, center = self.sql("select * from metadata").one()
-    return Metadata(name, proj, Point(center["x"], center["y"]))
+    name, region, proj, center = self.sql("select * from metadata").one()
+    return Metadata(name, region, proj, Point(center["x"], center["y"]))
 
 
   def get_routes(self) -> Routes:

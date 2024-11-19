@@ -5,7 +5,7 @@
       "ztm": "https://www.ztm.poznan.pl/pl/dla-deweloperow/getGTFSFile"
     },
     "projection": "EPSG:2180",
-    "region": "pl-wielkopolskie"
+    "region": "pl_wielkopolskie"
   },
   "Poznań (wrzesień)": {
     "database": "poz-w.db",
@@ -13,7 +13,7 @@
       "ztm": "https://www.ztm.poznan.pl/pl/dla-deweloperow/getGTFSFile/?file=20240905_20240930.zip"
     },
     "projection": "EPSG:2180",
-    "region": "pl-wielkopolskie"
+    "region": "pl_wielkopolskie"
   },
   "Warszawa": {
     "database": "waw.db",
@@ -23,6 +23,6 @@
       "wkd": "https://mkuran.pl/gtfs/wkd.zip"
     },
     "projection": "EPSG:2180",
-    "region": "pl-mazowieckie"
+    "region": "pl_mazowieckie"
   }
 }

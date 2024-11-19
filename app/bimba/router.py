@@ -69,7 +69,10 @@ class Router:
     return find_route(
       self.stops,
       self.trips,
-      prospect,
+      prospect.destination,
+      prospect.walk_distance,
+      prospect.near_start,
+      prospect.near_destination,
       start_time,
       services,
     )
@@ -78,19 +81,7 @@ class Router:
 _NB_POINT_TYPE = nbt.NamedUniTuple(nb.float32, 2, Point)
 _NB_PATH_SEGMENT_TYPE = nbt.NamedUniTuple(nb.int32, 3, PathSegment)
 _NB_PLAN_TYPE = nbt.NamedTuple([nb.int32, nbt.ListType(_NB_PATH_SEGMENT_TYPE), nb.int32], Plan)
-_NB_NEAR_DESTINATION_TUPLE_TYPE = nbt.UniTuple(nb.int32, 2)
 _NB_NEAR_STOP_TYPE = nbt.NamedTuple([nb.int32, nb.float32], NearStop)
-
-_NB_PROSPECT_TYPE = nbt.NamedTuple(
-  [
-    _NB_POINT_TYPE,
-    _NB_POINT_TYPE,
-    nb.float32,
-    nbt.List(_NB_NEAR_STOP_TYPE, reflected=True),
-    nbt.List(_NB_NEAR_STOP_TYPE, reflected=True),
-  ],
-  Prospect,
-)
 
 @nb.jit
 def empty_segment():
@@ -145,25 +136,27 @@ class RouterTask:
     self,
     stops: Stops,
     trips: Trips,
-    prospect: Prospect,
+    destination: Point,
+    walk_distance: float,
+    near_start: list[NearStop],
+    near_destination: list[NearStop],
     start_time: int,
     services: Services,
   ):
     self.stops = stops
     self.trips = trips
     self.services = services
-
-    self.destination = prospect.destination
-    self.near_destination = [n for n in prospect.near_destination]
+    self.destination = destination
+    self.near_destination = [n for n in near_destination]
 
     self.iteration = 0
-    self.arrival = start_time + int(prospect.walk_distance / WALK_SPEED)
-    self.path_tail = PathSegment(nb.int32(-1), nb.int32(-1), nb.int32(prospect.walk_distance))
+    self.arrival = start_time + int(walk_distance / WALK_SPEED)
+    self.path_tail = PathSegment(nb.int32(-1), nb.int32(-1), nb.int32(walk_distance))
 
     self.nodes = nb.typed.Dict.empty(nb.int32, _NB_NODE_TYPE)
     self.queue = nb.typed.List.empty_list(_NB_NODE_TYPE)
 
-    for id, dst in prospect.near_start:
+    for id, dst in near_start:
       n = self.get_node(id)
       n.arrival = start_time + int(dst / WALK_SPEED)
       n.path_tail = PathSegment(nb.int32(-1), nb.int32(-1), nb.int32(dst))
@@ -282,7 +275,10 @@ class RouterTask:
   (
     Stops.class_type.instance_type,
     Trips.class_type.instance_type,
-    _NB_PROSPECT_TYPE,
+    _NB_POINT_TYPE,
+    nb.float32,
+    nbt.List(_NB_NEAR_STOP_TYPE, reflected=True),
+    nbt.List(_NB_NEAR_STOP_TYPE, reflected=True),
     nb.int64,
     Services.class_type.instance_type,
   ),
@@ -291,14 +287,20 @@ class RouterTask:
 def find_route(
   stops: Stops,
   trips: Trips,
-  prospect: Prospect,
+  destination: Point,
+  walk_distance: float,
+  near_start: list[NearStop],
+  near_destination: list[NearStop],
   start_time: int,
   services: Services,
 ):
   return RouterTask(
     stops,
     trips,
-    prospect,
+    destination,
+    walk_distance,
+    near_start,
+    near_destination,
     start_time,
     services,
   ).solve()

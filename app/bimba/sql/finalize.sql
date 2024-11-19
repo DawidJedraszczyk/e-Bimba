@@ -35,6 +35,7 @@ from imported_stop i;
 
 insert into metadata values (
   getvariable('CITY'),
+  getvariable('REGION'),
   getvariable('PROJECTION'),
   struct_pack(
     x := getvariable('X0'),

@@ -7,14 +7,14 @@ class PlanTrip(NamedTuple):
     trip_id: int
     service_id: int
     trip_start: int
-    start_from_stop_id: int
+    from_stop: int
     departure_time: int
-    leave_at_stop_id: int
+    to_stop: int
     arrival_time: int
 
     def format(self, data: Data):
-        start = data.stops[self.start_from_stop_id]
-        leave = data.stops[self.leave_at_stop_id]
+        start = data.stops[self.from_stop]
+        leave = data.stops[self.to_stop]
 
         result = f"get from {start.name} ({start.code})\n"
         if self.trip_id == -1:
@@ -28,6 +28,6 @@ class PlanTrip(NamedTuple):
 
     def __repr__(self):
         return f"""PlanTrip({';'.join(map(str, [
-            self.trip_id, self.start_from_stop_id,
-            self.departure_time, self.leave_at_stop_id, self.arrival_time,
+            self.trip_id, self.from_stop,
+            self.departure_time, self.to_stop, self.arrival_time,
         ]))})"""

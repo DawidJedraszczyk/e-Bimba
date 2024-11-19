@@ -28,6 +28,7 @@ class TripInstance(NamedTuple):
 
 class Metadata(NamedTuple):
   name: str
+  region: str
   projection: str
   center: Point
 

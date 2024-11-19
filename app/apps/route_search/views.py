@@ -6,8 +6,10 @@ from .modules.algorithm_parts.AstarPlanner import *
 from .modules.algorithm_parts.data import *
 from django.http import HttpResponse
 from django.views import View
+from pathlib import Path
 import redis
 import pickle
+from bimba.data.misc import Coords
 from ebus.settings import REDIS_HOST, REDIS_PORT
 
 r = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, db=0)
@@ -35,12 +37,11 @@ class FindRouteView(View):
         destination = geolocator.geocode(request.POST.get('goal_location') + ', Poznań, województwo wielkopolskie, Polska')
 
         planner_straight = AStarPlanner(
-            data=Data.instance("../data/cities/poz-w.db"),
+            data=Data.instance(Path.cwd().parent / "data" / "cities" / "poz-w.db"),
             start_time=start_time,
-            START=(start.latitude, start.longitude),
-            DESTINATION=(destination.latitude, destination.longitude),
-            distance_metric='manhattan',
-            current_date='2024-09-05',
+            start=Coords(start.latitude, start.longitude),
+            destination=Coords(destination.latitude, destination.longitude),
+            date='2024-09-05',
         )
 
         for _ in range(20):

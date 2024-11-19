@@ -184,6 +184,7 @@ def prepare_city(city, name):
     with TransitDb(tmp, run_on_load=False) as tdb:
       tdb.set_variable("PROJECTION", city["projection"])
       tdb.set_variable("CITY", name)
+      tdb.set_variable("REGION", city["region"])
       tdb.script("init")
 
       for gtfs in city["gtfs"].keys():

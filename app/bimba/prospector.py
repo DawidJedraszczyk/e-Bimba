@@ -16,10 +16,14 @@ class NearStop(NamedTuple):
 
 class Prospect(NamedTuple):
   start: Point
-  destination: Point
-  walk_distance: float
+  start_coords: Coords
   near_start: list[NearStop]
+
+  destination: Point
+  destination_coords: Coords
   near_destination: list[NearStop]
+
+  walk_distance: float
 
 
 class Prospector:
@@ -88,10 +92,12 @@ class Prospector:
 
     return Prospect(
       start_point,
-      destination_point,
-      walk_distance,
+      start_coords,
       near_start,
+      destination_point,
+      destination_coords,
       near_destination,
+      walk_distance,
     )
 
 
@@ -123,10 +129,12 @@ class Prospector:
       coords = self.unproject(location)
       point = location
       near = None
-    else:
+    elif isinstance(location, int):
       s = self.stops[location]
       coords = Coords(np.float32(s.coords.lat), np.float32(s.coords.lon))
       point = Point(np.float32(s.position.x), np.float32(s.position.y))
       near = [NearStop(np.int32(location), np.float32(0))]
+    else:
+      raise Exception(f"Prospector.standardize: unsupported argument type {type(location)}")
 
     return coords, point, near
