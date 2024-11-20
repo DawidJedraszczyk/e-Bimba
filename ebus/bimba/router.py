@@ -78,10 +78,16 @@ class Router:
     )
 
 
-_NB_POINT_TYPE = nbt.NamedUniTuple(nb.float32, 2, Point)
-_NB_PATH_SEGMENT_TYPE = nbt.NamedUniTuple(nb.int32, 3, PathSegment)
-_NB_PLAN_TYPE = nbt.NamedTuple([nb.int32, nbt.ListType(_NB_PATH_SEGMENT_TYPE), nb.int32], Plan)
-_NB_NEAR_STOP_TYPE = nbt.NamedTuple([nb.int32, nb.float32], NearStop)
+def nbt_jitc(cls):
+  if nb.config.DISABLE_JIT:
+    return None
+  else:
+    return cls.class_type.instance_type
+
+NbtPoint = nbt.NamedUniTuple(nb.float32, 2, Point)
+NbtPathSegment = nbt.NamedUniTuple(nb.int32, 3, PathSegment)
+NbtPlan = nbt.NamedTuple([nb.int32, nbt.ListType(NbtPathSegment), nb.int32], Plan)
+NbtNearStop = nbt.NamedTuple([nb.int32, nb.float32], NearStop)
 
 @nb.jit
 def empty_segment():
@@ -94,7 +100,7 @@ def empty_segment():
   ("heap_pos", nb.int32),
   ("stop_id", nb.int32),
   ("walk_time", nb.int32),
-  ("path_tail", _NB_PATH_SEGMENT_TYPE),
+  ("path_tail", NbtPathSegment),
 ])
 class Node:
   def __init__(
@@ -113,23 +119,23 @@ class Node:
   def __lt__(self, other):
     return self.arrival + self.estimate < other.arrival + other.estimate
 
-_NB_NODE_TYPE = Node.class_type.instance_type
+NbtNode = nbt_jitc(Node)
 
 
 @jitclass([
-  ("stops", Stops.class_type.instance_type),
-  ("trips", Trips.class_type.instance_type),
-  ("services", Services.class_type.instance_type),
+  ("stops", nbt_jitc(Stops)),
+  ("trips", nbt_jitc(Trips)),
+  ("services", nbt_jitc(Services)),
 
-  ("destination", _NB_POINT_TYPE),
-  ("near_destination", nbt.List(_NB_NEAR_STOP_TYPE)),
+  ("destination", NbtPoint),
+  ("near_destination", nbt.List(NbtNearStop)),
 
   ("iteration", nb.int32),
   ("arrival", nb.int32),
-  ("path_tail", _NB_PATH_SEGMENT_TYPE),
+  ("path_tail", NbtPathSegment),
 
-  ("nodes", nbt.DictType(nb.int32, _NB_NODE_TYPE)),
-  ("queue", nbt.ListType(_NB_NODE_TYPE)),
+  ("nodes", nbt.List(NbtNode)),
+  ("queue", nbt.ListType(NbtNode)),
 ])
 class RouterTask:
   def __init__(
@@ -153,8 +159,8 @@ class RouterTask:
     self.arrival = start_time + int(walk_distance / WALK_SPEED)
     self.path_tail = PathSegment(nb.int32(-1), nb.int32(-1), nb.int32(walk_distance))
 
-    self.nodes = nb.typed.Dict.empty(nb.int32, _NB_NODE_TYPE)
-    self.queue = nb.typed.List.empty_list(_NB_NODE_TYPE)
+    self.nodes = [Node(nb.int32(-1), nb.int32(-1), nb.int32(-1))] * stops.count()
+    self.queue = nb.typed.List.empty_list(NbtNode)
 
     for id, dst in near_start:
       n = self.get_node(id)
@@ -166,9 +172,9 @@ class RouterTask:
 
 
   def get_node(self, stop_id: int) -> Node:
-    node = self.nodes.get(stop_id, None)
+    node = self.nodes[stop_id]
 
-    if node is None:
+    if node.stop_id == -1:
       walk_time = self.estimate_walk_time(stop_id)
       node = Node(stop_id, self.estimate(stop_id, walk_time), walk_time)
       self.nodes[stop_id] = node
@@ -206,7 +212,11 @@ class RouterTask:
 
     node.arrival = arrival
     node.path_tail = PathSegment(came_from.stop_id, nb.int32(trip_id), nb.int32(details))
-    heappush(self.queue, node)
+
+    if node.heap_pos == -1:
+      heappush(self.queue, node)
+    else:
+      heapdec(self.queue, node)
 
     if arrival + node.walk_time < self.arrival:
       self.arrival = arrival + node.walk_time
@@ -214,7 +224,7 @@ class RouterTask:
 
 
   def solve(self) -> Plan:
-    while len(self.queue) > 0:
+    while self.queue:
       from_node = heappop(self.queue)
 
       if from_node.arrival + from_node.estimate >= self.arrival:
@@ -258,7 +268,7 @@ class RouterTask:
 
 
   def gather_path(self, segment):
-    result = nb.typed.List.empty_list(_NB_PATH_SEGMENT_TYPE)
+    result = nb.typed.List.empty_list(NbtPathSegment)
 
     while True:
       result.append(segment)
@@ -271,16 +281,16 @@ class RouterTask:
 
 
 @nb.jit(
-  _NB_PLAN_TYPE
+  NbtPlan
   (
-    Stops.class_type.instance_type,
-    Trips.class_type.instance_type,
-    _NB_POINT_TYPE,
+    nbt_jitc(Stops),
+    nbt_jitc(Trips),
+    NbtPoint,
     nb.float32,
-    nbt.List(_NB_NEAR_STOP_TYPE, reflected=True),
-    nbt.List(_NB_NEAR_STOP_TYPE, reflected=True),
+    nbt.List(NbtNearStop, reflected=True),
+    nbt.List(NbtNearStop, reflected=True),
     nb.int64,
-    Services.class_type.instance_type,
+    nbt_jitc(Services),
   ),
   nogil = True,
 )
