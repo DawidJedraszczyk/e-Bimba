@@ -88,7 +88,7 @@ class FindRouteView(View):
             ManhattanEstimator,
         )
 
-        for _ in range(20):
+        for _ in range(5):
             planner_straight.find_next_plan()
         html = planner_straight.plans_to_html()
 

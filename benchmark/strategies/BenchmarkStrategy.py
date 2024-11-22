@@ -18,7 +18,7 @@ class PlannerResult(NamedTuple):
 class BenchmarkStrategy():
     data: Data
     benchmark_type = None
-    alternative_routes = 3
+    alternative_routes = 1
     estimator_factory = ManhattanEstimator
     total_times = []
     planners = []
@@ -52,7 +52,7 @@ class BenchmarkStrategy():
                 f'to: {route.destination_name} {destination} '
                 f'at time: {route.start_time} {route.date} '
                 f'({weekday})', 'BENCHMARK')
-            
+
             for _ in range(self.alternative_routes):
                 t0 = time()
                 _ = planner.find_next_plan()
@@ -82,7 +82,7 @@ class BenchmarkStrategy():
             end_time_in_seconds += time_to_seconds("24:00:00")
         duration = end_time_in_seconds - start_time_in_seconds
         return seconds_to_time(duration)
-    
+
     def get_csv_filename(self):
         current_time = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
         directory = os.path.join("benchmark_results", current_time)
@@ -105,4 +105,3 @@ class BenchmarkStrategy():
         }
         row_dictinary.update(algorithm_metrics_dict)
         return row_dictinary
-    

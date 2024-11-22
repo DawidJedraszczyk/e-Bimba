@@ -27,7 +27,6 @@ with start_osrm("pl_wielkopolskie"):
   # Warm up numba
   b = BenchmarkStrategy(data)
   b.sample_routes = [SampleRoute("Smochowice - przejazd kolejowy", "Głuszyna", '7:30:00', date='2024-09-05')]
-  b.alternative_routes = 1
   b.run()
   b.print_found_routes()
 

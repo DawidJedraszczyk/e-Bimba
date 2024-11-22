@@ -25,9 +25,3 @@ class PlanTrip(NamedTuple):
             result += f"\t USING {route_name} ([{seconds_to_time(self.departure_time)}] - [{seconds_to_time(self.arrival_time)}])\n"
         result += f"to {leave.name} ({leave.code})"
         return result
-
-    def __repr__(self):
-        return f"""PlanTrip({';'.join(map(str, [
-            self.trip_id, self.from_stop,
-            self.departure_time, self.to_stop, self.arrival_time,
-        ]))})"""
