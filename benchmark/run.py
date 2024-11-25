@@ -7,8 +7,8 @@ import sys
 ROOT = Path(__file__).parents[1]
 sys.path.extend([
   str(ROOT),
-  str(ROOT / "app"),
-  str(ROOT / "app" / "apps" / "route_search" / "modules"),
+  str(ROOT / "ebus"),
+  str(ROOT / "ebus" / "apps" / "route_search" / "modules"),
   str(ROOT / "pipeline"),
 ])
 

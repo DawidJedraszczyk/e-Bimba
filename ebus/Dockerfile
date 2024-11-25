@@ -7,7 +7,7 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Set the working directory in the container
-WORKDIR /app
+WORKDIR /ebus
 
 # Copy the requirements file to the container
 COPY requirements.txt ./
@@ -22,4 +22,4 @@ COPY . .
 EXPOSE 8000
 
 # Wait for postgres, run Django migrations, and start the Django development server
-CMD ["/app/run.sh"]
+CMD ["/ebus/run.sh"]
