@@ -1,8 +1,8 @@
 import csv
 import os
 
-from benchmark.strategies.BenchmarkStrategy import BenchmarkStrategy
-from benchmark.routes_generating.custom_routes import get_custom_sample_routes
+from strategies.BenchmarkStrategy import BenchmarkStrategy
+from routes_generating.custom_routes import get_custom_sample_routes
 from algorithm_parts.utils import seconds_to_time, plans_to_string, custom_print
 
 class CustomBenchmark(BenchmarkStrategy):
@@ -10,7 +10,7 @@ class CustomBenchmark(BenchmarkStrategy):
         BenchmarkStrategy.__init__(self, data)
         self.benchmark_type = 'custom_benchmark'
         self.sample_routes = get_custom_sample_routes()
-        
+
     def print_results_to_csv(self):
         filename = self.get_csv_filename()
         with open(filename, mode='w', newline='') as file:
@@ -18,7 +18,7 @@ class CustomBenchmark(BenchmarkStrategy):
             extended_metrics_dict = {
                     'jak dojade route': None,
                     'jak dojade duration': None,
-                    'google route': None, 
+                    'google route': None,
                     'google route duration': None
                 }
             common_metrics_csv_row_dict.update(extended_metrics_dict)
@@ -31,11 +31,11 @@ class CustomBenchmark(BenchmarkStrategy):
                 extended_metrics_dict = {
                     'jak dojade route' : str(route.jakdojade_plan),
                     'jak dojade duration' : self.compute_travel_duration(
-                        route.start_time, 
+                        route.start_time,
                         route.jakdojade_plan.arrival_time),
                     'google route' : str(route.google_plan),
                     'google route duration' : self.compute_travel_duration(
-                        route.start_time, 
+                        route.start_time,
                         route.google_plan.arrival_time)
                 }
                 common_metrics_dict.update(extended_metrics_dict)
@@ -62,8 +62,8 @@ class CustomBenchmark(BenchmarkStrategy):
             for i, route in enumerate(self.sample_routes):
                 writer.writerow([
                     round(self.total_times[i], 3),
-                    route.start_name, 
-                    route.destination_name, 
+                    route.start_name,
+                    route.destination_name,
                     route.start_time,
                     route.week_day,
                     plans_to_string(self.planners[i].found_plans),
@@ -74,9 +74,9 @@ class CustomBenchmark(BenchmarkStrategy):
                         route.start_time,
                         seconds_to_time(self.planners[i].found_plans[0].time_at_destination)) if self.planners[i].found_plans else 'NA',
                     self.compute_travel_duration(
-                        route.start_time, 
+                        route.start_time,
                         route.jakdojade_plan.arrival_time),
                     self.compute_travel_duration(
-                        route.start_time, 
+                        route.start_time,
                         route.google_plan.arrival_time)
                     ])"""

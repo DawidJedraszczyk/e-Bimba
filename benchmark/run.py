@@ -6,18 +6,18 @@ import sys
 
 ROOT = Path(__file__).parents[1]
 sys.path.extend([
-  str(ROOT),
+  str(ROOT / "benchmark"),
   str(ROOT / "ebus"),
   str(ROOT / "ebus" / "apps" / "route_search" / "modules"),
   str(ROOT / "pipeline"),
 ])
 
 from algorithm_parts.data import *
-from benchmark.components.SampleRoute import SampleRoute
-from benchmark.strategies.BenchmarkStrategy import BenchmarkStrategy
-from benchmark.strategies.CustomBenchmark import CustomBenchmark
-from benchmark.strategies.SmallAutoBenchmark import SmallAutoBenchmark
-from benchmark.strategies.FullAutoBenchmark import FullAutoBenchmark
+from components.SampleRoute import SampleRoute
+from strategies.BenchmarkStrategy import BenchmarkStrategy
+from strategies.CustomBenchmark import CustomBenchmark
+from strategies.SmallAutoBenchmark import SmallAutoBenchmark
+from strategies.FullAutoBenchmark import FullAutoBenchmark
 from common import OSRM_PORT, start_osrm
 
 with start_osrm("pl_wielkopolskie"):

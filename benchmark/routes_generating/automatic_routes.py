@@ -1,7 +1,7 @@
 from itertools import product
 
-from benchmark.routes_generating.resources import locations_dict, times, dates, restricted_locations_dict
-from benchmark.components.SampleRoute import SampleRoute
+from routes_generating.resources import locations_dict, times, dates, restricted_locations_dict
+from components.SampleRoute import SampleRoute
 
 def get_all_automatic_sample_routes():
     sample_routes = []

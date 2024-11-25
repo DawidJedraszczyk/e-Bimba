@@ -17,14 +17,15 @@ services:
     image: ghcr.io/project-osrm/osrm-backend
     command: osrm-routed --algorithm mld /data/map.osrm
     volumes:
-      ./data/regions/pl_wielkopolskie:/data
+      - ./data/regions/pl_wielkopolskie:/data
 
   django:
     build:
       context: ./ebus
       dockerfile: Dockerfile
     volumes:
-      ./data:/data
+      - ./data:/data
+      - ./cities.json:/cities.json
     ports:
       - "8000:8000"
     depends_on:

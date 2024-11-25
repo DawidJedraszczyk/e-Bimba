@@ -1,8 +1,8 @@
 import csv
 import os
 
-from benchmark.strategies.BenchmarkStrategy import BenchmarkStrategy
-from benchmark.routes_generating.automatic_routes import get_all_automatic_sample_routes
+from strategies.BenchmarkStrategy import BenchmarkStrategy
+from routes_generating.automatic_routes import get_all_automatic_sample_routes
 
 class FullAutoBenchmark(BenchmarkStrategy):
     def __init__(self, data):

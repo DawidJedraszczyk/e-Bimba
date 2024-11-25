@@ -1,15 +1,15 @@
 import csv
 import os
 
-from benchmark.strategies.BenchmarkStrategy import BenchmarkStrategy
-from benchmark.routes_generating.automatic_routes import get_small_instance_automatic_sample_routes
+from strategies.BenchmarkStrategy import BenchmarkStrategy
+from routes_generating.automatic_routes import get_small_instance_automatic_sample_routes
 
 class SmallAutoBenchmark(BenchmarkStrategy):
     def __init__(self, data):
         BenchmarkStrategy.__init__(self, data)
         self.benchmark_type = 'small_automatic_benchmark'
         self.sample_routes = get_small_instance_automatic_sample_routes()
-    
+
     def print_results_to_csv(self):
         filename = self.get_csv_filename()
         with open(filename, mode='w', newline='') as file:

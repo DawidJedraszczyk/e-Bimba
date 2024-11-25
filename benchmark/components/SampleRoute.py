@@ -1,5 +1,5 @@
 from datetime import datetime
-from benchmark.routes_generating.resources import locations_dict
+from routes_generating.resources import locations_dict
 
 class SampleRoute:
     def __init__(self,
@@ -10,7 +10,7 @@ class SampleRoute:
                 google_plan = None,
                 date = "2024-09-05"
                 ):
-        
+
         self.start_cords = locations_dict[start_name]
         self.start_name = start_name
         self.destination_cords = locations_dict[destination_name]

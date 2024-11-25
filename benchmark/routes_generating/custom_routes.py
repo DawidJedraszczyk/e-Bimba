@@ -1,6 +1,6 @@
-from benchmark.components.ComparisonPlan import ComparisonPlan
-from benchmark.components.ComparisonTrip import ComparisonTrip
-from benchmark.components.SampleRoute import SampleRoute
+from components.ComparisonPlan import ComparisonPlan
+from components.ComparisonTrip import ComparisonTrip
+from components.SampleRoute import SampleRoute
 
 # All the routes here are for the timatable for 5.09.2024 - 30.09.2024
 # Thursday = 2024-09-05
@@ -76,7 +76,7 @@ def get_custom_sample_routes():
 
     sample_routes.append(SampleRoute(start_name="Poznań Główny", destination_name="Chartowo/Kurlandzka" , start_time= "23:45:00", jakdojade_plan=jakdojade_plan , google_plan=google_plan,
                                       date='2024-09-05'))
-    
+
     #########################
     # !!! na podstawie danego rozkładu, algorytm podaje autobus, który wedłóg jak dojadę nie istnieje
     # edit - jednak istnieje tylko w sobtonik rozkładzie jazdy
@@ -105,7 +105,7 @@ def get_custom_sample_routes():
 
     sample_routes.append(SampleRoute(start_name="Stadion Lecha", destination_name="Poznań Główny" , start_time= "21:37:00", jakdojade_plan=jakdojade_plan , google_plan=google_plan,
                                       date='2024-09-05'))
-    
+
     #########################
     google_trips = []
     jakdojade_trips = []
@@ -120,7 +120,7 @@ def get_custom_sample_routes():
 
     sample_routes.append(SampleRoute(start_name="Strzeszyn - Owidiusza", destination_name="Politechnika CW" , start_time= "9:55:00", jakdojade_plan=jakdojade_plan , google_plan=google_plan,
                                       date='2024-09-05'))
-    
+
     #########################
     google_trips = []
     jakdojade_trips = []
@@ -200,7 +200,7 @@ def get_custom_sample_routes():
 
     sample_routes.append(SampleRoute(start_name="Morasko - Bożydara", destination_name="Poznań Główny" , start_time= "7:30:00", jakdojade_plan=jakdojade_plan , google_plan=google_plan,
                                      date='2024-09-05'))
-    
+
     #########################
     google_trips = []
     jakdojade_trips = []
@@ -215,7 +215,7 @@ def get_custom_sample_routes():
 
     sample_routes.append(SampleRoute(start_name="Kiekrz plaża parkowa", destination_name="IKEA" , start_time= "12:20:00", jakdojade_plan=jakdojade_plan , google_plan=google_plan,
                                       date='2024-09-05'))
-    
+
     #########################
     google_trips = []
     jakdojade_trips = []
@@ -233,9 +233,9 @@ def get_custom_sample_routes():
     jakdojade_trips.append(ComparisonTrip(start_time="13:57:00", end_time="14:16:00", start_location="Unii Lubelskiej", end_location="Głuszyna", bus="153"))
     jakdojade_plan = ComparisonPlan(jakdojade_trips, arrival_time="14:19:00")
 
-    sample_routes.append(SampleRoute(start_name="Kiekrz plaża parkowa", destination_name="Głuszyna" , start_time= "12:40:00", jakdojade_plan=jakdojade_plan , google_plan=google_plan, 
+    sample_routes.append(SampleRoute(start_name="Kiekrz plaża parkowa", destination_name="Głuszyna" , start_time= "12:40:00", jakdojade_plan=jakdojade_plan , google_plan=google_plan,
                                      date='2024-09-05'))
-    
+
     #########################
     google_trips = []
     jakdojade_trips = []
@@ -267,7 +267,7 @@ def get_custom_sample_routes():
 
     sample_routes.append(SampleRoute(start_name="Lotnisko", destination_name="Smochowice - przejazd kolejowy" , start_time= "14:00:00", jakdojade_plan=jakdojade_plan , google_plan=google_plan,
       date="2024-09-08"))
-    
+
     #########################
     google_trips = []
     jakdojade_trips = []
@@ -275,14 +275,14 @@ def get_custom_sample_routes():
     google_trips.append(ComparisonTrip(start_time="23:32:00", end_time="23:52:00", start_location="Port Lotniczy Ławica", end_location="Rondo Kaponiera", bus="159"))
     google_trips.append(ComparisonTrip(start_time="23:59:00", end_time="00:14:00", start_location="Rondo Kaponiera", end_location="Łupowska", bus="219"))
     google_plan = ComparisonPlan(jakdojade_trips, arrival_time="00:29:00")
-    
+
     jakdojade_trips.append(ComparisonTrip(start_time="23:32:00", end_time="23:52:00", start_location="Port Lotniczy Ławica", end_location="Rondo Kaponiera", bus="159"))
     jakdojade_trips.append(ComparisonTrip(start_time="23:59:00", end_time="00:14:00", start_location="Rondo Kaponiera", end_location="Łupowska", bus="219"))
     jakdojade_plan = ComparisonPlan(jakdojade_trips, arrival_time="00:29:00")
 
     sample_routes.append(SampleRoute(start_name="Lotnisko", destination_name="Smochowice - przejazd kolejowy" , start_time= "23:20:00", jakdojade_plan=jakdojade_plan , google_plan=google_plan,
       date="2024-09-08"))
-    
+
     #########################
     google_trips = []
     jakdojade_trips = []
@@ -297,7 +297,7 @@ def get_custom_sample_routes():
 
     sample_routes.append(SampleRoute(start_name="Smochowice - przejazd kolejowy", destination_name="Lotnisko" , start_time= "23:20:00", jakdojade_plan=jakdojade_plan , google_plan=google_plan,
       date="2024-09-08"))
-    
+
     #########################
     google_trips = []
     jakdojade_trips = []
@@ -314,7 +314,7 @@ def get_custom_sample_routes():
 
     sample_routes.append(SampleRoute(start_name="Smochowice - przejazd kolejowy", destination_name="Głuszyna" , start_time= "23:20:00", jakdojade_plan=jakdojade_plan , google_plan=google_plan,
       date="2024-09-08"))
-    
+
     #########################
     google_trips = []
     jakdojade_trips = []
