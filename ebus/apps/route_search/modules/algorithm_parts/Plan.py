@@ -4,6 +4,7 @@ from typing import Self
 from .data import Data
 from .estimator import Estimates
 from .PlanTrip import PlanTrip
+from .inconvenience import inconvenience
 from .utils import time_to_seconds, seconds_to_time
 from bimba.prospector import NearStop
 from ebus.algorithm_settings import INCONVENIENCE_SETTINGS

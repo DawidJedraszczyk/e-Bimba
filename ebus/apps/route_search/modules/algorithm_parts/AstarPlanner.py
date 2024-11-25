@@ -243,13 +243,7 @@ class AStarPlanner():
                 communication_content += f'''<div style="padding: 5px; display: flex; flex-direction: column; justify-content: center; align-items: center;"><img style="height: 23px; width: 23px; margin-bottom: 5px;" src="{static('base_view/img/BUS.svg')}">{str(travel_option)}</div>'''
 
             prepared_solution = {
-                'div': f'''<div style="display:none"></div>
-                           <div id="{index}" class="solution" style="cursor: pointer; width: 99%; border: solid 1px white; padding: 20px 0px; border-radius: 5px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
-                               <div style="font-size: 25px; margin-left: 5px;">{start_time}</div>
-                               <div style="display: flex;">{communication_content}</div>
-                               <div style="font-size: 25px; margin-right: 5px;">{destination_time}</div>
-                           </div>
-                        '''
+                'div': f'''<div style="display:none"></div><div id="{index}" class="solution" style="cursor: pointer; width: 99%; border: solid 1px white; padding: 20px 0px; border-radius: 5px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;"> <div style="font-size: 25px; margin-left: 5px;">{start_time}</div><div style="display: flex;">{communication_content}</div><div style="font-size: 25px; margin-right: 5px;">{destination_time}</div></div>'''
             }
             response[str(index)] = prepared_solution
         return response
@@ -298,24 +292,10 @@ class AStarPlanner():
             goal_stop = self.data.stops[plan_trip.to_stop]
 
             if index == 0:
-                response[0] = f'''
-                    <div style="display: flex; width: 90%; justify-content: center; align-items: center; margin: 10px 0;">
-                        <img style="width: 25px;" src="{static('base_view/img/WALK.png')}">
-                        <span style="margin-left: 10px; text-align: left;">
-                            {start_location} -> {start_stop.name}
-                        </span>
-                    </div>
-                '''
+                response[0] = f'''<div style="display: flex; width: 90%; justify-content: center; align-items: center; margin: 10px 0;"><img style="width: 25px;" src="{static('base_view/img/WALK.png')}"><span style="margin-left: 10px; text-align: left;">{start_location} -> {start_stop.name}</span></div>'''
 
             if index == len(plan.plan_trips) - 1:
-                response[len(plan.plan_trips) + 1] = f'''
-                    <div style="display: flex; width: 90%; justify-content: center; align-items: center; margin: 10px 0;">
-                        <img style="width: 25px;" src="{static('base_view/img/WALK.png')}">
-                        <span style="margin-left: 10px; text-align: left;">
-                            {goal_stop.name} -> {goal_location}
-                        </span>
-                    </div>
-                '''
+                response[len(plan.plan_trips) + 1] = f'''<div style="display: flex; width: 90%; justify-content: center; align-items: center; margin: 10px 0;"><img style="width: 25px;" src="{static('base_view/img/WALK.png')}"><span style="margin-left: 10px; text-align: left;">{goal_stop.name} -> {goal_location}</span></div>'''
 
             departure_time = seconds_to_time(plan_trip.departure_time)
             arrival_time = seconds_to_time(plan_trip.arrival_time)
@@ -324,13 +304,14 @@ class AStarPlanner():
                 trip = self.data.trips[plan_trip.trip_id]
                 route = self.data.routes[trip.route_id].name
                 direction = trip.headsign
-                response[
-                    index + 1] = f'''<div style="display: flex; width: 90%; flex-direction: column; justify-content: center; margin: 10px 0;"><div style="display:flex; align-items: center; margin: 10px 0;"><img src="{static('base_view/img/BUS.svg')}" alt="bus icon"/><span style="margin-left: 10px;">{route} - {direction} ({departure_time} - {arrival_time})</span></div><div class="stops" style="font-size: 14px; text-align: left;">'''
+
+
+                response[index + 1] = f'''<div class="departure-details" style="display: flex; width: 90%; flex-direction: column; justify-content: center; margin: 10px 0;"><div style="display:flex; align-items: center; margin: 10px 0;"><img src="{static('base_view/img/BUS.svg')}" alt="bus icon"/><span style="margin-left: 10px;">{route} - {direction} ({departure_time} - {arrival_time})</span></div><div class="stops" style="font-size: 14px; text-align: left;">'''
 
                 in_our_trip_flag = False
                 time_offset = 0
 
-                for stop_id, arrival, departure in self.data.trips.get_trip_stops(plan_trip.trip_id):
+                for stop_sequence, (stop_id, arrival, departure) in enumerate(self.data.trips.get_trip_stops(plan_trip.trip_id)):
                     if stop_id == plan_trip.from_stop:
                         in_our_trip_flag = True
                         time_offset = departure
@@ -341,25 +322,33 @@ class AStarPlanner():
                     if in_our_trip_flag:
                         time = relevant_time - time_offset + plan_trip.departure_time
                         stop = self.data.stops[stop_id]
-                        response[index + 1] += f'''{seconds_to_time(time)} {stop.name}<br>'''
+                        response[index + 1] += f'''<div class="departure-time" data-sequence-number={stop_sequence}>{seconds_to_time(time)} {stop.name}</div>'''
 
                     if stop_id == plan_trip.to_stop:
                         in_our_trip_flag = False
 
             else:
-                response[index + 1] = f'''
-                    <div style="display: flex; width: 90%; justify-content: center; align-items: center; margin: 10px 0;">
-                        <img style="width: 25px;" src="{static('base_view/img/WALK.png')}">
-                        <span style="margin-left: 10px; text-align: left;">
-                            {start_stop.name} -> {goal_stop.name}  ({departure_time} - {arrival_time})
-                        </span>
-                    </div>
-                '''
+                response[index + 1] = f'''<div style="display: flex; width: 90%; justify-content: center; align-items: center; margin: 10px 0;"><img style="width: 25px;" src="{static('base_view/img/WALK.png')}"><span style="margin-left: 10px; text-align: left;">{start_stop.name} -> {goal_stop.name}  ({departure_time} - {arrival_time})</span></div>'''
 
             response[index + 1] += "</div></div>"
 
         return response
 
+
+    def prepare_gtfs_trip_ids(self, plan_num: int):
+        response = {}
+
+        plan = self.found_plans[plan_num]
+
+        for index, plan_trip in enumerate(plan.plan_trips):
+            if plan_trip.trip_id != -1:
+                response[index] = self.data.tdb.get_trip_instance(
+                    plan_trip.trip_id,
+                    plan_trip.service_id,
+                    plan_trip.trip_start
+                ).gtfs_trip_id
+
+        return response
 
 _NB_PLAN_TRIP_TYPE = nbt.NamedUniTuple(nb.int32, 7, PlanTrip)
 _COMPILATION_T0 = time.time()

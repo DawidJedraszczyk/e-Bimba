@@ -29,13 +29,13 @@
   </div>
   <div class="form__group field">
     <input
-      type="time"
+      type="datetime-local"
       class="form__field"
-      name="time"
-      id="hour"
+      name="datetime"
+      id="datetime"
       required
     />
-    <label for="hour" class="form__label">Godzina i dzień wyjazdu</label>
+    <label for="datetime" class="form__label">Godzina i dzień wyjazdu</label>
   </div>
   <button type="submit" id="search-btn" class="search-btn">Szukaj</button>
 </form>
@@ -49,10 +49,11 @@
         e.preventDefault();
 
         const formData = new FormData(form);
+        formData.append('city', '{{city}}');
         document.getElementById('foundRoutes').innerHTML = '<span id="loader" class="show"></span>';
 
         try {
-            const routeResponse = await fetch('/find-route/', {
+            const routeResponse = await fetch('{% url 'route_search:FindRoute' %}', {
                 method: 'POST',
                 body: formData,
                 headers: {
@@ -64,7 +65,6 @@
             const routeData = response.html;
             
             const departureCoordinates = response.coords;
-            console.log(departureCoordinates)
             sessionStorage.setItem('departureCoordinates', JSON.stringify(departureCoordinates));
             
             
@@ -72,7 +72,9 @@
             const departuresDetailsData = response.details;
             sessionStorage.setItem('departuresDetails', JSON.stringify(departuresDetailsData))
             
-            
+            const departuresGtfsData = response.gtfs;
+            sessionStorage.setItem('departuresGTFS', JSON.stringify(departuresGtfsData))
+
             
             document.getElementById('foundRoutes').innerHTML = '';
             document.getElementById('foundRoutes').innerHTML = '<span id="loader"></span>'
@@ -81,8 +83,9 @@
                 document.getElementById('foundRoutes').innerHTML += solution['div']
 
             });
-            draw_route(departureCoordinates[0])
-            show_departure_details(departuresDetailsData[0])
+            current_solution = 0
+            draw_route(departureCoordinates[current_solution])
+            show_departure_details(departuresDetailsData[current_solution])
             
         } catch (error) {
             console.error('Error:', error);
