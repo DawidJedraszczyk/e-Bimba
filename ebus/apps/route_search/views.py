@@ -3,12 +3,25 @@ from django.http import JsonResponse
 from geopy.geocoders import Nominatim
 from .modules.algorithm_parts.utils import *
 from .modules.algorithm_parts.AstarPlanner import *
+from .modules.algorithm_parts.estimator import ManhattanEstimator
 from django.views import View
 import redis
 from ebus.settings import REDIS_HOST, REDIS_PORT
 from django.conf import settings
 from datetime import datetime
 import json
+from pathlib import Path
+from bimba.data.misc import Coords
+import sys
+
+
+ROOT = Path(__file__).parents[3]
+sys.path.extend([
+  str(ROOT),
+  str(ROOT / "ebus"),
+  str(ROOT / "ebus" / "apps" / "route_search" / "modules"),
+  str(ROOT / "pipeline"),
+])
 
 r = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, db=0)
 geolocator = Nominatim(user_agent="ebus")
@@ -24,7 +37,7 @@ cities = load_cities_data()
 def get_city(request_path):
     for city, data in cities.items():
         if city.lower() in request_path.lower():
-            return city.lower()
+            return city.capitalize()
 
 def get_coords(request_path):
     for city, data in cities.items():
@@ -57,15 +70,23 @@ class BaseView(TemplateView):
 class FindRouteView(View):
 
     def post(self, request, *args, **kwargs):
-        city = request.POST.get('city')
+        city = get_city(request.POST.get('city'))
+        database_name = cities[city]['database']
+        data = Data.instance(ROOT / "data" / "cities" / database_name)
 
         start = geolocator.geocode(request.POST.get('start_location') + ',' + city +', Polska')
         destination = geolocator.geocode(request.POST.get('goal_location') + ',' + city + ', Polska')
 
         _datetime = datetime.strptime(request.POST.get('datetime'), '%Y-%m-%dT%H:%M')
 
-
-        planner_straight = AStarPlanner(time_to_seconds(_datetime.strftime("%H:%M:%S")), (start.latitude, start.longitude), (destination.latitude, destination.longitude), 'manhattan', _datetime.strftime("%Y-%m-%d"))
+        planner_straight = AStarPlanner(
+            data,
+            Coords(*(start.latitude, start.longitude)),
+            Coords(*(destination.latitude, destination.longitude)),
+            _datetime.strftime("%Y-%m-%d"),
+            time_to_seconds(_datetime.strftime("%H:%M:%S")),
+            ManhattanEstimator,
+        )
 
         for _ in range(20):
             planner_straight.find_next_plan()
