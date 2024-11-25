@@ -5,8 +5,8 @@ from benchmark.strategies.BenchmarkStrategy import BenchmarkStrategy
 from benchmark.routes_generating.automatic_routes import get_small_instance_automatic_sample_routes
 
 class SmallAutoBenchmark(BenchmarkStrategy):
-    def __init__(self):
-        BenchmarkStrategy.__init__(self)
+    def __init__(self, data):
+        BenchmarkStrategy.__init__(self, data)
         self.benchmark_type = 'small_automatic_benchmark'
         self.sample_routes = get_small_instance_automatic_sample_routes()
     

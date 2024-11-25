@@ -1,41 +1,64 @@
 import datetime
 from functools import lru_cache
+import os
 from pathlib import Path
 from time import time
 
-from bimba.data.misc import Services
+from bimba.data.misc import Metadata, Services
 from bimba.data.routes import Routes
 from bimba.data.shapes import Shapes
 from bimba.data.stops import Stops
 from bimba.data.trips import Trips
+from bimba.osrm import OsrmClient
+from bimba.prospector import Prospector
 from bimba.transitdb import TransitDb
 from .utils import custom_print
 
-try:
-    from django.conf import settings
-    _DB_PATH = Path(settings.BASE_DIR) / "transit.db"
-except:
-    _DB_PATH = Path(__file__).parents[5] / "data" / "main" / "transit.db"
-
 
 class Data:
-    _instance = None
+    tdb: TransitDb
+    md: Metadata
+    routes: Routes
+    shapes: Shapes
+    stops: Stops
+    trips: Trips
+    prospector: Prospector
+
+    _instances = dict()
 
     @staticmethod
-    def instance():
-        if Data._instance is None:
+    def instance(db_path: Path):
+        key = db_path.absolute()
+        ins = Data._instances.get(key, None)
+
+        if ins is None:
             t0 = time()
-            Data._instance = Data()
+            ins = Data(db_path)
+            Data._instances[key] = ins
             custom_print(f'(Data - {time() - t0:.4f}s)', 'SETUP_TIMES')
 
-        return Data._instance
+        return ins
 
-    def __init__(self):
-        self.tdb = TransitDb(_DB_PATH)
+    def __init__(self, db_path: Path):
+        self.tdb = TransitDb(db_path)
+        self.md = self.tdb.get_metadata()
         self.routes = self.tdb.get_routes()
         self.shapes = self.tdb.get_shapes()
         self.stops = self.tdb.get_stops()
         self.trips = self.tdb.get_trips()
+
+        var = f"OSRM_URL_{self.md.region}"
+        osrm_url = os.environ.get(var, None)
+
+        if osrm_url is None:
+            raise Exception(f"Missing env var {var}")
+
+        self.prospector = Prospector(
+            self.tdb,
+            OsrmClient(osrm_url),
+            self.md,
+            self.stops,
+        )
 
     @lru_cache
     def services_around(self, date: datetime.date) -> Services:

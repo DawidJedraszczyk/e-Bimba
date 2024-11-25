@@ -1,15 +1,8 @@
-import asyncio
-from dataclasses import dataclass
 import datetime
 import duckdb
-import functools
 import numpy as np
 from numpy.typing import NDArray
-import os
 from pathlib import Path
-import pyarrow
-import time
-from typing import Iterable
 
 from .data.misc import *
 from .data.routes import Routes
@@ -17,18 +10,10 @@ from .data.shapes import Shapes
 from .data.stops import Stops
 from .data.trips import Trips
 from .db import Db
-from .osrm import OsrmClient
 from ebus.algorithm_settings import WALKING_SETTINGS
 
 
 class TransitDb(Db):
-  OPTIONAL_GTFS_FILES = [
-    "calendar.txt",
-    "calendar_dates.txt",
-    "feed_info.txt",
-    "frequencies.txt",
-  ]
-
   def __init__(self, path: Path, run_on_load: bool = True):
     scripts = Path(__file__).parent / "sql"
     variables = {
@@ -64,8 +49,8 @@ class TransitDb(Db):
 
 
   def get_metadata(self) -> Metadata:
-    name, proj, center = self.sql("select * from metadata").one()
-    return Metadata(name, proj, Point(center["x"], center["y"]))
+    name, region, proj, center = self.sql("select * from metadata").one()
+    return Metadata(name, region, proj, Point(center["x"], center["y"]))
 
 
   def get_routes(self) -> Routes:
@@ -164,91 +149,3 @@ class TransitDb(Db):
     """, [trip, service, start_time]).one()
 
     return TripInstance(wa, id)
-
-
-  def init_schema(self):
-    print("Initializing schema")
-    self.script("init")
-
-
-  def import_gtfs(self, source_name: str, gtfs_folder: Path):
-    print(f"Importing GTFS '{source_name}' from '{gtfs_folder}'")
-    self.set_variable('SOURCE_NAME', source_name)
-    self.set_variable('GTFS_FOLDER', str(gtfs_folder))
-
-    t0 = time.time()
-    self.script("gtfs/init")
-    self.script("gtfs/import/required")
-
-    for opt_gtfs in self.OPTIONAL_GTFS_FILES:
-      if (gtfs_folder / opt_gtfs).exists():
-        self.script(f"gtfs/import/{opt_gtfs[:-4].replace('_', '-')}")
-
-    t1 = time.time()
-    self.script("gtfs/process/assign-id")
-    self.script("gtfs/process/services")
-    self.script("gtfs/process/shapes")
-    self.script("gtfs/process/trips")
-
-    t2 = time.time()
-    self.script("gtfs/insert")
-    self.script("gtfs/clean-up")
-
-    t3 = time.time()
-    print(f"Time: {_t(t2, t0)} "
-      f"(parsing: {_t(t1, t0)}, processing: {_t(t2, t1)}, inserting: {_t(t3, t2)})")
-
-
-  async def calculate_stop_walks(self, osrm: OsrmClient):
-    t0 = time.time()
-    print("Calculating walking distances between stops")
-    self.script("project-stop-coords")
-    inputs = self.script("init-stop-walk").arrow()
-    sem = asyncio.Semaphore(os.cpu_count())
-
-    async def task(row):
-      async with sem:
-        from_id = row["from_stop"]
-        from_lat = row["lat"]
-        from_lon = row["lon"]
-        to_stops = row["to_stops"].values
-        to_ids = to_stops.field("id").to_numpy()
-        to_lats = to_stops.field("lat").to_numpy()
-        to_lons = to_stops.field("lon").to_numpy()
-
-        distances = await osrm.distance_to_many(
-          Coords(from_lat, from_lon),
-          (Coords(lat, lon) for lat, lon in zip(to_lats, to_lons)),
-        )
-
-        return from_id, to_ids, distances
-
-    for task in [asyncio.create_task(task(row)) for row in inputs]:
-      from_id, to_ids, distances = await task
-      from_ids = np.repeat(from_id, len(to_ids))
-
-      self.sql(
-        "insert into stop_walk from result",
-        views = {
-          "result": pyarrow.table(
-            [from_ids, to_ids, distances],
-            ["from_stop", "to_stop", "distance"],
-          )
-        },
-      )
-
-    t1 = time.time()
-    print(f"Time: {_t(t1, t0)}")
-
-
-  def finalize(self):
-    t0 = time.time()
-    print("Finalizing")
-    self.script("finalize")
-
-    t1 = time.time()
-    print(f"Time: {_t(t1, t0)}")
-
-
-def _t(t_to, t_from):
-  return f"{round(t_to - t_from, 3)}s"

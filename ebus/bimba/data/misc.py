@@ -9,12 +9,12 @@ INF_TIME = 0x1FFFFFFF
 
 
 class Point(NamedTuple):
-  x: float
-  y: float
+  x: np.float32
+  y: np.float32
 
 class Coords(NamedTuple):
-  lat: float
-  lon: float
+  lat: np.float32
+  lon: np.float32
 
 class Range(NamedTuple):
   beg: int
@@ -28,6 +28,7 @@ class TripInstance(NamedTuple):
 
 class Metadata(NamedTuple):
   name: str
+  region: str
   projection: str
   center: Point
 

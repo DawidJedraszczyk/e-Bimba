@@ -1,7 +1,7 @@
 {% load static %}
 
 <div id="foundRoutes">
-    <span id="loader"></span>
+  <span id="loader"></span>
 </div>
 
 <script>
@@ -87,6 +87,13 @@
 
     const show_vehicles = (solution_id) => {
         const departureGTFSSessionStorage = sessionStorage.getItem('departuresGTFS');
+    const createDiv = (divClass, divId, divContent) => {
+        let div = document.createElement('div');
+        div.id = divId;
+        div.classList.add(divClass);
+        div.innerHTML = divContent;
+        return div;
+    }
 
         if (departureGTFSSessionStorage) {
             const departureGTFS = JSON.parse(departureGTFSSessionStorage);

@@ -1,6 +1,7 @@
 WALKING_SETTINGS = {
     'PACE': 1.4,  # (m/s)
     'TIME_WITHIN_WALKING': 600, #time_to_seconds('00:10:00')
+    'DISTANCE_MULTIPLIER': 1.1, # Used when exact distance is unknown
 }
 
 HEURISTIC_SETTINGS = {
@@ -11,6 +12,13 @@ HEURISTIC_SETTINGS = {
     # and I didn't want to make algorithm to work slower after all
     # BTW, even though it is not admissable heurisitc,
     # in most cases results are otimal compared to jakdojade and google
+    'TRANSFER_TIME': 180,
+}
+
+INCONVENIENCE_SETTINGS = {
+    'WALK_TIME_PENALTY': 2, # Per second
+    'WAIT_TIME_PENALTY': 1, # Per second
+    'TRANSFER_PENALTY': 200,
 }
 
 METRICS_SETTINGS = {

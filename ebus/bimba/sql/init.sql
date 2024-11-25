@@ -1,5 +1,6 @@
 create table metadata (
   name text not null,
+  region text not null,
   projection text not null,
   center struct (
     x float4,
