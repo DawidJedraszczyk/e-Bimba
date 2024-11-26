@@ -1,27 +1,21 @@
-from django.views.generic import TemplateView
-from django.http import JsonResponse
-from geopy.geocoders import Nominatim
-from .modules.algorithm_parts.utils import *
-from .modules.algorithm_parts.AstarPlanner import *
-from .modules.algorithm_parts.estimator import ManhattanEstimator
-from django.views import View
-import redis
-from ebus.settings import REDIS_HOST, REDIS_PORT
-from django.conf import settings
 from datetime import datetime
+from django.conf import settings
+from django.http import JsonResponse
+from django.views import View
+from django.views.generic import TemplateView
+from geopy.geocoders import Nominatim
 import json
 from pathlib import Path
-from bimba.data.misc import Coords
+import redis
 import sys
 
+from .modules.views.functions import *
+from algorithm.estimator import ManhattanEstimator
+from algorithm.astar_planner import AStarPlanner
+from algorithm.utils import time_to_seconds
+from ebus.settings import REDIS_HOST, REDIS_PORT
+from transit.data.misc import Coords
 
-ROOT = Path(__file__).parents[3]
-sys.path.extend([
-  str(ROOT),
-  str(ROOT / "ebus"),
-  str(ROOT / "ebus" / "apps" / "route_search" / "modules"),
-  str(ROOT / "pipeline"),
-])
 
 r = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, db=0)
 geolocator = Nominatim(user_agent="ebus")
@@ -72,36 +66,43 @@ class FindRouteView(View):
     def post(self, request, *args, **kwargs):
         city = get_city(request.POST.get('city'))
         database_name = cities[city]['database']
-        data = Data.instance(ROOT / "data" / "cities" / database_name)
+        data = Data.instance(Path.cwd().parent / "data" / "cities" / database_name)
 
         start = geolocator.geocode(request.POST.get('start_location') + ',' + city +', Polska')
         destination = geolocator.geocode(request.POST.get('goal_location') + ',' + city + ', Polska')
 
         _datetime = datetime.strptime(request.POST.get('datetime'), '%Y-%m-%dT%H:%M')
 
-        planner_straight = AStarPlanner(
+        planner = AStarPlanner(
             data,
-            Coords(*(start.latitude, start.longitude)),
-            Coords(*(destination.latitude, destination.longitude)),
+            Coords(start.latitude, start.longitude),
+            Coords(destination.latitude, destination.longitude),
             _datetime.strftime("%Y-%m-%d"),
             time_to_seconds(_datetime.strftime("%H:%M:%S")),
             ManhattanEstimator,
         )
 
         for _ in range(5):
-            planner_straight.find_next_plan()
-        html = planner_straight.plans_to_html()
+            planner.find_next_plan()
 
-        coords = {}
-        for solution_id in range(len(planner_straight.found_plans)):
-            coords[solution_id] = planner_straight.prepare_coords(solution_id)
+        prospect = planner.prospect
+        plans = planner.found_plans
+        html = plans_to_html(planner.found_plans, data)
 
-        details = {}
-        gtfs = {}
-        for solution_id in range(len(planner_straight.found_plans)):
-            details[solution_id] = planner_straight.prepare_departure_details(solution_id, start,destination)
-            gtfs[solution_id] = planner_straight.prepare_gtfs_trip_ids(solution_id)
+        coords = {
+            i: prepare_coords(plan, prospect.start_coords, prospect.destination_coords, data)
+            for i, plan in enumerate(plans)
+        }
 
+        details = {
+            i: prepare_departure_details(plan, start, destination, data)
+            for i, plan in enumerate(plans)
+        }
+
+        gtfs = {
+            i: prepare_gtfs_trip_ids(plan, data)
+            for i, plan in enumerate(plans)
+        }
 
         response_data = {
             'html': html,

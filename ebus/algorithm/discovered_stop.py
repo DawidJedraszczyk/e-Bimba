@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
 from .estimator import Estimates
-from .Plan import Plan
+from .plan import Plan
 
 
 @dataclass

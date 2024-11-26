@@ -6,12 +6,12 @@ import sys
 SCRIPT_FOLDER = Path(__file__).parent
 sys.path.append(str(SCRIPT_FOLDER.parent / "ebus"))
 
-from bimba.db import *
-from bimba.transitdb import *
-from bimba.unzip import *
+from transit.db import *
+from transit.transitdb import *
+from transit.unzip import *
 
 
-SQL_GTFS_FOLDER = SCRIPT_FOLDER.parent / "ebus" / "bimba" / "sql" / "gtfs"
+SQL_GTFS_FOLDER = SCRIPT_FOLDER.parent / "ebus" / "transit" / "sql" / "gtfs"
 
 
 def get_import_script(name: str) -> str:

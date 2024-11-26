@@ -8,11 +8,10 @@ ROOT = Path(__file__).parents[1]
 sys.path.extend([
   str(ROOT / "benchmark"),
   str(ROOT / "ebus"),
-  str(ROOT / "ebus" / "apps" / "route_search" / "modules"),
   str(ROOT / "pipeline"),
 ])
 
-from algorithm_parts.data import *
+from algorithm.data import *
 from components.SampleRoute import SampleRoute
 from strategies.BenchmarkStrategy import BenchmarkStrategy
 from strategies.CustomBenchmark import CustomBenchmark

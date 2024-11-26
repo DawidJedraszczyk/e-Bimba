@@ -18,8 +18,8 @@ sys.path.append(str(Path(__file__).parents[1] / "ebus"))
 sys.path.append(str(Path(__file__).parent))
 
 from common import *
-from bimba.osrm import *
-from bimba.transitdb import *
+from transit.osrm import *
+from transit.transitdb import *
 
 
 FUSE_ZIP = "fuse-zip"

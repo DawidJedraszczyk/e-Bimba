@@ -4,14 +4,14 @@ import os
 from pathlib import Path
 from time import time
 
-from bimba.data.misc import Metadata, Services
-from bimba.data.routes import Routes
-from bimba.data.shapes import Shapes
-from bimba.data.stops import Stops
-from bimba.data.trips import Trips
-from bimba.osrm import OsrmClient
-from bimba.prospector import Prospector
-from bimba.transitdb import TransitDb
+from transit.data.misc import Metadata, Services
+from transit.data.routes import Routes
+from transit.data.shapes import Shapes
+from transit.data.stops import Stops
+from transit.data.trips import Trips
+from transit.osrm import OsrmClient
+from transit.prospector import Prospector
+from transit.transitdb import TransitDb
 from .utils import custom_print
 
 

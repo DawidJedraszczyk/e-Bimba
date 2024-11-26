@@ -4,7 +4,7 @@ import json
 from pathlib import Path
 import time
 
-from bimba.osrm import OsrmClient
+from transit.osrm import OsrmClient
 
 
 PIPELINE = Path(__file__).parent
