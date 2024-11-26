@@ -21,7 +21,7 @@ services:
 
   django:
     build:
-      context: ./app
+      context: ./ebus
       dockerfile: Dockerfile
     volumes:
       ./data:/data

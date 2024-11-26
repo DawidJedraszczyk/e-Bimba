@@ -5,15 +5,22 @@
       "ztm": "https://www.ztm.poznan.pl/pl/dla-deweloperow/getGTFSFile"
     },
     "projection": "EPSG:2180",
-    "region": "pl_wielkopolskie"
+    "region": "pl_wielkopolskie",
+    "map": "http://download.geofabrik.de/europe/poland/wielkopolskie-latest.osm.pbf",
+    "center_coordinates": {"lng": 52.403499, "lat": 16.923179}
   },
   "Poznań (wrzesień)": {
     "database": "poz-w.db",
     "gtfs": {
       "ztm": "https://www.ztm.poznan.pl/pl/dla-deweloperow/getGTFSFile/?file=20240905_20240930.zip"
     },
+    "gtfs_realtime" : {
+      "ztm": "https://www.ztm.poznan.pl/pl/dla-deweloperow/getGtfsRtFile?file=trip_updates.pb"
+    },
     "projection": "EPSG:2180",
-    "region": "pl_wielkopolskie"
+    "region": "pl_wielkopolskie",
+    "map": "http://download.geofabrik.de/europe/poland/wielkopolskie-latest.osm.pbf",
+    "center_coordinates": {"lng": 52.403499, "lat": 16.923179}
   },
   "Warszawa": {
     "database": "waw.db",
@@ -23,6 +30,8 @@
       "wkd": "https://mkuran.pl/gtfs/wkd.zip"
     },
     "projection": "EPSG:2180",
-    "region": "pl_mazowieckie"
+    "region": "pl_mazowieckie",
+    "map": "http://download.geofabrik.de/europe/poland/mazowieckie-latest.osm.pbf",
+    "center_coordinates": {"lng": 52.229676, "lat": 21.012229}
   }
 }

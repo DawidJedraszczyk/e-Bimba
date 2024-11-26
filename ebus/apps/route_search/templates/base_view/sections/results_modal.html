@@ -1,0 +1,203 @@
+{% load static %}
+
+<div id="foundRoutes">
+  <span id="loader"></span>
+</div>
+
+<script>
+    let current_solution;
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        document.body.addEventListener('click', function (event) {
+            if (event.target.classList.contains('solution')) {
+                current_solution = event.target.id;
+                handle_route_click(event.target.id)
+            }
+        });
+    });
+
+    window.addEventListener("vehiclePositionsUpdated", (e) => {
+        const vehicles_data = e.detail;
+        show_vehicles(current_solution)
+    });
+
+    window.addEventListener("tripUpdatesUpdated", (e) => {
+        const trip_updates_data = e.detail;
+        show_delays()
+    });
+
+    const handle_route_click = (solution_id) => {
+        let coords, details;
+
+        const departureCoordinatesSessionStorage = sessionStorage.getItem('departureCoordinates');
+
+        // Check if data exists
+        if (departureCoordinatesSessionStorage) {
+            const departureCoordinates = JSON.parse(departureCoordinatesSessionStorage);
+
+            coords = departureCoordinates[solution_id];
+            draw_route(coords);
+        }
+
+        const departureDetailsSessionStorage = sessionStorage.getItem('departuresDetails');
+
+        if (departureDetailsSessionStorage) {
+            const departureDetails = JSON.parse(departureDetailsSessionStorage);
+
+            details = departureDetails[solution_id];
+            show_departure_details(details);
+        }
+
+
+        show_vehicles(solution_id)
+
+
+    }
+
+    const show_departure_details = (details) => {
+        const departureDetailsContainer = document.getElementById('departureDetailsContent');
+        departureDetailsContainer.innerHTML = '';
+
+        // Append all departure details
+        Object.values(details).forEach(departureDiv => {
+            departureDetailsContainer.innerHTML += departureDiv;
+        });
+
+        document.getElementById('departureDetails').style.display = "flex";
+        document.getElementById("arrow-icon-hours").addEventListener("click", function () {
+            document.getElementById('departureDetails').style.display = "none";
+        });
+
+    }
+
+    const show_vehicles = (solution_id) => {
+        const departureGTFSSessionStorage = sessionStorage.getItem('departuresGTFS');
+    const createDiv = (divClass, divId, divContent) => {
+        let div = document.createElement('div');
+        div.id = divId;
+        div.classList.add(divClass);
+        div.innerHTML = divContent;
+        return div;
+    }
+
+        if (departureGTFSSessionStorage) {
+            const departureGTFS = JSON.parse(departureGTFSSessionStorage);
+
+            let trip_ids = departureGTFS[solution_id];
+            removeVehiclesRoutingControl();
+
+            for (let trip_id in trip_ids) {
+                const filteredVehicles = GTFS_DATA.vehicles_data.filter(
+                    vehicle => vehicle.trip_id === trip_ids[trip_id]
+                );
+
+                filteredVehicles.forEach(vehicle => {
+                    const marker = L.marker([vehicle.latitude, vehicle.longitude], {
+                        icon: L.divIcon({
+                            className: 'custom-marker',
+                            html: `<div class="marker-circle">${vehicle.route_id || 'N/A'}</div>`,
+                            iconSize: [25, 25], // Icon size
+                            iconAnchor: [12.5, 12.5], // Center the icon
+                        }),
+                    }).bindPopup(
+                        `<b>ID pojazdu:</b> ${vehicle.vehicle_id}<br>
+                     <b>ID odjazdu:</b> ${vehicle.route_id}<br>
+                     <b>Data:</b> ${vehicle.timestamp}`
+                    );
+
+                    // Add the marker to the map
+                    marker.addTo(map);
+
+                    // Track the marker for removal later
+                    vehiclesControls.push(marker);
+                });
+            }
+        }
+    };
+
+    const show_delays = () => {
+        const departureGTFSSessionStorage = sessionStorage.getItem('departuresGTFS');
+        const departureDetailsSessionStorage = sessionStorage.getItem('departuresDetails');
+        let departureDetails = JSON.parse(departureDetailsSessionStorage);
+
+        if (departureGTFSSessionStorage) {
+            const departureGTFS = JSON.parse(departureGTFSSessionStorage);
+
+            for (let departure in departureGTFS) {
+                for (let gtfs in departureGTFS[departure]) {
+                    let trip_id = departureGTFS[departure][gtfs];
+
+                    const filteredDelays = GTFS_DATA.trip_updates_data.filter(
+                        trip => trip.trip_id === trip_id
+                    );
+
+                    filteredDelays.forEach(delay => {
+                        let departure_details = departureDetails[departure];
+                        const detailsWithClass = Object.entries(departure_details).filter(([key, value]) => value.includes('class="departure-details"'));
+
+                        const reindexedDetails = detailsWithClass.map(([_, value], index) => ({
+                            id: index,
+                            value: value
+                        }));
+
+                        reindexedDetails.forEach(detail => {
+                            if (detail.id == gtfs) {
+                                const parser = new DOMParser();
+                                const doc = parser.parseFromString(detail.value, "text/html");
+                                const elements = doc.querySelectorAll(`.departure-time`);
+
+                                elements.forEach((parsedElement) => {
+                                    const sequenceNumber = parseInt(parsedElement.getAttribute("data-sequence-number"), 10);
+
+                                    if (sequenceNumber >= delay.stop_sequence) {
+                                        // Find the actual element in the live DOM
+                                        const actualElement = document.querySelector(
+                                            `.departure-time[data-sequence-number="${sequenceNumber}"]`
+                                        );
+
+                                        if (actualElement) {
+                                            const delayToShow = delay.delay < 0
+                                                ? `-${Math.abs(delay.delay)} s`
+                                                : `+${delay.delay} s`;
+
+                                            // Extract and sanitize existing text
+                                            const originalText = actualElement.textContent.trim();
+                                            const timeMatch = originalText.match(/^(\d{2}:\d{2}:\d{2})/);
+
+                                            if (timeMatch) {
+                                                const timePart = timeMatch[1]; // Extracts time
+                                                const restOfText = originalText.replace(/^(\d{2}:\d{2}:\d{2})\s?[+-]?\d*\s?s?/, "").trim(); // Removes existing delay
+
+                                                // Reassign content in the desired format
+                                                actualElement.textContent = `${timePart} ${delayToShow} ${restOfText}`;
+
+                                            }
+                                        }
+                                    }
+                                });
+                            }
+                        });
+                    });
+                }
+            }
+        }
+    };
+
+
+
+</script>

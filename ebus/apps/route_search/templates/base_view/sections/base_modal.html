@@ -1,0 +1,41 @@
+{% load static %}
+
+<div id="searchContainer" class="searchContainer">
+    <div id="content" class="content">
+        {% include 'base_view/sections/search_modal.html' %}
+        {% include 'base_view/sections/results_modal.html' %}
+    </div>
+    <img id="arrow-icon" class="arrow-icon" src="{% static 'base_view/img/arrow_icon.svg' %}"/>
+</div>
+
+<div id="departureDetails">
+    <img id="arrow-icon-hours" class="arrow-icon" src="{% static 'base_view/img/arrow-icon.svg' %}"/>
+    <div id="departureDetailsContent" style="overflow-y: auto; padding: 10px; display: flex; flex-direction: column; align-items: center; width: 80%;"></div>
+</div>
+<script>
+    //hide search container
+    let hiddenStatus = false;
+
+    function changeHiddenClass() {
+        if (hiddenStatus) {
+            document.getElementById("arrow-icon").className = "arrow-icon__hidden";
+            document.getElementById("arrow-icon").style.zIndex = 2;
+            document.getElementById("searchContainer").className = "searchContainer__hidden";
+            document.getElementById("content").style.display = "none"; // Hide the content
+            document.getElementById("departureDetails").classList.add("src-cont-hidden");
+        } else {
+            document.getElementById("searchContainer").className = "searchContainer";
+            document.getElementById("arrow-icon").className = "arrow-icon";
+            document.getElementById("content").style.display = ""; // Show the content
+            document.getElementById("departureDetails").classList.remove("src-cont-hidden");
+
+        }
+    }
+    document.addEventListener("DOMContentLoaded", init, false);
+    function init() {
+        document.getElementById("arrow-icon").addEventListener("click", function () {
+            hiddenStatus = !hiddenStatus; // Toggle the hidden status
+            changeHiddenClass();
+        });
+    }
+</script>

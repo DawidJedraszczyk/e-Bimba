@@ -1,0 +1,26 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pl-PL">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sprawdź swojego busa</title>
+
+    <!--  LEAFLET  -->
+    <link rel="stylesheet" href="{% static 'base_view/lib/leaflet/leaflet.css' %}"/>
+    <script src="{% static 'base_view/lib/leaflet/leaflet.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'base_view/lib/leaflet/leaflet-routing-machine.css' %}"/>
+    <script src="{% static 'base_view/lib/leaflet/leaflet-routing-machine.js' %}"></script>
+
+    <!--  STYLES  -->
+    <link rel="stylesheet" href="{% static 'base_view/css/index.css' %}"/>
+  </head>
+  <body>
+    {% include './sections/base_modal.html' %}
+    {% include './sections/map.html' %}
+    <script src="{% static 'base_view/js/index.js' %}"></script>
+    <script src="{% static 'base_view/js/workers.js' %}"></script>
+  </body>
+</html>

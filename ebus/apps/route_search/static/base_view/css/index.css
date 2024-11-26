@@ -1,0 +1,832 @@
+:root {
+  --cyan: #11998e;
+  --green: #38ef7d;
+  --background: #222;
+  --text-color: #9b9b9b;
+}
+
+* {
+  margin: 0px;
+  padding: 0px;
+}
+
+body {
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    font-family: "Poppins", sans-serif;
+    width: 100vw;
+    height: 100vh;
+    color: var(--text-color);
+    background-color: var(--background);
+    overflow: hidden;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background-image: linear-gradient(180deg, #11998e 0%, #38ef7d 99%);
+  box-shadow: inset 1px 1px 3px 0 rgba(#fff, 0.5);
+  border-radius: 100px;
+}
+body {
+  font-family: "Poppins", sans-serif;
+  width: 100vw;
+  height: 100vh;
+  color: var(--text-color);
+  background-color: var(--background);
+  overflow: hidden;
+}
+#map {
+  position: relative;
+  z-index: 0;
+  bottom: 0px;
+  width: 100vw;
+  height: 100%;
+  overflow: hidden;
+}
+.schedule-btn {
+    cursor: pointer;
+    padding-left: 10px;
+}
+.route-btn {
+  cursor: pointer;
+}
+
+#loader {
+  width: 48px;
+  height: 48px;
+  display: block;
+  margin: 20px auto;
+  box-sizing: border-box;
+  position: absolute;
+  top: calc(50% - 24px);
+  left: calc(50% - 19px);
+}
+#loader::after {
+  display:none;
+  content: '';
+  box-sizing: border-box;
+  width: 48px;
+  height: 48px;
+  left: 0;
+  bottom: 0;
+  position: absolute;
+  border-radius: 50% 50% 0;
+  border: 15px solid #FFF;
+  transform: rotate(45deg) translate(0, 0);
+  box-sizing: border-box;
+  animation: animMarker 0.4s ease-in-out infinite alternate;
+}
+#loader::before {
+  display:none;
+  content: '';
+  box-sizing: border-box;
+  position: absolute;
+  left: 0;
+  right: 0;
+  margin: auto;
+  top: 150%;
+  width: 24px;
+  height: 4px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.2);
+  animation: animShadow 0.4s ease-in-out infinite alternate;
+}
+#loader.show::after {
+  display: block;
+}
+
+#loader.show::before {
+  display: block;
+}
+#loader.shadow{
+  opacity: 0.2;
+}
+@keyframes animMarker {
+  0% {
+    transform: rotate(45deg) translate(5px, 5px);
+  }
+  100% {
+    transform: rotate(45deg) translate(-5px, -5px);
+  }
+}
+
+@keyframes animShadow {
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(0.5);
+  }
+}
+
+.route-btn {
+  color: white;
+  text-align: center;
+}
+
+#back-btn {
+  display: none;
+  position: relative;
+  width: 400px;
+  color: white;
+  top: 55px;
+  font-size: 15px;
+}
+
+#back-btn:hover {
+  color: var(--cyan);
+  cursor: pointer;
+}
+
+#back-btn:hover img {
+  cursor: pointer;
+  border: 1px var(--cyan) solid;
+  background-color: var(--cyan);
+}
+#back-icon {
+  width: 10px;
+  height: 10px;
+  background-color: white;
+  border-radius: 15px;
+  border: 1px white solid;
+  transform: rotate(-90deg);
+  margin-right: 5px;
+}
+main {
+  width: 100vw;
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.searchContainer {
+  width: 520px;
+  height: 75%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: absolute;
+  z-index: 2;
+  border-radius: 0px 25px 25px 0px;
+  background-color: var(--background);
+}
+
+.arrow-icon {
+  width: 30px;
+  height: 30px;
+  background-color: var(--text-color);
+  border: solid 1px var(--text-color);
+  border-radius: 30px;
+  position: absolute;
+  right: 20px;
+  top: calc(50% - 16px);
+  rotate: -90deg;
+  z-index: 1;
+}
+
+.arrow-icon:hover,
+.arrow-icon:focus {
+  cursor: pointer;
+  background-color: var(--cyan);
+  border: solid 1px var(--cyan);
+}
+
+/*when search bar hidden*/
+.searchContainer__hidden {
+  width: 0px;
+}
+.routeContainer__hidden,
+.scheduleContainer__hidden {
+  height: 0px;
+  display: none;
+}
+.arrow-icon__hidden {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  background-color: var(--cyan);
+  border: solid 1px var(--cyan);
+  border-radius: 30px;
+  rotate: 90deg;
+  left: 10px;
+  top: calc(50% - 15px);
+  z-index: 1;
+}
+
+.arrow-icon__hidden:hover,
+.arrow-icon__hidden:focus {
+  cursor: pointer;
+  background-color: var(--cyan);
+  border: solid 1px var(--cyan);
+}
+
+.content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 80%;
+  height: 100%;
+}
+
+.content__hidden {
+  display: none;
+}
+
+.custom-marker .marker-circle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    background-color: #007bff; /* Same as fillColor */
+    color: white; /* Text color */
+    font-size: 12px;
+    font-weight: bold;
+}
+
+@media screen and (max-width: 1000px) {
+  main {
+    position: relative;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .searchContainer {
+    width: 100vw;
+    position: absolute;
+    top: 0px;
+    height: 380px;
+  }
+  .routeContainer,
+  .scheduleContainer {
+    position: absolute;
+    top: 50px;
+  }
+  .scheduleContainer {
+    width: 300px;
+    height: 250px;
+    overflow-y: auto;
+  }
+  .arrow-icon {
+    rotate: 0deg;
+    top: 325px;
+    left: calc(50% - 15px);
+  }
+
+  #selectedRoute {
+    margin-top: 20px;
+    height: 60%;
+  }
+
+  /*when search bar hidden*/
+  .searchContainer__hidden {
+    width: 100%;
+    height: 0px;
+  }
+  .routeContainer__hidden,
+  .scheduleContainer__hidden {
+    display: none;
+  }
+
+  .arrow-icon__hidden {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    background-color: var(--cyan);
+    border: solid 1px var(--cyan);
+    border-radius: 30px;
+    rotate: -180deg;
+    left: calc(50% - 16px);
+    top: 20px;
+    z-index: 1;
+  }
+  .arrow-icon__hidden:hover,
+  .arrow-icon__hidden:focus {
+    cursor: pointer;
+    background-color: var(--cyan);
+    border: solid 1px var(--cyan);
+  }
+
+  #back-btn {
+    top: 10px;
+
+  }
+}
+@media screen and (min-width: 800px) and (max-width: 1000px) {
+  .searchContainer {
+    height: 400px;
+  }
+  .arrow-icon {
+    top: 88%;
+  }
+}
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 30px #222 inset !important;
+}
+.suggestion {
+  white-space: nowrap;
+  font-family: inherit;
+  font-weight: bold;
+  outline: 0;
+  font-size: 1.3rem;
+  -webkit-text-fill-color: #747171 !important;
+  z-index: -1;
+  position: absolute;
+  top: 22px;
+  left: 0px;
+}
+
+input:-webkit-autofill {
+  font-size: 1.3rem;
+  -webkit-text-fill-color: white !important;
+}
+input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+  filter: brightness(0) invert(1);
+}
+.form__group {
+  position: relative;
+  padding: 15px 0 0;
+  margin-top: 10px;
+}
+.form__field {
+  font-family: inherit;
+  width: 100%;
+  border: 0;
+  border-bottom: 2px solid #9b9b9b;
+  outline: 0;
+  font-size: 1.3rem;
+  color: #fff;
+  padding: 7px 0;
+  background: transparent;
+  transition: border-color 0.2s;
+}
+.form__field::placeholder {
+  color: transparent;
+}
+.form__field:placeholder-shown ~ .form__label {
+  font-size: 1.3rem;
+  cursor: text;
+  top: 20px;
+}
+.form__label {
+  position: absolute;
+  top: 0;
+  display: block;
+  transition: 0.2s;
+  font-size: 1rem;
+  color: #ffffff;
+}
+
+.form__field:focus {
+  padding-bottom: 6px;
+  font-weight: 700;
+  border-width: 3px;
+  border-image: linear-gradient(to right, var(--cyan), var(--green));
+  border-image-slice: 1;
+}
+.form__field:focus ~ .form__label {
+  position: absolute;
+  top: 0;
+  display: block;
+  transition: 0.2s;
+  font-size: 1rem;
+  color: var(--cyan);
+  font-weight: 700;
+}
+/* reset input */
+.form__field:required,
+.form__field:invalid {
+  box-shadow: none;
+}
+/* demo */
+
+.search-btn {
+  background-color: var(--background);
+  border: none;
+  width: 50px;
+  cursor: pointer;
+  margin-top: 30px;
+  color: white;
+}
+
+.search-btn:hover,
+.search-btn:focus {
+  color: var(--cyan);
+}
+* {
+  margin: 0px;
+  padding: 0px;
+}
+
+.hours {
+  font-size: 25px;
+  color: white;
+  margin: 5px 0px;
+}
+.meters{
+    font-size: 10px;
+    width: 30px;
+}
+
+.leaflet-routing-container {
+  display: none;
+}
+
+#foundRoutes {
+  font-size: 20px;
+  color: white;
+  overflow-y: scroll;
+  display: flex;
+  flex-direction: column;
+  width: 400px;
+  height: 80%;
+  position: absolute;
+  top: 100px;
+}
+
+.dataContainer{
+    width: 100%;
+}
+.timeContainer, .dataContainer{
+    height: 60px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.roadType {
+  margin-bottom: 20px;
+}
+
+#back-btn {
+  display: none;
+  position: absolute;
+  width: 400px;
+  color: white;
+  top: 55px;
+  font-size: 15px;
+}
+
+#back-btn:hover {
+  color: var(--cyan);
+  cursor: pointer;
+}
+
+#back-btn:hover img {
+  cursor: pointer;
+  border: 1px var(--cyan) solid;
+  background-color: var(--cyan);
+}
+
+.buses, .hours {
+  width: 100%;
+  font-size: 15px;
+  display: flex;
+  justify-content: space-between;
+}
+.busImgAndNumber{
+    display: flex;
+    width: 50px;
+    justify-content: space-around;
+}
+.busImgAndNumber img {
+  width: 20px;
+  height: 20px;
+}
+.hours p{
+  font-size: 20px;
+}
+
+.infoContainer{
+    width: 60%;
+}
+
+.route {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  margin-bottom: 20px;
+  width: calc(100% - 40px);
+  height: 80px;
+  color: white;
+  border: 2px solid var(--text-color);
+  border-radius: 20px;
+  padding: 10px;
+  cursor: pointer;
+}
+
+.route:hover,
+.route:focus {
+  color: white;
+  border: 2px solid var(--cyan);
+}
+
+.routeContainer {
+  visibility: visible;
+  position: absolute;
+  top: calc(50% - 130px);
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+  z-index: 1;
+}
+
+@media only screen and (max-width: 1000px){
+  #foundRoutes{
+    top: 45px;
+  }
+}
+@media only screen and (max-width: 450px){
+    #foundRoutes{
+     width: 90%;
+     overflow-x: hidden;
+    }
+    .departureTime{
+        font-size: 15px;
+    }
+    .departureTime h2{
+        font-size: 22px;
+    }
+    #back-btn{
+      width: 90%;
+    }
+}
+@media only screen and (max-width: 400px){
+    .buses{
+        justify-content: space-around;
+    }
+    .distance{
+        display: none;
+    }
+}
+#departureDetails {
+  font-size: 20px;
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  width: 400px;
+  left: 490px;
+  border-radius: 0px 25px 25px 0px;
+  height: 75%;
+  background-color: #353434;
+  color: white;
+  text-align: center;
+  z-index: 1;
+}
+
+#departureDetails.src-cont-hidden {
+  left: 0 !important;
+}
+
+#selectedRouteData{
+  max-width: 360px;
+  display: flex;
+  flex-direction: column;
+}
+#arrow-icon-hours{
+    height: 30px !important;
+    width: 30px;
+}
+
+#departureDetails img{
+  height: 25px;
+}
+
+.location, .distanceToWalk, .busDetails, .busStations, .busStations li, .busImgAndNumberSelectedRoute {
+  display: flex;
+  justify-content: start;
+  text-align: start;
+  align-items: center;
+  font-size: 16px;
+  max-width: 350px;
+}
+.busImgAndNumberSelectedRoute{
+    font-size: 25px;
+    margin-bottom: 10px;
+    width: 100%;
+}
+.busImgAndNumberSelectedRoute p {
+    margin-left: 5px;
+    font-size: 20px;
+}
+#firstLocation {
+  margin-bottom: 10px;
+}
+.location img, .distanceToWalk img {
+    margin-right: 5px;
+}
+
+#goalLocation {
+  margin-top: 10px;
+}
+.distanceToWalk{
+  margin-bottom: 10px;
+}
+.busDetails{
+  font-size: 35px;
+  margin-bottom: 10px;
+  margin-top: 20px;
+}
+.busStations ul{
+  list-style: none;
+  width: 100%;
+  margin-bottom: 20px;
+}
+.busStations li {
+  display: flex;
+  justify-content: start;
+  width: 100%;
+  justify-content: start;
+}
+#secondDistance{
+  margin-top: 20px;
+}
+
+@media screen and (max-width: 1000px) {
+    #departureDetails {
+        display: none;
+        width: 100vw;
+        height: 80vh;
+        left: 0px;
+        top: 0px;
+        border-radius: 0px 0px 25px 25px;
+        z-index: 3;
+    }
+    #searchContainer{
+        border-radius: 0px 0px 25px 25px;
+    }
+    #arrow-icon-hours {
+      top: 20px;
+    }
+    #back-btn {
+      top: 10px;
+    }
+}
+#busContainer{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    height: 60%;
+}
+#back-btn-schedule{
+    position: absolute;
+    font-size: 15px;
+    top: -60px;
+    display: none;
+}
+#back-btn-schedule:hover{
+    color: white;
+    cursor: pointer;
+}
+#back-btn-schedule:hover img{
+    background-color: white;
+    border: 1px white solid;
+}
+
+.scheduleContainer img{
+    background-color: var(--text-color);
+    height: 12px;
+    transform: rotate(-90deg);
+    margin-right: 5px;
+    position: relative;
+    top: 2px;
+    border: 1px var(--text-color) solid;
+    border-radius: 50%;
+}
+.scheduleContainer {
+  visibility: hidden;
+  position: absolute;
+  top: 15vh;
+  width: 300px;
+  height: 70%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--text-color);
+  font-size: 25px;
+  z-index: 1;
+}
+.bus {
+    height: 40px;
+    text-align: center;
+    font-size: 30px;
+    width: 50px;
+}
+.stop:hover, .bus:hover{
+    color: white;
+    cursor: pointer;
+}
+#detailsContainer {
+  display: none;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  width: 350px;
+  height: 100%;
+}
+.buttonForDetails{
+    width: 300px;
+    display: flex;
+    align-items: center;
+}
+.direction{
+  color: var(--text-color);
+  font-size: 25px;
+  display: flex;
+  height: fit-content;
+  flex-direction: column;
+  align-items: center;
+}
+.direction img{
+  margin-top: 10px;
+  margin-bottom: 20px;
+  width: 15px;
+  height: 15px !important;
+  transform: rotate(-90deg);
+  position: relative;
+  right: -10px;
+  top: 4px;
+}
+.rotateImg {
+  transform: rotate(0px);
+}
+.stopsContainer{
+  display: none;
+  width: 200px;
+  height: 0px;
+  overflow: auto;
+}
+.stop{
+  text-align: start;
+  font-size: 15px;
+}
+.direction:hover .buttonForDetails{
+  cursor: pointer;
+  color: white;
+}
+.busName{
+    position: absolute;
+    top: -65px;
+    color: white;
+}
+.hour{
+    display: none;
+}
+.dayType{
+    width: 300px;
+    margin-bottom: 10px;
+    color: var(--text-color);
+    flex-direction: column;
+}
+.dayType:hover{
+    color: white;
+    cursor: pointer;
+}
+.dayType:hover img{
+    background-color: var(--cyan);
+    border: 1px var(--cyan) solid;
+}
+.dayType img{
+    position: relative;
+    height: 13px !important;
+    border: 1px var(--text-color) solid;
+    border-radius: 50%;
+    width: 13px;
+    right: 2px;
+    top: -1px;
+    transform: rotate(-90deg);
+}
+.currClicked .hour{
+    display: block;
+}
+#stopName{
+    position: absolute;
+    top: 10px;
+}
+
+.currClicked .stopsContainer{
+    height: 80%;
+    width: 300px;
+    display: block;
+}
+.currClicked img{
+    transform: rotate(90deg)
+}
+.direction:hover img{
+  background-color: var(--cyan);
+  border: solid 1px var(--cyan);
+}
