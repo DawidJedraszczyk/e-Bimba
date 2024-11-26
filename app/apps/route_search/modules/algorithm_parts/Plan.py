@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from typing import Self
 
 from .data import Data
 from .estimator import Estimates
@@ -25,7 +24,7 @@ class Plan:
         return self.current_time + self.estimates.walk_time
 
     @staticmethod
-    def from_start(start_time: int, stop_id: int, walk_time: int, estimates: Estimates) -> Self:
+    def from_start(start_time: int, stop_id: int, walk_time: int, estimates: Estimates):
         return Plan(
             stop_id,
             start_time + walk_time,
@@ -34,7 +33,7 @@ class Plan:
             walk_time * INCONVENIENCE_SETTINGS["WALK_TIME_PENALTY"],
         )
 
-    def extend(self, plan_trip: PlanTrip, estimates: Estimates) -> Self:
+    def extend(self, plan_trip: PlanTrip, estimates: Estimates):
         inconvenience = self.inconvenience
 
         if plan_trip.trip_id == -1:
