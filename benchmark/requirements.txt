@@ -4,4 +4,5 @@ duckdb==1.1.1
 haversine==2.8.1
 numba==0.60.0
 requests==2.32.3
+pyproj
 pandas
