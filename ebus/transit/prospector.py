@@ -103,7 +103,11 @@ class Prospector:
 
   def project(self, c: Coords) -> Point:
     x, y = self.transformer.transform(c.lat, c.lon)
-    return Point(np.float32(x - self.md.center.x), np.float32(y - self.md.center.y))
+
+    return Point(
+      np.float32(x - self.md.center_position.x),
+      np.float32(y - self.md.center_position.y)
+    )
 
 
   def unproject(self, p: Point) -> Coords:

@@ -33,14 +33,26 @@ insert into stop by name select
 from imported_stop i;
 
 
+set variable CENTER = ST_Transform(
+  ST_Point2D(getvariable('X0'), getvariable('Y0')),
+  getvariable('PROJECTION'),
+  'WGS84'
+);
+
+
 insert into metadata values (
   getvariable('CITY'),
   getvariable('REGION'),
   getvariable('PROJECTION'),
   struct_pack(
+    lat := ST_X(getvariable('CENTER')),
+    lon := ST_Y(getvariable('CENTER'))
+  ),
+  struct_pack(
     x := getvariable('X0'),
     y := getvariable('Y0')
   ),
+  (select coalesce(list(column0), []) from city_realtime),
 );
 
 

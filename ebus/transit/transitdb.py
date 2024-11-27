@@ -14,16 +14,14 @@ from ebus.algorithm_settings import WALKING_SETTINGS
 
 
 class TransitDb(Db):
-  def __init__(self, path: Path, run_on_load: bool = True):
+  def __init__(self, path: Path, write=False):
     scripts = Path(__file__).parent / "sql"
     variables = {
       "MAX_STOP_WALK": WALKING_SETTINGS["TIME_WITHIN_WALKING"] * WALKING_SETTINGS["PACE"]
     }
 
-    super().__init__(path, scripts, variables)
-
-    if run_on_load:
-      self.script("on-load")
+    super().__init__(path, scripts, write, variables)
+    self.sql("install spatial; load spatial")
 
 
   def clone(self):
@@ -49,8 +47,10 @@ class TransitDb(Db):
 
 
   def get_metadata(self) -> Metadata:
-    name, region, proj, center = self.sql("select * from metadata").one()
-    return Metadata(name, region, proj, Point(center["x"], center["y"]))
+    md = self.sql("select metadata from metadata").scalar()
+    md["center_coords"] = Coords(**md["center_coords"])
+    md["center_position"] = Point(**md["center_position"])
+    return Metadata(**md)
 
 
   def get_routes(self) -> Routes:

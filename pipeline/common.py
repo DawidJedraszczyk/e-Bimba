@@ -27,6 +27,14 @@ def fpath(path: Path):
   return str(path.relative_to(ROOT))
 
 
+def get_city(name_or_id):
+  for city in CITIES:
+    if city["name"] == name_or_id or city["id"] == name_or_id:
+      return city
+
+  return None
+
+
 @contextlib.contextmanager
 def start_osrm(region: str):
   print(f"Starting osrm-routed {fpath(DATA_REGIONS / region)} on port {OSRM_PORT}")

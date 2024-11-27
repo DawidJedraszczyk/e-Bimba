@@ -168,10 +168,10 @@ def osrm_data(region: str):
       file.rename(DATA_REGIONS / region / file.name)
 
 
-def prepare_city(city, name):
-  target = DATA_CITIES / city["database"]
-  tmp = TMP_CITIES / city["database"]
-  tmp_dir = TMP_CITIES / city["database"].replace(".", "_")
+def prepare_city(city):
+  target = DATA_CITIES / f"{city["id"]}.db"
+  tmp = TMP_CITIES / f"{city["id"]}.db"
+  tmp_dir = TMP_CITIES / city["id"]
 
   if target.exists():
     print(f"Database {fpath(target)} exists, skipping")
@@ -181,9 +181,9 @@ def prepare_city(city, name):
     download_if_missing(url, tmp_dir / f"{k}.zip")
 
   try:
-    with TransitDb(tmp, run_on_load=False) as tdb:
+    with TransitDb(tmp, write=True) as tdb:
       tdb.set_variable("PROJECTION", city["projection"])
-      tdb.set_variable("CITY", name)
+      tdb.set_variable("CITY", city["name"])
       tdb.set_variable("REGION", city["region"])
       tdb.script("init")
 
@@ -200,7 +200,8 @@ def prepare_city(city, name):
 
       t0 = time.time()
       print("Finalizing")
-      tdb.script("finalize")
+      realtime = np.array(city.get("realtime", []), dtype=str)
+      tdb.script("finalize", views={"city_realtime": realtime})
 
       t1 = time.time()
       print(f"Time: {_t(t1, t0)}")
@@ -219,22 +220,23 @@ def main():
   if len(args) == 1:
     print(f"Usage: {args[0]} CITY")
   elif args[1] == "all":
-    for name, params in CITIES.items():
-      prepare_city(params, name)
+    for city in CITIES:
+      prepare_city(city)
     return
   else:
-    city_name = " ".join(args[1:])
+    city_name_or_db = " ".join(args[1:])
+    city = get_city(city_name_or_db)
 
-    if city_name not in CITIES:
-      print(f"Unknown city '{city_name}'")
-    else:
-      prepare_city(CITIES[city_name], city_name)
+    if city is not None:
+      prepare_city(city)
       return
+
+    print(f"Unknown city '{city_name}'")
 
   print("Available cities:\n  all")
 
-  for city in CITIES.keys():
-    print(f"  {city}")
+  for city in CITIES:
+    print(f"  {city["name"]} | {city["id"]}")
 
 
 

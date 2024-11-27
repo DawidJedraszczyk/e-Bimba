@@ -21,25 +21,9 @@ r = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, db=0)
 geolocator = Nominatim(user_agent="ebus")
 
 
-def load_cities_data():
-    with open(settings.CITIES_JSON_PATH, 'r', encoding='utf-8') as file:
-        cities_data = json.load(file)
-    return cities_data
+def load_city_data(city):
+    return Data.instance(Path.cwd().parent / "data" / "cities" / f"{city}.db")
 
-cities = load_cities_data()
-
-def get_city(request_path):
-    for city, data in cities.items():
-        if city.lower() in request_path.lower():
-            return city.capitalize()
-
-def get_coords(request_path):
-    for city, data in cities.items():
-        if city.lower() in request_path.lower():
-            coordinates = data.get("center_coordinates")
-            return [coordinates["lng"], coordinates["lat"]]
-
-    return None
 
 class BaseView(TemplateView):
     '''
@@ -51,22 +35,23 @@ class BaseView(TemplateView):
     template_name = 'base_view/index.html'
 
     def get(self, request, *args, **kwargs):
-
         return super().get(request, *args, **kwargs)
 
-    def get_context_data(self,*args, **kwargs):
+    def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['city'] = get_city(self.request.path)
-        context['center_coordinates'] = get_coords(self.request.path)
+        city_id = kwargs['city']
+        data = load_city_data(city_id)
+        context['city'] = city_id
+        context['center_coordinates'] = [*data.md.center_coords]
         return context
 
 
 class FindRouteView(View):
 
     def post(self, request, *args, **kwargs):
-        city = get_city(request.POST.get('city'))
-        database_name = cities[city]['database']
-        data = Data.instance(Path.cwd().parent / "data" / "cities" / database_name)
+        city_id = request.POST.get('city')
+        data = load_city_data(city_id)
+        city = data.md.name
 
         start = geolocator.geocode(request.POST.get('start_location') + ',' + city +', Polska')
         destination = geolocator.geocode(request.POST.get('goal_location') + ',' + city + ', Polska')

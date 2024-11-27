@@ -1,7 +1,3 @@
-install spatial;
-load spatial;
-
-
 create temp table stop_pos as
   select
     id,

@@ -26,8 +26,8 @@ class Db:
   db: duckdb.DuckDBPyConnection
   scripts: Path
 
-  def __init__(self, path: Path, scripts: Path, variables: dict = {}):
-    self.db = duckdb.connect(path)
+  def __init__(self, path: Path, scripts: Path, write=False, variables={}):
+    self.db = duckdb.connect(path, not write)
     self.scripts = scripts
 
     for k, v in variables.items():

@@ -2,10 +2,18 @@ create table metadata (
   name text not null,
   region text not null,
   projection text not null,
-  center struct (
+
+  center_coords struct (
+    lat float4,
+    lon float4
+  ) not null,
+
+  center_position struct (
     x float4,
     y float4
   ) not null,
+
+  realtime text[] not null,
 );
 
 
@@ -39,7 +47,7 @@ create table stop (
     lon float4
   ) not null,
 
-  position struct ( -- in meters, relative to metadata.center
+  position struct ( -- in meters, relative to metadata.center_position
     x float4,
     y float4
   ) not null,
