@@ -2,7 +2,10 @@ import contextlib
 import docker
 import json
 from pathlib import Path
+import shutil
+import subprocess
 import time
+import zipfile
 
 from transit.osrm import OsrmClient
 
@@ -22,6 +25,15 @@ REGIONS = json.loads((ROOT / "regions.json").read_bytes())
 OSRM_IMAGE = "ghcr.io/project-osrm/osrm-backend"
 OSRM_PORT = 53909
 
+FUSE_ZIP = "fuse-zip"
+
+OPTIONAL_GTFS_FILES = [
+  "calendar.txt",
+  "calendar_dates.txt",
+  "feed_info.txt",
+  "frequencies.txt",
+]
+
 
 def fpath(path: Path):
   return str(path.relative_to(ROOT))
@@ -33,6 +45,31 @@ def get_city(name_or_id):
       return city
 
   return None
+
+
+def unzip(file: Path, folder: Path):
+  if folder.exists():
+    if next(folder.iterdir(), None) is not None:
+      print(f"Folder '{fpath(folder)}' is not empty, assuming alread unzipped")
+      return
+
+    print(f"Removing empty folder '{fpath(folder)}'")
+    folder.rmdir()
+
+  if shutil.which(FUSE_ZIP) is not None:
+    try:
+      print(f"Mounting '{fpath(file)}' as '{fpath(folder)}' using {FUSE_ZIP}")
+      folder.mkdir()
+      subprocess.run([FUSE_ZIP, "-r", file, folder], check=True)
+      return
+    except Exception as e:
+      print(f"Failed ({e})")
+      folder.rmdir()
+
+  print(f"Unzipping '{fpath(file)}' to '{fpath(folder)}'")
+
+  with zipfile.ZipFile(file, "r") as zip:
+    zip.extractall(folder)
 
 
 @contextlib.contextmanager

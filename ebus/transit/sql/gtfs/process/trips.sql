@@ -1,4 +1,4 @@
-create temp table trip_with_stops as with
+create temp table pt_agg_stops as with
   raw as (
     select
       t.trip_id as id,
@@ -40,17 +40,51 @@ select
 from raw;
 
 
+create table pt_agg_start_times as select
+  route,
+  service,
+  shape,
+  headsign,
+  wheelchair_accessible,
+  list(struct_pack(start_time, gtfs_trip_id := id)) as start_times,
+  stops,
+from pt_agg_stops
+where not exists (from gtfs_frequencies f where f.trip_id = id)
+group by all;
+
+
+insert into pt_agg_start_times select
+  route,
+  service,
+  shape,
+  headsign,
+  wheelchair_accessible,
+  reduce(
+    list([
+      struct_pack(start_time := t, gtfs_trip_id := id)
+      for t in range(parse_time(f.start_time), parse_time(end_time), headway_secs)
+    ]),
+    (xs, ys) -> xs || ys
+  ),
+  stops,
+from pt_agg_stops
+join gtfs_frequencies f on (f.trip_id = id)
+group by all;
+
+
+drop table pt_agg_stops;
+
+
 create temp table processed_trip as with
-  agg_start_times as (
+  sorted as (
     select
       route,
       service,
       shape,
       headsign,
-      list(start_time order by start_time) as start_times,
+      list_sort([st.start_time for st in start_times]) as start_times,
       stops,
-    from trip_with_stops
-    group by all
+    from pt_agg_start_times
   ),
 
   agg_services as (
@@ -64,7 +98,7 @@ create temp table processed_trip as with
       ) as services,
       start_times,
       stops,
-    from agg_start_times
+    from sorted
     group by all
   ),
 

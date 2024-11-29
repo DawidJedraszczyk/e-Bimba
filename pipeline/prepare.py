@@ -7,12 +7,9 @@ import os
 from pathlib import Path
 import pyarrow
 import requests
-import shutil
-import subprocess
 import sys
 import time
 from typing import Iterable
-import zipfile
 
 sys.path.append(str(Path(__file__).parents[1] / "ebus"))
 sys.path.append(str(Path(__file__).parent))
@@ -20,16 +17,6 @@ sys.path.append(str(Path(__file__).parent))
 from common import *
 from transit.osrm import *
 from transit.transitdb import *
-
-
-FUSE_ZIP = "fuse-zip"
-
-OPTIONAL_GTFS_FILES = [
-  "calendar.txt",
-  "calendar_dates.txt",
-  "feed_info.txt",
-  "frequencies.txt",
-]
 
 
 def download_if_missing(url, path):
@@ -42,31 +29,6 @@ def download_if_missing(url, path):
 
   with open(path, "wb") as file:
     file.write(content)
-
-
-def unzip(file: Path, folder: Path):
-  if folder.exists():
-    if next(folder.iterdir(), None) is not None:
-      print(f"Folder '{fpath(folder)}' is not empty, assuming alread unzipped")
-      return
-
-    print(f"Removing empty folder '{fpath(folder)}'")
-    folder.rmdir()
-
-  if shutil.which(FUSE_ZIP) is not None:
-    try:
-      print(f"Mounting '{fpath(file)}' as '{fpath(folder)}' using {FUSE_ZIP}")
-      folder.mkdir()
-      subprocess.run([FUSE_ZIP, "-r", file, folder], check=True)
-      return
-    except Exception as e:
-      print(f"Failed ({e})")
-      folder.rmdir()
-
-  print(f"Unzipping '{fpath(file)}' to '{fpath(folder)}'")
-
-  with zipfile.ZipFile(file, "r") as zip:
-    zip.extractall(folder)
 
 
 def import_gtfs(tdb, source_name: str, gtfs_folder: Path):
@@ -93,7 +55,7 @@ def import_gtfs(tdb, source_name: str, gtfs_folder: Path):
   tdb.script("gtfs/clean-up")
 
   t3 = time.time()
-  print(f"Time: {_t(t2, t0)} "
+  print(f"Time: {_t(t3, t0)} "
     f"(parsing: {_t(t1, t0)}, processing: {_t(t2, t1)}, inserting: {_t(t3, t2)})")
 
 

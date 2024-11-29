@@ -18,9 +18,9 @@ order by id;
 
 insert into imported_stop select
   id,
-  stop_code,
+  coalesce(stop_code, ''),
   stop_name,
-  zone_id,
+  coalesce(zone_id, ''),
   struct_pack(
     lat := stop_lat,
     lon := stop_lon
@@ -48,16 +48,15 @@ from processed_trip;
 insert into trip_instance by name select
   (
     select id from processed_trip pt
-    where pt.route = tws.route
-      and pt.shape = tws.shape
-      and pt.headsign = tws.headsign
-      and pt.stops = tws.stops
+    where pt.route = agg.route
+      and pt.shape = agg.shape
+      and pt.headsign = agg.headsign
+      and pt.stops = agg.stops
   ) as trip,
   service,
-  start_time,
+  unnest(start_times, recursive := true),
   wheelchair_accessible,
-  id as gtfs_trip_id,
-from trip_with_stops tws;
+from pt_agg_start_times agg;
 
 
 insert into regular_service select

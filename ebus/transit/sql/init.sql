@@ -38,9 +38,9 @@ create sequence seq_agency_id minvalue 0 start 0;
 
 create table stop (
   id int4 not null,
-  code text,
+  code text not null,
   name text not null,
-  zone text,
+  zone text not null,
 
   coords struct (
     lat float4,
@@ -66,9 +66,9 @@ create table stop (
 
 create temp table imported_stop (
   id int4 not null,
-  code text,
+  code text not null,
   name text not null,
-  zone text,
+  zone text not null,
 
   coords struct (
     lat float4,
