@@ -7,6 +7,7 @@ from .data.misc import Coords, Metadata, Point
 from .data.stops import Stops
 from .osrm import *
 from .transitdb import TransitDb
+from ebus.algorithm_settings import WALKING_SETTINGS
 
 
 class NearStop(NamedTuple):
@@ -87,8 +88,13 @@ class Prospector:
         walk_distance = distances[-1]
 
     if walk_distance is None:
-      distances = self.osrm.distance_to_many(start_coords, [destination_coords])
-      walk_distance = distances[0]
+      straight = start_point.distance(destination_point)
+
+      if straight > WALKING_SETTINGS["TIME_WITHIN_WALKING"] * WALKING_SETTINGS["PACE"]:
+        walk_distance = straight * WALKING_SETTINGS["DISTANCE_MULTIPLIER"]
+      else:
+        distances = self.osrm.distance_to_many(start_coords, [destination_coords])
+        walk_distance = distances[0]
 
     return Prospect(
       start_point,
@@ -111,8 +117,8 @@ class Prospector:
 
 
   def unproject(self, p: Point) -> Coords:
-    x = p.x + self.md.center.x
-    y = p.y + self.md.center.y
+    x = p.x + self.md.center_position.x
+    y = p.y + self.md.center_position.y
     lat, lon = self.untransformer.transform(x, y)
     return Coords(np.float32(lat), np.float32(lon))
 

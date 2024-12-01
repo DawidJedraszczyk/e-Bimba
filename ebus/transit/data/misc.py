@@ -12,6 +12,10 @@ class Point(NamedTuple):
   x: np.float32
   y: np.float32
 
+  def distance(self, other) -> np.float32:
+    return np.sqrt((self.x - other.x)**2 + (self.y-other.y)**2)
+
+
 class Coords(NamedTuple):
   lat: np.float32
   lon: np.float32
@@ -49,3 +53,11 @@ class Services:
     self.today.sort()
     self.yesterday.sort()
     self.tomorrow.sort()
+
+  @staticmethod
+  def empty():
+    return Services(
+      np.empty(0, np.int32),
+      np.empty(0, np.int32),
+      np.empty(0, np.int32),
+    )

@@ -2,6 +2,7 @@
 
 import asyncio
 from concurrent.futures import ThreadPoolExecutor
+from enum import Enum
 import numba as nb
 import numba.types as nbt
 import numpy as np
@@ -26,14 +27,12 @@ if len(sys.argv) == 1:
   sys.exit()
 else:
   city_name = " ".join(sys.argv[1:])
+  city = get_city(city_name)
 
-  if city_name not in CITIES:
+  if city is None:
     print(f"Unknown city '{city_name}'")
     sys.exit()
-  else:
-    city = CITIES[city_name]
 
-from apps.route_search.modules.algorithm_parts.utils import seconds_to_time
 from transit.data.misc import *
 from transit.transitdb import *
 from transit.osrm import *
@@ -41,8 +40,15 @@ from transit.prospector import *
 from transit.router import *
 
 
+class Destinations(Enum):
+  RANDOM = 1
+  GRID = 2
+  STOP = 3
+
+
 BATCH_SIZE = 1000
 NUM_BATCHES = 128
+TYPE = Destinations.GRID
 
 
 class Row(NamedTuple):
@@ -56,9 +62,8 @@ class Row(NamedTuple):
 
 
 thread_local = threading.local()
-tdb = TransitDb(DATA_CITIES / city["database"])
-osrm = OsrmClient(f"http://localhost:{OSRM_PORT}")
-prospector = Prospector(tdb, osrm)
+tdb = TransitDb(DATA_CITIES / f"{city["id"]}.db")
+prospector = Prospector(tdb, None)
 stops = prospector.stops
 router = Router(tdb, stops=stops)
 stop_count = stops.count()
@@ -76,7 +81,7 @@ def random_pos():
   )
 
 def pos2coords(pos):
-  lat, lon = transformer.transform(pos.x + md.center.x, pos.y + md.center.y)
+  lat, lon = transformer.transform(pos.x + md.center_position.x, pos.y + md.center_position.y)
   return Coords(lat, lon)
 
 def random_stop():
@@ -113,14 +118,25 @@ def make_batch():
     to_pos = random_pos()
     day_type = random_day_type()
     start = random_time()
-    prospect = local_prospector.prospect(from_stop, to_pos)
+
+    match TYPE:
+      case Destinations.RANDOM:
+        destination = random_pos()
+
+      case Destinations.GRID:
+        destination = osrm.nearest(pos2coords(random_pos()))
+
+      case Destinations.STOP:
+        destination = random_stop()
+
+    prospect = local_prospector.prospect(from_stop, destination)
     plan = local_router.find_route(prospect, dt_services[day_type], start)
 
     rows.append(Row(
       stops[from_stop].position.x,
       stops[from_stop].position.y,
-      to_pos.x,
-      to_pos.y,
+      prospect.destination.x,
+      prospect.destination.y,
       day_type,
       start,
       plan.arrival - start,
@@ -134,8 +150,9 @@ def make_batch():
 
 tp = ThreadPoolExecutor(max_workers=os.cpu_count())
 
-with start_osrm(city["region"]):
+with start_osrm(city["region"], instances=2) as osrm:
+  prospector.osrm = osrm
   batches = list(tp.map(lambda _: make_batch(), range(NUM_BATCHES)))
 
 table = pa.Table.from_struct_array(pa.chunked_array(batches))
-pq.write_table(table, TMP_CITIES / city["database"].replace(".db", "-dataset.parquet"))
+pq.write_table(table, TMP_CITIES / f"{city["id"]}-dataset.parquet")
