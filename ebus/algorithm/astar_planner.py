@@ -51,6 +51,7 @@ class AStarPlanner():
             data.stops,
             self.prospect.destination,
             self.prospect.near_destination,
+            date,
         )
 
         self.iterations = 0
