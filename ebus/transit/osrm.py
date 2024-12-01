@@ -1,31 +1,58 @@
 import aiohttp
+import asyncio
 import contextlib
 from itertools import chain
 import numpy as np
 from numpy.typing import NDArray
+import random
 import requests
+from time import sleep
 from typing import Iterable
 
 from .data.misc import Coords
 
 
 class OsrmClient:
-  base_url: str
+  instances: list[str]
   profile: str
+  retry: bool
 
-  def __init__(self, url, profile = "foot"):
-    self.base_url = url
+  def __init__(self, url, profile="foot", retry=False):
+    self.instances = [url] if isinstance(url, str) else url
     self.profile = profile
+    self.retry = retry
 
 
   def call(self, url, params={}):
-    return requests.get(self.base_url + url, params).json()
+    while True:
+      try:
+        return requests.get(self.get_instance() + url, params).json()
+      except Exception as ex:
+        if self.retry:
+          print(ex)
+          sleep(random.random())
+          continue
+        else:
+          raise
 
 
   async def call_async(self, url, params={}):
-    async with aiohttp.ClientSession(self.base_url) as session:
-      async with session.get(url, params=params) as res:
-        return await res.json()
+    while True:
+      try:
+        async with aiohttp.ClientSession(self.get_instance()) as session:
+          async with session.get(url, params=params) as res:
+            return await res.json()
+      except Exception as ex:
+        if self.retry:
+          print(ex)
+          await asyncio.sleep(random.random())
+          continue
+        else:
+          raise
+
+
+  def get_instance(self):
+    return random.choice(self.instances)
 
 
   def distance_to_many(
@@ -74,9 +101,17 @@ class OsrmClient:
     )
 
 
+  def nearest(self, coords: Coords) -> Coords:
+    res = self.call(f"/nearest/v1/{self.profile}/{coords.lon},{coords.lat}.json")
+    loc = res["waypoints"][0]["location"]
+    return Coords(np.float32(loc[1]), np.float32(loc[0]))
+
+
   def healthcheck(self) -> bool:
     try:
-      self.call(f"/nearest/v1/{self.profile}/0,0.json")
+      for instance in self.instances:
+        requests.get(f"{instance}/nearest/v1/{self.profile}/0,0.json").json()
+
       return True
     except:
       return False
