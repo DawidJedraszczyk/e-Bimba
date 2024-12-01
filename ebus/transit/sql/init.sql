@@ -41,6 +41,7 @@ create table stop (
   code text not null,
   name text not null,
   zone text not null,
+  cluster int4 not null,
 
   coords struct (
     lat float4,
