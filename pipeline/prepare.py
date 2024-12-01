@@ -131,8 +131,8 @@ def osrm_data(region: str):
 
 
 def prepare_city(city):
-  target = DATA_CITIES / f"{city["id"]}.db"
-  tmp = TMP_CITIES / f"{city["id"]}.db"
+  target = DATA_CITIES / f'{city["id"]}.db'
+  tmp = TMP_CITIES / f'{city["id"]}.db'
   tmp_dir = TMP_CITIES / city["id"]
 
   if target.exists():
@@ -198,7 +198,7 @@ def main():
   print("Available cities:\n  all")
 
   for city in CITIES:
-    print(f"  {city["name"]} | {city["id"]}")
+    print(f'  {city["name"]} | {city["id"]}')
 
 
 
