@@ -3,7 +3,7 @@ import os
 
 from strategies.BenchmarkStrategy import BenchmarkStrategy
 from routes_generating.custom_routes import get_custom_sample_routes
-from algorithm_parts.utils import seconds_to_time, plans_to_string, custom_print
+from algorithm.utils import seconds_to_time, plans_to_string, custom_print
 
 class CustomBenchmark(BenchmarkStrategy):
     def __init__(self, data):

@@ -4,11 +4,11 @@ import os
 from time import time
 from typing import NamedTuple
 
-from algorithm_parts.data import Data
-from algorithm_parts.estimator import ManhattanEstimator
-from algorithm_parts.utils import time_to_seconds, seconds_to_time, custom_print, plans_to_string
-from algorithm_parts.AstarPlanner import AStarPlanner
-from bimba.data.misc import Coords
+from algorithm.data import Data
+from algorithm.estimator import ManhattanEstimator
+from algorithm.utils import time_to_seconds, seconds_to_time, custom_print, plans_to_string
+from algorithm.astar_planner import AStarPlanner
+from transit.data.misc import Coords
 
 class PlannerResult(NamedTuple):
     found_plans: list

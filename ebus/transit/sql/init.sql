@@ -2,10 +2,18 @@ create table metadata (
   name text not null,
   region text not null,
   projection text not null,
-  center struct (
+
+  center_coords struct (
+    lat float4,
+    lon float4
+  ) not null,
+
+  center_position struct (
     x float4,
     y float4
   ) not null,
+
+  realtime text[] not null,
 );
 
 
@@ -30,16 +38,16 @@ create sequence seq_agency_id minvalue 0 start 0;
 
 create table stop (
   id int4 not null,
-  code text,
+  code text not null,
   name text not null,
-  zone text,
+  zone text not null,
 
   coords struct (
     lat float4,
     lon float4
   ) not null,
 
-  position struct ( -- in meters, relative to metadata.center
+  position struct ( -- in meters, relative to metadata.center_position
     x float4,
     y float4
   ) not null,
@@ -58,9 +66,9 @@ create table stop (
 
 create temp table imported_stop (
   id int4 not null,
-  code text,
+  code text not null,
   name text not null,
-  zone text,
+  zone text not null,
 
   coords struct (
     lat float4,

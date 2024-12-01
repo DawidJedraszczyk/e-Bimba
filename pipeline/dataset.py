@@ -34,11 +34,11 @@ else:
     city = CITIES[city_name]
 
 from apps.route_search.modules.algorithm_parts.utils import seconds_to_time
-from bimba.data.misc import *
-from bimba.transitdb import *
-from bimba.osrm import *
-from bimba.prospector import *
-from bimba.router import *
+from transit.data.misc import *
+from transit.transitdb import *
+from transit.osrm import *
+from transit.prospector import *
+from transit.router import *
 
 
 BATCH_SIZE = 1000

@@ -1,12 +1,21 @@
 from dataclasses import dataclass
+from typing import NamedTuple
 
 from .data import Data
 from .estimator import Estimates
-from .PlanTrip import PlanTrip
-from .inconvenience import inconvenience
 from .utils import time_to_seconds, seconds_to_time
-from bimba.prospector import NearStop
+from transit.prospector import NearStop
 from ebus.algorithm_settings import INCONVENIENCE_SETTINGS
+
+
+class PlanTrip(NamedTuple):
+    trip_id: int
+    service_id: int
+    trip_start: int
+    from_stop: int
+    departure_time: int
+    to_stop: int
+    arrival_time: int
 
 
 @dataclass
@@ -25,6 +34,9 @@ class Plan:
 
     # A better plan was found after adding this one to the queue
     superseded: bool = False
+
+    def __lt__(self, other):
+        return self.informed_score < other.informed_score
 
     # Lower is better
     @property
@@ -116,12 +128,19 @@ class Plan:
         result = f"start at: {start.name} ({start.code}) on {seconds_to_time(start_time)}\n"
 
         for plan_trip in self.plan_trips:
-            result += "\t" + plan_trip.format(data).replace("\n", "\n\t") + "\n"
+            from_stop = data.stops[plan_trip.from_stop]
+            to_stop = data.stops[plan_trip.to_stop]
+
+            result += f"\tget from {from_stop.name} ({from_stop.code})\n"
+            if plan_trip.trip_id == -1:
+                result += f"\t\t BY FOOT ([{seconds_to_time(plan_trip.departure_time)}] - [{seconds_to_time(plan_trip.arrival_time)}])\n"
+            else:
+                route_id = data.trips[plan_trip.trip_id].route_id
+                route_name = data.routes[route_id].name
+                result += f"\t\t USING {route_name} ([{seconds_to_time(plan_trip.departure_time)}] - [{seconds_to_time(plan_trip.arrival_time)}])\n"
+            result += f"\tto {to_stop.name} ({to_stop.code})\n"
 
         time_at_destination = self.get_informed_time_at_destination()
         result += f"reach destination at: {seconds_to_time(time_at_destination)}\n"
         result += f"inconvenience: {self.inconvenience}"
         return result
-
-    def __lt__(self, other):
-        return self.informed_score < other.informed_score

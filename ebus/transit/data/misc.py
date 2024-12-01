@@ -30,7 +30,9 @@ class Metadata(NamedTuple):
   name: str
   region: str
   projection: str
-  center: Point
+  center_coords: Coords
+  center_position: Point
+  realtime: list[str]
 
 
 @jitclass([

@@ -2,9 +2,9 @@ from abc import ABC, abstractmethod
 import math
 from typing import NamedTuple
 
-from bimba.data.misc import Point, INF_TIME
-from bimba.data.stops import Stops
-from bimba.prospector import NearStop
+from transit.data.misc import Point, INF_TIME
+from transit.data.stops import Stops
+from transit.prospector import NearStop
 from ebus.algorithm_settings import HEURISTIC_SETTINGS, WALKING_SETTINGS
 
 
@@ -74,7 +74,7 @@ class EuclideanEstimator(Estimator):
     def travel_time(self, from_stop: int, at_time: int) -> int:
         distance = self.distance(self.stops[from_stop].position, self.destination)
         return int(distance / HEURISTIC_SETTINGS["MAX_SPEED"])
-    
+
 
     def walk_time(self, from_stop: int) -> int:
         distance = self.distance(self.stops[from_stop].position, self.destination)

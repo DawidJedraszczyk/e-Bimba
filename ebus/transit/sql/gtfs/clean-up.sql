@@ -12,5 +12,5 @@ drop table service_map;
 drop table shape_map;
 drop table processed_shape;
 drop table processed_trip;
-drop table trip_with_stops;
+drop table pt_agg_start_times;
 drop table covered_days;
