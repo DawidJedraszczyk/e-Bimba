@@ -62,7 +62,7 @@ class Row(NamedTuple):
 
 
 thread_local = threading.local()
-tdb = TransitDb(DATA_CITIES / f"{city["id"]}.db")
+tdb = TransitDb(DATA_CITIES / f"{city['id']}.db")
 prospector = Prospector(tdb, None)
 stops = prospector.stops
 router = Router(tdb, stops=stops)
@@ -155,4 +155,4 @@ with start_osrm(city["region"], instances=2) as osrm:
   batches = list(tp.map(lambda _: make_batch(), range(NUM_BATCHES)))
 
 table = pa.Table.from_struct_array(pa.chunked_array(batches))
-pq.write_table(table, TMP_CITIES / f"{city["id"]}-dataset.parquet")
+pq.write_table(table, TMP_CITIES / f"{city['id']}-dataset.parquet")
