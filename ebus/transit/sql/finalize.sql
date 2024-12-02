@@ -1,6 +1,11 @@
 insert into stop by name select
   i.*,
   (
+    select cluster
+    from clustering c
+    where c.id = i.id
+  ) as cluster,
+  (
     select struct_pack(x, y)
     from stop_pos p
     where p.id = i.id

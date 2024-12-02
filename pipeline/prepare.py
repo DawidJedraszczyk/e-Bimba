@@ -4,9 +4,11 @@ import asyncio
 import docker
 import json
 import os
+import math
 from pathlib import Path
 import pyarrow
 import requests
+from sklearn.cluster import KMeans
 import sys
 import time
 from typing import Iterable
@@ -62,7 +64,6 @@ def import_gtfs(tdb, source_name: str, gtfs_folder: Path):
 async def calculate_stop_walks(tdb, osrm: OsrmClient):
   t0 = time.time()
   print("Calculating walking distances between stops")
-  tdb.script("project-stop-coords")
   inputs = tdb.script("init-stop-walk").arrow()
   sem = asyncio.Semaphore(os.cpu_count())
 
@@ -130,9 +131,17 @@ def osrm_data(region: str):
       file.rename(DATA_REGIONS / region / file.name)
 
 
+def cluster_stops(tdb: TransitDb):
+  stop_pos = tdb.sql("from stop_pos").np()
+  n = len(stop_pos["id"])
+  clusters = round(8 * math.sqrt(n))
+  labels = KMeans(clusters).fit_predict(np.stack([stop_pos["x"], stop_pos["y"]], axis=-1))
+  return pyarrow.table([stop_pos["id"], labels], ["id", "cluster"])
+
+
 def prepare_city(city):
-  target = DATA_CITIES / f"{city["id"]}.db"
-  tmp = TMP_CITIES / f"{city["id"]}.db"
+  target = DATA_CITIES / f"{city['id']}.db"
+  tmp = TMP_CITIES / f"{city['id']}.db"
   tmp_dir = TMP_CITIES / city["id"]
 
   if target.exists():
@@ -155,6 +164,9 @@ def prepare_city(city):
         unzip(gtfs_zip, gtfs_dir)
         import_gtfs(tdb, gtfs, gtfs_dir)
 
+      tdb.script("project-stop-coords")
+      clustering = cluster_stops(tdb)
+
       osrm_data(city["region"])
 
       with start_osrm(city["region"]) as osrm:
@@ -163,7 +175,7 @@ def prepare_city(city):
       t0 = time.time()
       print("Finalizing")
       realtime = np.array(city.get("realtime", []), dtype=str)
-      tdb.script("finalize", views={"city_realtime": realtime})
+      tdb.script("finalize", views={"city_realtime": realtime, "clustering": clustering})
 
       t1 = time.time()
       print(f"Time: {_t(t1, t0)}")
@@ -198,7 +210,7 @@ def main():
   print("Available cities:\n  all")
 
   for city in CITIES:
-    print(f"  {city["name"]} | {city["id"]}")
+    print(f"  {city['name']} | {city['id']}")
 
 
 

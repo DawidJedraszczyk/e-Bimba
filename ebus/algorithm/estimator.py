@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
+import datetime
 import math
-from typing import NamedTuple
+from typing import Callable, NamedTuple
 
 from transit.data.misc import Point, INF_TIME
 from transit.data.stops import Stops
@@ -27,6 +28,7 @@ class Estimator(ABC):
         stops: Stops,
         destination: Point,
         near: list[NearStop],
+        date: datetime.date,
     ):
         self.stops = stops
         self.destination = destination
@@ -63,8 +65,9 @@ class EuclideanEstimator(Estimator):
         stops: Stops,
         destination: Point,
         near: list[NearStop],
+        date: datetime.date,
     ):
-        super().__init__(stops, destination, near)
+        super().__init__(stops, destination, near, date)
 
 
     def distance(self, a: Point, b: Point) -> float:
@@ -87,8 +90,9 @@ class ManhattanEstimator(Estimator):
         stops: Stops,
         destination: Point,
         near: list[NearStop],
+        date: datetime.date,
     ):
-        super().__init__(stops, destination, near)
+        super().__init__(stops, destination, near, date)
 
 
     def distance(self, a: Point, b: Point) -> float:
@@ -103,3 +107,46 @@ class ManhattanEstimator(Estimator):
     def walk_time(self, from_stop: int) -> int:
         distance = self.distance(self.stops[from_stop].position, self.destination)
         return int(distance / self.PACE)
+
+
+class NnEstimator(EuclideanEstimator):
+    nn: Callable[[Point, Point, int, int], int]
+    date: datetime.date
+
+    TIME_VALID = 0
+
+    def __init__(
+        self,
+        nn: Callable[[Point, Point, int, int], int],
+        stops: Stops,
+        destination: Point,
+        near: list[NearStop],
+        date: datetime.date,
+    ):
+        super().__init__(stops, destination, near, date)
+        self.nn = nn
+        self.date = date if isinstance(date, datetime.date) else datetime.date.fromisoformat(date)
+
+
+    def travel_time(self, from_stop: int, at_time: int) -> int:
+        return self.nn(
+            self.stops[from_stop].position,
+            self.destination,
+            self.day_type(at_time),
+            at_time,
+        )
+
+
+    def day_type(self, at_time: int) -> int:
+        date = self.date
+
+        if at_time > 24*60*60:
+            date += datetime.timedelta(days=1)
+
+        match date.weekday():
+            case 6:
+                return 2
+            case 5:
+                return 1
+            case _:
+                return 0

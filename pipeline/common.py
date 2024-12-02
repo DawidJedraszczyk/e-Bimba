@@ -73,25 +73,31 @@ def unzip(file: Path, folder: Path):
 
 
 @contextlib.contextmanager
-def start_osrm(region: str):
-  print(f"Starting osrm-routed {fpath(DATA_REGIONS / region)} on port {OSRM_PORT}")
+def start_osrm(region: str, instances=1):
+  d = docker.from_env()
+  ports = [OSRM_PORT + i for i in range(instances)]
+  print(f"Starting {instances} osrm-routed {fpath(DATA_REGIONS / region)} on ports {ports}")
 
-  container = docker.from_env().containers.run(
-    image=OSRM_IMAGE,
-    command=f"osrm-routed --algorithm mld /data/map.osrm",
-    volumes={str((DATA_REGIONS / region).absolute()): {"bind": "/data", "mode": "ro"}},
-    ports={"5000/tcp": OSRM_PORT},
-    detach=True,
-    remove=True,
-  )
+  containers = [
+    d.containers.run(
+      image=OSRM_IMAGE,
+      command=f"osrm-routed --algorithm mld /data/map.osrm",
+      volumes={str((DATA_REGIONS / region).absolute()): {"bind": "/data", "mode": "ro"}},
+      ports={"5000/tcp": port},
+      detach=True,
+      remove=True,
+    )
+    for port in ports
+  ]
 
   try:
-    osrm = OsrmClient(f"http://localhost:{OSRM_PORT}")
+    osrm = OsrmClient([f"http://localhost:{port}" for port in ports], retry=True)
     osrm_healthcheck(osrm)
     yield osrm
   finally:
     print("Stopping osrm-routed")
-    container.stop()
+    for c in containers:
+      c.stop()
 
 
 def osrm_healthcheck(osrm):

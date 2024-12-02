@@ -1,8 +1,10 @@
+ai-edge-litert==1.0.1
 aiohttp==3.10.10
 docker==7.1.0
 duckdb==1.1.1
 haversine==2.8.1
 numba==0.60.0
+numpy==1.26.4
 requests==2.32.3
 pyproj
 pandas

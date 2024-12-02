@@ -83,7 +83,7 @@ class TransitDb(Db):
 
   def get_stops(self) -> Stops:
     a = self.sql("select * from stop order by id").arrow()
-    ids, codes, names, zones, coords, positions, walks, trips = a.flatten()
+    ids, codes, names, zones, clusters, coords, positions, walks, trips = a.flatten()
     lats, lons = coords.flatten()
     xs, ys = positions.flatten()
     walks_off = walks.offsets
@@ -96,6 +96,7 @@ class TransitDb(Db):
       codes.tolist(),
       names.tolist(),
       zones.tolist(),
+      clusters.to_numpy(),
       lats.to_numpy(),
       lons.to_numpy(),
       xs.to_numpy(),

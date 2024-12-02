@@ -64,7 +64,7 @@ class FindRouteView(View):
             Coords(destination.latitude, destination.longitude),
             _datetime.strftime("%Y-%m-%d"),
             time_to_seconds(_datetime.strftime("%H:%M:%S")),
-            ManhattanEstimator,
+            data.estimator_factory,
         )
 
         for _ in range(5):

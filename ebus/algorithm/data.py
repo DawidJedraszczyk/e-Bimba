@@ -1,18 +1,21 @@
 import datetime
-from functools import lru_cache
+from functools import lru_cache, partial
 import os
 from pathlib import Path
 from time import time
+from typing import Callable
 
-from transit.data.misc import Metadata, Services
+from .estimator import Estimator, EuclideanEstimator, NnEstimator
+from .nn import load_nn
+from .utils import custom_print
+from transit.data.misc import Metadata, Point, Services
 from transit.data.routes import Routes
 from transit.data.shapes import Shapes
 from transit.data.stops import Stops
 from transit.data.trips import Trips
 from transit.osrm import OsrmClient
-from transit.prospector import Prospector
+from transit.prospector import Prospector, NearStop
 from transit.transitdb import TransitDb
-from .utils import custom_print
 
 
 class Data:
@@ -23,6 +26,7 @@ class Data:
     stops: Stops
     trips: Trips
     prospector: Prospector
+    estimator_factory: Callable[[Stops, Point, list[NearStop], datetime.date], Estimator]
 
     _instances = dict()
 
@@ -59,6 +63,13 @@ class Data:
             self.md,
             self.stops,
         )
+
+        model_path = db_path.parent / db_path.name.replace(".db", ".tflite")
+
+        if model_path.exists():
+            self.estimator_factory = partial(NnEstimator, load_nn(model_path))
+        else:
+            self.estimator_factory = EuclideanEstimator
 
     @lru_cache
     def services_around(self, date: datetime.date) -> Services:

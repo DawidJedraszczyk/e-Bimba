@@ -10,6 +10,7 @@ class Stop(NamedTuple):
   code: Optional[str]
   name: str
   zone: Optional[str]
+  cluster: int
   coords: Coords
   position: Point
   walks: Range
@@ -31,6 +32,7 @@ class StopTrip(NamedTuple):
   ("codes", nbt.List(nbt.string)),
   ("names", nbt.List(nbt.string)),
   ("zones", nbt.List(nbt.string)),
+  ("clusters", nb.int32[:]),
   ("lats", nb.float32[:]),
   ("lons", nb.float32[:]),
   ("xs", nb.float32[:]),
@@ -49,6 +51,7 @@ class Stops:
     codes,
     names,
     zones,
+    clusters,
     lats,
     lons,
     xs,
@@ -64,6 +67,7 @@ class Stops:
     self.codes = codes
     self.names = names
     self.zones = zones
+    self.clusters = clusters
     self.lats = lats
     self.lons = lons
     self.xs = xs
@@ -91,6 +95,7 @@ class Stops:
       self.codes[id],
       self.names[id],
       self.zones[id],
+      self.clusters[id],
       Coords(self.lats[id], self.lons[id]),
       Point(self.xs[id], self.ys[id]),
       Range(self.walks_off[id], self.walks_off[id+1]),

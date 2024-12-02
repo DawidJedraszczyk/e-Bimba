@@ -19,13 +19,13 @@ class BenchmarkStrategy():
     data: Data
     benchmark_type = None
     alternative_routes = 1
-    estimator_factory = ManhattanEstimator
     total_times = []
     planners = []
     sample_routes = None
 
     def __init__(self, data):
         self.data = data
+        self.estimator_factory = data.estimator_factory
 
     def run(self):
         self.total_times = []
