@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 import datetime
 import math
+import numpy as np
 from typing import Callable, NamedTuple
 
 from transit.data.misc import Point, INF_TIME
@@ -150,3 +151,29 @@ class NnEstimator(EuclideanEstimator):
                 return 1
             case _:
                 return 0
+
+
+class ClusterEstimator(EuclideanEstimator):
+    clustertimes: np.ndarray
+
+    def __init__(
+        self,
+        clustertimes: np.ndarray,
+        stops: Stops,
+        destination: Point,
+        near: list[NearStop],
+        date: datetime.date,
+    ):
+        super().__init__(stops, destination, near, date)
+        self.clustertimes = clustertimes
+
+
+    def travel_time(self, from_stop: int, at_time: int) -> int:
+        result = self.estimate_walk_time(from_stop)
+        from_cluster = self.stops[from_stop].cluster
+
+        for near in self.near:
+            to_cluster = self.stops[near.id].cluster
+            result = min(result, self.clustertimes[from_cluster, to_cluster])
+
+        return result

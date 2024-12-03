@@ -1,11 +1,12 @@
 import datetime
 from functools import lru_cache, partial
+import numpy as np
 import os
 from pathlib import Path
 from time import time
 from typing import Callable
 
-from .estimator import Estimator, EuclideanEstimator, NnEstimator
+from .estimator import *
 from .nn import load_nn
 from .utils import custom_print
 from transit.data.misc import Metadata, Point, Services
@@ -65,9 +66,12 @@ class Data:
         )
 
         model_path = db_path.parent / db_path.name.replace(".db", ".tflite")
+        clustertimes_path = db_path.parent / db_path.name.replace(".db", "-clustertimes.npy")
 
         if model_path.exists():
             self.estimator_factory = partial(NnEstimator, load_nn(model_path))
+        elif clustertimes_path.exists():
+            self.estimator_factory = partial(ClusterEstimator, np.load(clustertimes_path))
         else:
             self.estimator_factory = EuclideanEstimator
 
