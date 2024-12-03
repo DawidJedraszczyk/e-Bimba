@@ -83,30 +83,33 @@ def distance_m(a, b) -> np.float32:
 def calculate_times(from_cluster, clusters, stops, trips, empty_services):
   result = np.empty(clusters.count, dtype=np.int32)
 
+  task = RouterTask(
+    stops,
+    trips,
+    np.empty((0, 0), np.int32),
+    clusters.centers[from_cluster],
+    0.0,
+    clusters.stops[from_cluster],
+    clusters.stops[from_cluster],
+    0,
+    empty_services,
+  )
+
+  task.arrival = INF_TIME
+  task.exhaustive = True
+  task.solve_timeless()
+
   for to_cluster in range(clusters.count):
     if to_cluster == from_cluster:
       result[to_cluster] = 0
       continue
 
-    walk_distance = min([
-      distance(stops[a.id].position, stops[b.id].position)
-      for b in clusters.stops[to_cluster]
-      for a in clusters.stops[from_cluster]
-    ])
+    time = INF_TIME
 
-    task = RouterTask(
-      stops,
-      trips,
-      np.empty((0, 0), np.int32),
-      clusters.centers[to_cluster],
-      walk_distance,
-      clusters.stops[from_cluster],
-      clusters.stops[to_cluster],
-      0,
-      empty_services,
-    )
+    for stop in clusters.stops[to_cluster]:
+      time = min(time, task.get_node(stop.id).arrival)
 
-    result[to_cluster] = task.solve_timeless().arrival
+    result[to_cluster] = time
 
   return result
 

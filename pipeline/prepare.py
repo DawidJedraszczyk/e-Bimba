@@ -21,6 +21,9 @@ from transit.osrm import *
 from transit.transitdb import *
 
 
+CLUSTER_MULT = 16
+
+
 def download_if_missing(url, path):
   if path.exists():
     return
@@ -134,7 +137,7 @@ def osrm_data(region: str):
 def cluster_stops(tdb: TransitDb):
   stop_pos = tdb.sql("from stop_pos").np()
   n = len(stop_pos["id"])
-  clusters = round(8 * math.sqrt(n))
+  clusters = min(round(CLUSTER_MULT * math.sqrt(n)), n)
   labels = KMeans(clusters).fit_predict(np.stack([stop_pos["x"], stop_pos["y"]], axis=-1))
   return pyarrow.table([stop_pos["id"], labels], ["id", "cluster"])
 
