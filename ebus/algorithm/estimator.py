@@ -1,179 +1,96 @@
-from abc import ABC, abstractmethod
 import datetime
 import math
+import numba as nb
 import numpy as np
 from typing import Callable, NamedTuple
 
-from transit.data.misc import Point, INF_TIME
+from transit.data.misc import Point, DAY, INF_TIME
 from transit.data.stops import Stops
-from transit.prospector import NearStop
+from transit.prospector import Prospect
 from ebus.algorithm_settings import HEURISTIC_SETTINGS, WALKING_SETTINGS
 
 
-class Estimates(NamedTuple):
+class Estimate(NamedTuple):
     travel_time: int
-    walk_time: int
     at_time: int
 
 
-class Estimator(ABC):
-    stops: Stops
-    destination: Point
-    near: list[NearStop]
+class Instant(NamedTuple):
+    day_type: int
+    time: int
 
-    TIME_VALID: int = INF_TIME
-    PACE: float = WALKING_SETTINGS["PACE"]
-
-    def __init__(
-        self,
-        stops: Stops,
-        destination: Point,
-        near: list[NearStop],
-        date: datetime.date,
-    ):
-        self.stops = stops
-        self.destination = destination
-        self.near = near
-
-    @abstractmethod
-    def travel_time(self, from_stop: int, at_time: int) -> int:
-        pass
-
-    @abstractmethod
-    def walk_time(self, from_stop: int) -> int:
-        pass
-
-
-    def estimate_walk_time(self, from_stop: int) -> int:
-        for near in self.near:
-            if near.id == from_stop:
-                return near.walk_distance / self.PACE
-
-        return self.walk_time(from_stop)
-
-
-    def estimate(self, from_stop: int, at_time: int) -> Estimates:
-        return Estimates(
-            self.travel_time(from_stop, at_time),
-            self.estimate_walk_time(from_stop),
-            at_time,
-        )
-
-
-class EuclideanEstimator(Estimator):
-    def __init__(
-        self,
-        stops: Stops,
-        destination: Point,
-        near: list[NearStop],
-        date: datetime.date,
-    ):
-        super().__init__(stops, destination, near, date)
-
-
-    def distance(self, a: Point, b: Point) -> float:
-        return math.sqrt((a.x - b.x)**2 + (a.y - b.y)**2)
-
-
-    def travel_time(self, from_stop: int, at_time: int) -> int:
-        distance = self.distance(self.stops[from_stop].position, self.destination)
-        return int(distance / HEURISTIC_SETTINGS["MAX_SPEED"])
-
-
-    def walk_time(self, from_stop: int) -> int:
-        distance = self.distance(self.stops[from_stop].position, self.destination)
-        return int(distance * WALKING_SETTINGS["DISTANCE_MULTIPLIER"] / self.PACE)
-
-
-class ManhattanEstimator(Estimator):
-    def __init__(
-        self,
-        stops: Stops,
-        destination: Point,
-        near: list[NearStop],
-        date: datetime.date,
-    ):
-        super().__init__(stops, destination, near, date)
-
-
-    def distance(self, a: Point, b: Point) -> float:
-        return abs(a.x - b.x) + abs(a.y - b.y)
-
-
-    def travel_time(self, from_stop: int, at_time: int) -> int:
-        distance = self.distance(self.stops[from_stop].position, self.destination)
-        return int(distance / HEURISTIC_SETTINGS["MAX_SPEED"])
-
-
-    def walk_time(self, from_stop: int) -> int:
-        distance = self.distance(self.stops[from_stop].position, self.destination)
-        return int(distance / self.PACE)
-
-
-class NnEstimator(EuclideanEstimator):
-    nn: Callable[[Point, Point, int, int], int]
-    date: datetime.date
-
-    TIME_VALID = 0
-
-    def __init__(
-        self,
-        nn: Callable[[Point, Point, int, int], int],
-        stops: Stops,
-        destination: Point,
-        near: list[NearStop],
-        date: datetime.date,
-    ):
-        super().__init__(stops, destination, near, date)
-        self.nn = nn
-        self.date = date if isinstance(date, datetime.date) else datetime.date.fromisoformat(date)
-
-
-    def travel_time(self, from_stop: int, at_time: int) -> int:
-        return self.nn(
-            self.stops[from_stop].position,
-            self.destination,
-            self.day_type(at_time),
-            at_time,
-        )
-
-
-    def day_type(self, at_time: int) -> int:
-        date = self.date
-
-        if at_time > 24*60*60:
+    @classmethod
+    def from_date(cls, date, time):
+        if time > DAY:
+            time -= DAY
             date += datetime.timedelta(days=1)
 
         match date.weekday():
             case 6:
-                return 2
+                dt = 2
             case 5:
-                return 1
+                dt = 1
             case _:
-                return 0
+                dt = 0
+
+        return cls(dt, time)
 
 
-class ClusterEstimator(EuclideanEstimator):
-    clustertimes: np.ndarray
-
-    def __init__(
-        self,
-        clustertimes: np.ndarray,
-        stops: Stops,
-        destination: Point,
-        near: list[NearStop],
-        date: datetime.date,
-    ):
-        super().__init__(stops, destination, near, date)
-        self.clustertimes = clustertimes
+class Estimator(NamedTuple):
+    estimate: Callable[[Stops, Prospect, int, Instant], int]
+    stop_to_stop: Callable[[Stops, int, int, Instant], int]
+    time_valid: int
 
 
-    def travel_time(self, from_stop: int, at_time: int) -> int:
-        result = self.estimate_walk_time(from_stop)
-        from_cluster = self.stops[from_stop].cluster
+null_estimator = Estimator(
+    estimate = lambda stops, prospect, from_stop, at_time: 0,
+    stop_to_stop = lambda stops, a, b, at_time: 0,
+    time_valid = INF_TIME,
+)
 
-        for near in self.near:
-            to_cluster = self.stops[near.id].cluster
-            result = min(result, self.clustertimes[from_cluster, to_cluster])
+
+def distance_estimator(metric: Callable[[Point, Point], float]) -> Estimator:
+    max_speed = HEURISTIC_SETTINGS["MAX_SPEED"]
+
+    @nb.jit
+    def estimate(stops, prospect, from_stop, at_time):
+        distance = metric(stops[from_stop].position, prospect.destination)
+        return distance / max_speed
+
+    @nb.jit
+    def stop_to_stop(stops, a, b, at_time):
+        distance = metric(stops[a].position, stops[b].position)
+        return distance / max_speed
+
+    return Estimator(estimate, stop_to_stop, INF_TIME)
+
+
+@nb.jit
+def euclidean_metric(a: Point, b: Point) -> float:
+    return math.sqrt((a.x - b.x)**2 + (a.y - b.y)**2)
+
+euclidean_estimator = distance_estimator(euclidean_metric)
+
+
+@nb.jit
+def manhattan_metric(a: Point, b: Point) -> float:
+    return abs(a.x - b.x) + abs(a.y - b.y)
+
+manhattan_estimator = distance_estimator(manhattan_metric)
+
+
+def via_nearest(base: Estimator) -> Estimator:
+    stop_to_stop = base.stop_to_stop
+    pace = WALKING_SETTINGS["PACE"]
+
+    @nb.jit
+    def estimate(stops, prospect, from_stop, at_time):
+        result = INF_TIME
+
+        for near in prospect.near_destination:
+            s2s = stop_to_stop(stops, from_stop, near.id, at_time)
+            result = min(result, s2s + int(near.walk_distance / pace))
 
         return result
+
+    return Estimator(estimate, stop_to_stop, base.time_valid)

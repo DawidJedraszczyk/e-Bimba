@@ -5,7 +5,7 @@ from time import time
 from typing import NamedTuple
 
 from algorithm.data import Data
-from algorithm.estimator import ManhattanEstimator
+from algorithm.estimator import Estimator
 from algorithm.utils import time_to_seconds, seconds_to_time, custom_print, plans_to_string
 from algorithm.astar_planner import AStarPlanner
 from transit.data.misc import Coords
@@ -17,15 +17,16 @@ class PlannerResult(NamedTuple):
 
 class BenchmarkStrategy():
     data: Data
+    estimator: Estimator
     benchmark_type = None
     alternative_routes = 1
     total_times = []
     planners = []
     sample_routes = None
 
-    def __init__(self, data):
+    def __init__(self, data, estimator=None):
         self.data = data
-        self.estimator_factory = data.estimator_factory
+        self.estimator = estimator or data.default_estimator
 
     def run(self):
         self.total_times = []
@@ -44,7 +45,7 @@ class BenchmarkStrategy():
                 destination,
                 start_date,
                 start_time,
-                self.estimator_factory,
+                self.estimator,
             )
 
             custom_print(

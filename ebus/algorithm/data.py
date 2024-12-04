@@ -4,10 +4,11 @@ import numpy as np
 import os
 from pathlib import Path
 from time import time
-from typing import Callable
+from typing import Callable, Optional
 
-from .estimator import *
-from .nn import load_nn
+from .estimator import Estimator, euclidean_estimator
+from .estimators.cluster import cluster_estimator
+from .estimators.nn import nn_estimator
 from .utils import custom_print
 from transit.data.misc import Metadata, Point, Services
 from transit.data.routes import Routes
@@ -27,7 +28,9 @@ class Data:
     stops: Stops
     trips: Trips
     prospector: Prospector
-    estimator_factory: Callable[[Stops, Point, list[NearStop], datetime.date], Estimator]
+    default_estimator: Estimator
+    cluster_estimator: Optional[Estimator]
+    nn_estimator: Optional[Estimator]
 
     _instances = dict()
 
@@ -65,15 +68,27 @@ class Data:
             self.stops,
         )
 
-        model_path = db_path.parent / db_path.name.replace(".db", ".tflite")
-        clustertimes_path = db_path.parent / db_path.name.replace(".db", "-clustertimes.npy")
+        def aux_file(suffix):
+            return db_path.parent / db_path.name.replace(".db", suffix)
 
-        if model_path.exists():
-            self.estimator_factory = partial(NnEstimator, load_nn(model_path))
-        elif clustertimes_path.exists():
-            self.estimator_factory = partial(ClusterEstimator, np.load(clustertimes_path))
+        nn_path = aux_file(".tflite")
+        clustertimes_path = aux_file("-clustertimes.npy")
+
+        if clustertimes_path.exists():
+            self.cluster_estimator = cluster_estimator(clustertimes_path)
         else:
-            self.estimator_factory = EuclideanEstimator
+            self.cluster_estimator = None
+
+        if nn_path.exists():
+            self.nn_estimator = nn_estimator(nn_path)
+        else:
+            self.nn_estimator = None
+
+        self.default_estimator = (
+            self.nn_estimator
+            or self.cluster_estimator
+            or euclidean_estimator
+        )
 
     @lru_cache
     def services_around(self, date: datetime.date) -> Services:

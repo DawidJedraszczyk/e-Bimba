@@ -2,99 +2,109 @@ from dataclasses import dataclass
 from typing import NamedTuple
 
 from .data import Data
-from .estimator import Estimates
+from .estimator import Estimate
 from .utils import time_to_seconds, seconds_to_time
+from transit.data.misc import INF_TIME
 from transit.prospector import NearStop
 from ebus.algorithm_settings import INCONVENIENCE_SETTINGS
 
 
 class PlanTrip(NamedTuple):
-    trip_id: int
-    service_id: int
-    trip_start: int
-    from_stop: int
+    from_stop: int # -1 if from start
     departure_time: int
     to_stop: int
     arrival_time: int
 
+    # All -1 if walking
+    trip_id: int = -1
+    service_id: int = -1
+    trip_start: int = -1
+
 
 @dataclass
 class Plan:
-    start_time: int
-    initial_walk_time: int
     current_stop_id: int
     current_time: int
     inconvenience: int
-    estimates: Estimates
+    initial_walk: int
     plan_trips: list[PlanTrip]
     generation: int = 0
-
-    # Distinguishes between potential terminal plans from the ones in heuristic stage
-    is_terminal: bool = False
+    travel_time: int = INF_TIME
+    walk_time: int = INF_TIME
 
     # A better plan was found after adding this one to the queue
     superseded: bool = False
 
     def __lt__(self, other):
-        return self.informed_score < other.informed_score
+        return self.score < other.score
 
     # Lower is better
     @property
     def score(self):
-        return (self.current_time + self.estimates.travel_time, self.inconvenience)
+        return (self.current_time + self.travel_time, self.inconvenience)
 
     @property
-    def informed_score(self):
-        return (self.get_informed_time_at_destination(), self.inconvenience)
+    def stop_score(self):
+        return (self.current_time, self.inconvenience)
 
     @property
     def time_at_destination(self):
-        return self.current_time + self.estimates.walk_time
+        return self.current_time + self.walk_time
 
     @property
-    def first_stop(self):
-        return self.current_stop_id if not self.plan_trips else self.plan_trips[0].from_stop
+    def start_time(self):
+        if self.plan_trips:
+            return self.plan_trips[0].departure_time - self.initial_walk
+        else:
+            return self.current_time - self.initial_walk
 
     @staticmethod
-    def from_start(start_time: int, walk_time: int, stop_id: int, estimates: Estimates):
+    def initial(stop_id, start_time, initial_walk):
         return Plan(
-            start_time,
-            walk_time,
             stop_id,
-            start_time + walk_time,
-            walk_time * INCONVENIENCE_SETTINGS["WALK_TIME_PENALTY"],
-            estimates,
+            start_time + initial_walk,
+            int(initial_walk * INCONVENIENCE_SETTINGS["WALK_TIME_PENALTY"]),
+            initial_walk,
             [],
         )
 
-    def extend(self, plan_trip: PlanTrip, estimates: Estimates):
+    def extend(self, plan_trip: PlanTrip):
         if plan_trip.trip_id == -1 and not self.plan_trips:
-            return Plan.from_start(
-                self.start_time,
-                self.initial_walk_time + plan_trip.arrival_time - plan_trip.departure_time,
+            return Plan.initial(
                 plan_trip.to_stop,
-                estimates,
+                self.current_time - self.initial_walk,
+                plan_trip.arrival_time - plan_trip.departure_time + self.initial_walk,
             )
 
         inconvenience = self.inconvenience
 
         if plan_trip.trip_id == -1:
             walk_time = plan_trip.arrival_time - plan_trip.departure_time
-            inconvenience += walk_time * INCONVENIENCE_SETTINGS["WALK_TIME_PENALTY"]
+            inconvenience += int(walk_time * INCONVENIENCE_SETTINGS["WALK_TIME_PENALTY"])
         elif self.plan_trips:
             inconvenience += INCONVENIENCE_SETTINGS["TRANSFER_PENALTY"]
             wait_time = plan_trip.departure_time - self.plan_trips[-1].arrival_time
-            inconvenience += wait_time * INCONVENIENCE_SETTINGS["WAIT_TIME_PENALTY"]
+            inconvenience += int(wait_time * INCONVENIENCE_SETTINGS["WAIT_TIME_PENALTY"])
 
         return Plan(
-            self.start_time,
-            self.initial_walk_time,
             plan_trip.to_stop,
             plan_trip.arrival_time,
             inconvenience,
-            estimates,
+            self.initial_walk,
             self.plan_trips + [plan_trip],
             self.generation,
+        )
+
+    def extend_to_destination(self):
+        return Plan(
+            self.current_stop_id,
+            self.current_time + self.walk_time,
+            self.inconvenience + self.walk_time * INCONVENIENCE_SETTINGS["WALK_TIME_PENALTY"],
+            self.initial_walk,
+            self.plan_trips,
+            self.generation,
+            travel_time=0,
+            walk_time=0,
         )
 
     def get_used_trip_instances(self) -> frozenset[tuple[int, int]]:
@@ -103,18 +113,6 @@ class Plan:
             for pt in self.plan_trips
             if pt.trip_id != -1
         )
-
-    def set_as_terminal(self):
-        self.is_terminal = True
-
-    def get_informed_time_at_destination(self):
-        if self.is_terminal:
-            return self.current_time + self.estimates.walk_time
-        else:
-            return self.current_time + self.estimates.travel_time
-
-    def get_absolute_arrival_time_difference(self, other):
-        return self.get_informed_time_at_destination() - other.get_informed_time_at_destination()
 
     def format(self, data: Data):
         if len(self.plan_trips) == 0:
@@ -140,7 +138,6 @@ class Plan:
                 result += f"\t\t USING {route_name} ([{seconds_to_time(plan_trip.departure_time)}] - [{seconds_to_time(plan_trip.arrival_time)}])\n"
             result += f"\tto {to_stop.name} ({to_stop.code})\n"
 
-        time_at_destination = self.get_informed_time_at_destination()
-        result += f"reach destination at: {seconds_to_time(time_at_destination)}\n"
+        result += f"reach destination at: {seconds_to_time(self.current_time)}\n"
         result += f"inconvenience: {self.inconvenience}"
         return result

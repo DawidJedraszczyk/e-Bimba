@@ -10,7 +10,6 @@ import redis
 import sys
 
 from .modules.views.functions import *
-from algorithm.estimator import ManhattanEstimator
 from algorithm.astar_planner import AStarPlanner
 from algorithm.utils import time_to_seconds
 from ebus.settings import REDIS_HOST, REDIS_PORT
@@ -62,9 +61,9 @@ class FindRouteView(View):
             data,
             Coords(start.latitude, start.longitude),
             Coords(destination.latitude, destination.longitude),
-            _datetime.strftime("%Y-%m-%d"),
+            _datetime.date(),
             time_to_seconds(_datetime.strftime("%H:%M:%S")),
-            data.estimator_factory,
+            data.default_estimator,
         )
 
         for _ in range(5):

@@ -12,6 +12,7 @@ sys.path.extend([
 ])
 
 from algorithm.data import *
+from algorithm.estimator import *
 from components.SampleRoute import SampleRoute
 from strategies.BenchmarkStrategy import BenchmarkStrategy
 from strategies.CustomBenchmark import CustomBenchmark
