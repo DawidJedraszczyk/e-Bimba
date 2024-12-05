@@ -5,7 +5,7 @@ ALTERNATIVE_PLAN_SETTINGS = {
 
 WALKING_SETTINGS = {
     'PACE': 1.4,  # (m/s)
-    'TIME_WITHIN_WALKING': 600, #time_to_seconds('00:10:00')
+    'TIME_WITHIN_WALKING': 2400,  #time_to_seconds('00:10:00')
     'DISTANCE_MULTIPLIER': 1.1, # Used when exact distance is unknown
 }
 
