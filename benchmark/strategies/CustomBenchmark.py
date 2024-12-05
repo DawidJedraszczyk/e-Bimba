@@ -6,8 +6,8 @@ from routes_generating.custom_routes import get_custom_sample_routes
 from algorithm.utils import seconds_to_time, plans_to_string, custom_print
 
 class CustomBenchmark(BenchmarkStrategy):
-    def __init__(self, data):
-        BenchmarkStrategy.__init__(self, data)
+    def __init__(self, data, estimator=None):
+        BenchmarkStrategy.__init__(self, data, estimator)
         self.benchmark_type = 'custom_benchmark'
         self.sample_routes = get_custom_sample_routes()
 
