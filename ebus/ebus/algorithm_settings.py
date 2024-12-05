@@ -10,7 +10,7 @@ WALKING_SETTINGS = {
 }
 
 HEURISTIC_SETTINGS = {
-    'MAX_SPEED': 5.56, # (m/s)
+    'MAX_SPEED': 20, # (m/s)
     # TODO:
     # Thats actually an average tram speed in Poznań, way too slow for admissable heuristic
     # I just left it like that, because I made some improvements,
