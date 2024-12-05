@@ -83,14 +83,21 @@ def distance_m(a, b) -> np.float32:
 def calculate_times(from_cluster, clusters, stops, trips, empty_services):
   result = np.empty(clusters.count, dtype=np.int32)
 
+  prospect = Prospect(
+    clusters.centers[from_cluster],
+    Coords(np.float32(0), np.float32(0)),
+    clusters.stops[from_cluster],
+    clusters.centers[from_cluster],
+    Coords(np.float32(0), np.float32(0)),
+    clusters.stops[from_cluster],
+    np.float32(0),
+  )
+
   task = RouterTask(
     stops,
     trips,
     np.empty((0, 0), np.int32),
-    clusters.centers[from_cluster],
-    0.0,
-    clusters.stops[from_cluster],
-    clusters.stops[from_cluster],
+    prospect,
     0,
     empty_services,
   )
