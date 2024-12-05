@@ -1,6 +1,7 @@
+import numpy as np
 import numba as nb
 from numba.experimental import jitclass
-import numpy as np
+import numba.types as nbt
 from typing import NamedTuple
 
 
@@ -61,3 +62,7 @@ class Services:
       np.empty(0, np.int32),
       np.empty(0, np.int32),
     )
+
+
+NbtPoint = nbt.NamedUniTuple(nb.float32, 2, Point)
+NbtCoords = nbt.NamedUniTuple(nb.float32, 2, Coords)

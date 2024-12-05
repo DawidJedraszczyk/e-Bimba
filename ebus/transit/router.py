@@ -11,7 +11,7 @@ from .data.stops import Stops
 from .data.trips import Trips
 from .heapq import *
 from .params import *
-from .prospector import NearStop, Prospect
+from .prospector import *
 from .transitdb import *
 
 
@@ -82,10 +82,7 @@ class Router:
       self.stops,
       self.trips,
       self.clustertimes,
-      prospect.destination,
-      prospect.walk_distance,
-      prospect.near_start,
-      prospect.near_destination,
+      prospect,
       start_time,
       services,
     )
@@ -102,10 +99,8 @@ def nbt_jitc(cls):
   else:
     return cls.class_type.instance_type
 
-NbtPoint = nbt.NamedUniTuple(nb.float32, 2, Point)
 NbtPathSegment = nbt.NamedUniTuple(nb.int32, 3, PathSegment)
 NbtPlan = nbt.NamedTuple([nb.int32, nbt.ListType(NbtPathSegment), nb.int32], Plan)
-NbtNearStop = nbt.NamedTuple([nb.int32, nb.float32], NearStop)
 
 @nb.jit
 def empty_segment():
@@ -163,10 +158,7 @@ class RouterTask:
     stops: Stops,
     trips: Trips,
     clustertimes: np.ndarray,
-    destination: Point,
-    walk_distance: float,
-    near_start: list[NearStop],
-    near_destination: list[NearStop],
+    prospect: Prospect,
     start_time: int,
     services: Services,
   ):
@@ -174,18 +166,18 @@ class RouterTask:
     self.trips = trips
     self.clustertimes = clustertimes
     self.services = services
-    self.destination = destination
-    self.near_destination = [n for n in near_destination]
+    self.destination = prospect.destination
+    self.near_destination = prospect.near_destination
 
     self.iteration = 0
-    self.arrival = start_time + int(walk_distance / WALK_SPEED)
-    self.path_tail = PathSegment(nb.int32(-1), nb.int32(-1), nb.int32(walk_distance))
+    self.arrival = start_time + int(prospect.walk_distance / WALK_SPEED)
+    self.path_tail = PathSegment(nb.int32(-1), nb.int32(-1), nb.int32(prospect.walk_distance))
     self.exhaustive = False
 
     self.nodes = [Node(nb.int32(-1), nb.int32(-1), nb.int32(-1))] * stops.count()
     self.queue = nb.typed.List.empty_list(NbtNode)
 
-    for id, dst in near_start:
+    for id, dst in prospect.near_start:
       n = self.get_node(id)
       n.arrival = start_time + int(dst / WALK_SPEED)
       n.path_tail = PathSegment(nb.int32(-1), nb.int32(-1), nb.int32(dst))

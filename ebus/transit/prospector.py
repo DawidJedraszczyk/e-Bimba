@@ -1,9 +1,12 @@
 from itertools import chain
 import numpy as np
+import numba as nb
+from numba.experimental import jitclass
+import numba.types as nbt
 import pyproj
 from typing import NamedTuple, Optional
 
-from .data.misc import Coords, Metadata, Point
+from .data.misc import *
 from .data.stops import Stops
 from .osrm import *
 from .transitdb import TransitDb
@@ -14,17 +17,36 @@ class NearStop(NamedTuple):
   id: int
   walk_distance: float
 
+NbtNearStop = nbt.NamedTuple([nb.int32, nb.float32], NearStop)
 
-class Prospect(NamedTuple):
-  start: Point
-  start_coords: Coords
-  near_start: list[NearStop]
 
-  destination: Point
-  destination_coords: Coords
-  near_destination: list[NearStop]
-
-  walk_distance: float
+@jitclass([
+  ("start", NbtPoint),
+  ("start_coords", NbtCoords),
+  ("near_start", nbt.List(NbtNearStop)),
+  ("destination", NbtPoint),
+  ("destination_coords", NbtCoords),
+  ("near_destination", nbt.List(NbtNearStop)),
+  ("walk_distance", nb.float32),
+])
+class Prospect:
+  def __init__(
+    self,
+    start: Point,
+    start_coords: Coords,
+    near_start: list[NearStop],
+    destination: Point,
+    destination_coords: Coords,
+    near_destination: list[NearStop],
+    walk_distance: float,
+  ):
+    self.start = start
+    self.start_coords = start_coords
+    self.near_start = [n for n in near_start]
+    self.destination = destination
+    self.destination_coords = destination_coords
+    self.near_destination = [n for n in near_destination]
+    self.walk_distance = walk_distance
 
 
 class Prospector:
@@ -71,8 +93,8 @@ class Prospector:
         chain((self.stops[id].coords for id in ns_ids), [destination_coords]),
       )
 
-      near_start = [NearStop(id, dst) for id, dst in zip(ns_ids, distances)]
-      walk_distance = distances[-1]
+      near_start = _create_near_list(ns_ids, distances)
+      walk_distance = np.float32(distances[-1])
 
     if near_destination is None:
       nd_ids = self.tdb.nearest_stops(destination_point)
@@ -82,19 +104,19 @@ class Prospector:
         to_coords.append(start_coords)
 
       distances = self.osrm.distance_to_many(destination_coords, to_coords)
-      near_destination = [NearStop(id, dst) for id, dst in zip(nd_ids, distances)]
+      near_destination = _create_near_list(nd_ids, distances)
 
       if walk_distance is None:
-        walk_distance = distances[-1]
+        walk_distance = np.float32(distances[-1])
 
     if walk_distance is None:
       straight = start_point.distance(destination_point)
 
       if straight > WALKING_SETTINGS["TIME_WITHIN_WALKING"] * WALKING_SETTINGS["PACE"]:
-        walk_distance = straight * WALKING_SETTINGS["DISTANCE_MULTIPLIER"]
+        walk_distance = np.float32(straight * WALKING_SETTINGS["DISTANCE_MULTIPLIER"])
       else:
         distances = self.osrm.distance_to_many(start_coords, [destination_coords])
-        walk_distance = distances[0]
+        walk_distance = np.float32(distances[0])
 
     return Prospect(
       start_point,
@@ -132,12 +154,12 @@ class Prospector:
     Optional[list[NearStop]]
   ]:
     if isinstance(location, Coords):
-      coords = location
+      coords = Coords(np.float32(location.lat), np.float32(location.lon))
       point = self.project(location)
       near = None
     elif isinstance(location, Point):
       coords = self.unproject(location)
-      point = location
+      point = Point(np.float32(location.x), np.float32(location.y))
       near = None
     elif isinstance(location, int):
       s = self.stops[location]
@@ -148,3 +170,10 @@ class Prospector:
       raise Exception(f"Prospector.standardize: unsupported argument type {type(location)}")
 
     return coords, point, near
+
+
+def _create_near_list(ids, distances):
+  return [
+    NearStop(np.int32(id), np.float32(dst))
+    for id, dst in zip(ids, distances)
+  ]
