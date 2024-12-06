@@ -6,8 +6,10 @@ from algorithm.estimator import *
 from ebus.algorithm_settings import WALKING_SETTINGS
 
 
-def cluster_estimator(clustertimes_path: Path) -> Estimator:
-  clustertimes = np.load(clustertimes_path)
+def cluster_estimator(clustertimes: np.ndarray|Path) -> Estimator:
+  if isinstance(clustertimes, Path):
+    clustertimes = np.load(clustertimes)
+
   uwdm = WALKING_SETTINGS["DISTANCE_MULTIPLIER"]
   pace = WALKING_SETTINGS["PACE"]
 

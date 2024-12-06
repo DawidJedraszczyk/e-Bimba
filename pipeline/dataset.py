@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 
-import asyncio
 from concurrent.futures import ThreadPoolExecutor
+import datetime
 from enum import Enum
 import numba as nb
+import numba.np.numpy_support as nbp
 import numba.types as nbt
 import numpy as np
 import os
@@ -14,7 +15,6 @@ import pyproj
 import random
 import sys
 import threading
-import time
 from typing import NamedTuple
 
 sys.path.append(str(Path(__file__).parents[1] / "ebus"))
@@ -33,6 +33,7 @@ else:
     print(f"Unknown city '{city_name}'")
     sys.exit()
 
+from algorithm.estimators.cluster import cluster_estimator
 from transit.data.misc import *
 from transit.transitdb import *
 from transit.osrm import *
@@ -47,7 +48,7 @@ class Destinations(Enum):
 
 
 BATCH_SIZE = 1000
-NUM_BATCHES = 128
+NUM_BATCHES = 2000
 TYPE = Destinations.GRID
 
 
@@ -61,23 +62,86 @@ class Row(NamedTuple):
   time: np.int32
 
 
+FIELDS = [
+  ("from_x", np.float32),
+  ("from_y", np.float32),
+  ("to_x", np.float32),
+  ("to_y", np.float32),
+  ("day_type", np.int8),
+  ("start", np.int32),
+  ("reference", np.int32),
+  ("time", np.int32),
+]
+
+@jitclass([
+  ("i", nb.int32),
+  *((name, nbp.from_dtype(dtype)[:]) for name, dtype in FIELDS),
+])
+class Batch:
+  def __init__(self):
+    self.i = 0
+    self.from_x = np.empty(BATCH_SIZE, np.float32)
+    self.from_y = np.empty(BATCH_SIZE, np.float32)
+    self.to_x = np.empty(BATCH_SIZE, np.float32)
+    self.to_y = np.empty(BATCH_SIZE, np.float32)
+    self.day_type = np.empty(BATCH_SIZE, np.int8)
+    self.start = np.empty(BATCH_SIZE, np.int32)
+    self.reference = np.empty(BATCH_SIZE, np.int32)
+    self.time = np.empty(BATCH_SIZE, np.int32)
+
+  def push(
+    self,
+    from_x,
+    from_y,
+    to_x,
+    to_y,
+    day_type,
+    start,
+    reference,
+    time,
+  ):
+    if self.i == BATCH_SIZE:
+      return
+
+    self.from_x[self.i] = from_x
+    self.from_y[self.i] = from_y
+    self.to_x[self.i] = to_x
+    self.to_y[self.i] = to_y
+    self.day_type[self.i] = day_type
+    self.start[self.i] = start
+    self.reference[self.i] = reference
+    self.time[self.i] = time
+    self.i += 1
+
+
+def batch_to_chunk(batch):
+  return pa.StructArray.from_arrays(
+    [getattr(batch, name) for name, _ in FIELDS],
+    [name for name, _ in FIELDS]
+  )
+
+
 thread_local = threading.local()
 tdb = TransitDb(DATA_CITIES / f"{city['id']}.db")
+clustertimes = np.load(DATA_CITIES / f"{city['id']}-clustertimes.npy")
+reference = cluster_estimator(clustertimes).estimate
 prospector = Prospector(tdb, None)
 stops = prospector.stops
 router = Router(tdb, stops=stops)
+trips = router.trips
 stop_count = stops.count()
 
 
 md = prospector.md
 transformer = pyproj.Transformer.from_proj(md.projection, 'WGS84')
-x_d = np.std(stops.xs) / 2
-y_d = np.std(stops.ys) / 2
+x_dev = np.std(stops.xs)
+y_dev = np.std(stops.ys)
 
+@nb.jit
 def random_pos():
   return Point(
-    np.float32(np.random.normal(0.0, x_d)),
-    np.float32(np.random.normal(0.0, y_d)),
+    np.float32(np.random.normal(0.0, x_dev/2)),
+    np.float32(np.random.normal(0.0, y_dev/2)),
   )
 
 def pos2coords(pos):
@@ -97,27 +161,73 @@ dt_services = [workday_services, saturday_services, sunday_services]
 def random_day_type():
   return random.randrange(0, len(dt_services))
 
+@nb.jit
 def random_time():
   return random.randrange(0, 24*60*60)
 
 
+@nb.jit(nogil=True)
+def process(stops, trips, prospect, from_stop, day_type, services, batch):
+  start = random_time()
+
+  task = RouterTask(
+    stops,
+    trips,
+    clustertimes,
+    prospect,
+    start,
+    services,
+  )
+
+  plan = task.solve()
+
+  batch.push(
+    prospect.start.x / x_dev,
+    prospect.start.y / y_dev,
+    prospect.destination.x / x_dev,
+    prospect.destination.y / y_dev,
+    day_type,
+    start,
+    reference(stops, prospect, from_stop, None),
+    plan.arrival - start,
+  )
+
+  if len(plan.path) > 3:
+    stop_id = plan.path[random.randrange(3, len(plan.path))].from_stop
+    node = task.nodes[stop_id]
+    to_stop = stops[stop_id]
+
+    prospect.destination = to_stop.position
+    prospect.near_destination = [
+      NearStop(sw.stop_id, nb.float32(sw.distance))
+      for sw in stops.get_stop_walks(stop_id)
+    ]
+
+    batch.push(
+      prospect.start.x / x_dev,
+      prospect.start.y / y_dev,
+      prospect.destination.x / x_dev,
+      prospect.destination.y / y_dev,
+      day_type,
+      start,
+      reference(stops, prospect, from_stop, None),
+      node.arrival - start,
+    )
+
+
 def make_batch():
   local_prospector = getattr(thread_local, "prospector", None)
-  local_router = getattr(thread_local, "router", None)
 
-  if local_router is None:
+  if local_prospector is None:
     local_prospector = prospector.clone()
     thread_local.prospector = local_prospector
-    local_router = router.clone()
-    thread_local.router = local_router
 
-  rows = []
+  batch = Batch()
 
-  for _ in range(BATCH_SIZE):
+  while batch.i < BATCH_SIZE:
     from_stop = random_stop()
     to_pos = random_pos()
     day_type = random_day_type()
-    start = random_time()
 
     match TYPE:
       case Destinations.RANDOM:
@@ -130,22 +240,9 @@ def make_batch():
         destination = random_stop()
 
     prospect = local_prospector.prospect(from_stop, destination)
-    plan = local_router.find_route(prospect, dt_services[day_type], start)
+    process(stops, trips, prospect, from_stop, day_type, dt_services[day_type], batch)
 
-    rows.append(Row(
-      stops[from_stop].position.x,
-      stops[from_stop].position.y,
-      prospect.destination.x,
-      prospect.destination.y,
-      day_type,
-      start,
-      plan.arrival - start,
-    ))
-
-  return pa.StructArray.from_arrays(
-    (np.array([getattr(r, f) for r in rows], Row.__annotations__[f]) for f in Row._fields),
-    Row._fields,
-  )
+  return batch_to_chunk(batch)
 
 
 tp = ThreadPoolExecutor(max_workers=os.cpu_count())
@@ -155,4 +252,8 @@ with start_osrm(city["region"], instances=2) as osrm:
   batches = list(tp.map(lambda _: make_batch(), range(NUM_BATCHES)))
 
 table = pa.Table.from_struct_array(pa.chunked_array(batches))
-pq.write_table(table, TMP_CITIES / f"{city['id']}-dataset.parquet")
+
+now = datetime.datetime.now().isoformat()
+out_path = TMP_CITIES / city['id'] / "dataset" / f"{now}.parquet"
+out_path.parent.mkdir(parents=True, exist_ok=True)
+pq.write_table(table, out_path)

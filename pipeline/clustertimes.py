@@ -39,7 +39,6 @@ from transit.data.misc import *
 from transit.transitdb import *
 from transit.prospector import Prospect, NearStop
 from transit.router import *
-from transit.params import TRAM_SPEED
 
 
 @jitclass([
