@@ -10,17 +10,12 @@ from .data.shapes import Shapes
 from .data.stops import Stops
 from .data.trips import Trips
 from .db import Db
-from ebus.algorithm_settings import WALKING_SETTINGS
 
 
 class TransitDb(Db):
   def __init__(self, path: Path, write=False):
     scripts = Path(__file__).parent / "sql"
-    variables = {
-      "MAX_STOP_WALK": WALKING_SETTINGS["TIME_WITHIN_WALKING"] * WALKING_SETTINGS["PACE"]
-    }
-
-    super().__init__(path, scripts, write, variables)
+    super().__init__(path, scripts, write)
     self.sql("install spatial; load spatial")
 
 
@@ -41,8 +36,14 @@ class TransitDb(Db):
     )
 
 
-  def nearest_stops(self, position: Point) -> NDArray:
-    params = {"x": float(position.x), "y": float(position.y)}
+  def nearest_stops(self, position: Point, radius: float, min_count: int) -> NDArray:
+    params = {
+      "x": float(position.x),
+      "y": float(position.y),
+      "radius": radius,
+      "min_count": min_count,
+    }
+
     return self.script("get-nearest-stops", params).np()["id"]
 
 

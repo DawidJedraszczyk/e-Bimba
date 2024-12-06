@@ -44,7 +44,14 @@ class AStarPlanner():
         estimator=None,
     ):
         start_init_time = time.time()
-        self.prospect = data.prospector.prospect(start, destination)
+        self.prospect = data.prospector.prospect(
+            start,
+            destination,
+            start_radius=PROSPECTING_SETTINGS["START_RADIUS"],
+            start_min_count=PROSPECTING_SETTINGS["START_MIN_COUNT"],
+            destination_radius=PROSPECTING_SETTINGS["DESTINATION_RADIUS"],
+            destination_min_count=PROSPECTING_SETTINGS["DESTINATION_MIN_COUNT"],
+        )
         prospecting_time = time.time() - start_init_time
 
         self.data = data

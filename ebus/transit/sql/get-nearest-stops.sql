@@ -20,5 +20,5 @@ with
 select
   id,
 from ranked r
-where rank <= 5
-  or distance <= getvariable('MAX_STOP_WALK')
+where rank <= $min_count
+  or distance <= $radius

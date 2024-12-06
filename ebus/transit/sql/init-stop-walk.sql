@@ -28,8 +28,11 @@ with
   nearest as (
     select from_stop, to_stop
     from ranked
-    where rank <= 10
-      or distance <= getvariable('MAX_STOP_WALK')
+    where rank <= getvariable('STOP_WALK_MIN_COUNT')
+      or (
+        distance <= getvariable('STOP_WALK_RADIUS')
+        and rank <= getvariable('STOP_WALK_MAX_COUNT')
+      )
   )
 
 select

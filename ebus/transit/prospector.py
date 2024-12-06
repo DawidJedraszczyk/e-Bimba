@@ -80,13 +80,25 @@ class Prospector:
     self,
     start: Coords|Point|int,
     destination: Coords|Point|int,
+    radius: float = 1000.0,
+    min_count: int = 10,
+    direct_precise_distance: float = 1000.0,
+    estimated_distance_mult: float = 1.1,
+    start_radius: float|None = None,
+    start_min_count: int|None = None,
+    destination_radius: float|None = None,
+    destination_min_count: int|None = None,
   ) -> Prospect:
     start_coords, start_point, near_start = self.standardize(start)
     destination_coords, destination_point, near_destination = self.standardize(destination)
     walk_distance = None
 
     if near_start is None:
-      ns_ids = self.tdb.nearest_stops(start_point)
+      ns_ids = self.tdb.nearest_stops(
+        start_point,
+        start_radius or radius,
+        start_min_count or min_count,
+      )
 
       distances = self.osrm.distance_to_many(
         start_coords,
@@ -97,7 +109,12 @@ class Prospector:
       walk_distance = np.float32(distances[-1])
 
     if near_destination is None:
-      nd_ids = self.tdb.nearest_stops(destination_point)
+      nd_ids = self.tdb.nearest_stops(
+        destination_point,
+        destination_radius or radius,
+        destination_min_count or min_count,
+      )
+
       to_coords = [self.stops[id].coords for id in nd_ids]
 
       if walk_distance is None:
@@ -112,8 +129,8 @@ class Prospector:
     if walk_distance is None:
       straight = start_point.distance(destination_point)
 
-      if straight > WALKING_SETTINGS["TIME_WITHIN_WALKING"] * WALKING_SETTINGS["PACE"]:
-        walk_distance = np.float32(straight * WALKING_SETTINGS["DISTANCE_MULTIPLIER"])
+      if straight > direct_precise_distance:
+        walk_distance = np.float32(straight * estimated_distance_mult)
       else:
         distances = self.osrm.distance_to_many(start_coords, [destination_coords])
         walk_distance = np.float32(distances[0])

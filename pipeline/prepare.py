@@ -21,6 +21,9 @@ from transit.osrm import *
 from transit.transitdb import *
 
 
+STOP_WALK_RADIUS = 1000
+STOP_WALK_MIN_COUNT = 10
+STOP_WALK_MAX_COUNT = 50
 CLUSTER_MULT = 16
 
 
@@ -67,6 +70,9 @@ def import_gtfs(tdb, source_name: str, gtfs_folder: Path):
 async def calculate_stop_walks(tdb, osrm: OsrmClient):
   t0 = time.time()
   print("Calculating walking distances between stops")
+  tdb.set_variable("STOP_WALK_RADIUS", STOP_WALK_RADIUS)
+  tdb.set_variable("STOP_WALK_MIN_COUNT", STOP_WALK_MIN_COUNT)
+  tdb.set_variable("STOP_WALK_MAX_COUNT", STOP_WALK_MAX_COUNT)
   inputs = tdb.script("init-stop-walk").arrow()
   sem = asyncio.Semaphore(os.cpu_count())
 

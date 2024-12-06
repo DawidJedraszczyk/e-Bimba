@@ -5,8 +5,14 @@ ALTERNATIVE_PLAN_SETTINGS = {
 
 WALKING_SETTINGS = {
     'PACE': 1.4,  # (m/s)
-    'TIME_WITHIN_WALKING': 2400,  #time_to_seconds('00:10:00')
     'DISTANCE_MULTIPLIER': 1.1, # Used when exact distance is unknown
+}
+
+PROSPECTING_SETTINGS = {
+    'START_RADIUS': 1000,
+    'START_MIN_COUNT': 10,
+    'DESTINATION_RADIUS': 1000,
+    'DESTINATION_MIN_COUNT': 10,
 }
 
 HEURISTIC_SETTINGS = {
