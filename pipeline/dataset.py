@@ -48,19 +48,8 @@ class Destinations(Enum):
 
 
 BATCH_SIZE = 1000
-NUM_BATCHES = 2000
+NUM_BATCHES = 128
 TYPE = Destinations.GRID
-
-
-class Row(NamedTuple):
-  from_x: np.float32
-  from_y: np.float32
-  to_x: np.float32
-  to_y: np.float32
-  day_type: np.int8
-  start: np.int32
-  time: np.int32
-
 
 FIELDS = [
   ("from_x", np.float32),
@@ -68,57 +57,10 @@ FIELDS = [
   ("to_x", np.float32),
   ("to_y", np.float32),
   ("day_type", np.int8),
-  ("start", np.int32),
+  ("start", np.float32),
   ("reference", np.int32),
   ("time", np.int32),
 ]
-
-@jitclass([
-  ("i", nb.int32),
-  *((name, nbp.from_dtype(dtype)[:]) for name, dtype in FIELDS),
-])
-class Batch:
-  def __init__(self):
-    self.i = 0
-    self.from_x = np.empty(BATCH_SIZE, np.float32)
-    self.from_y = np.empty(BATCH_SIZE, np.float32)
-    self.to_x = np.empty(BATCH_SIZE, np.float32)
-    self.to_y = np.empty(BATCH_SIZE, np.float32)
-    self.day_type = np.empty(BATCH_SIZE, np.int8)
-    self.start = np.empty(BATCH_SIZE, np.int32)
-    self.reference = np.empty(BATCH_SIZE, np.int32)
-    self.time = np.empty(BATCH_SIZE, np.int32)
-
-  def push(
-    self,
-    from_x,
-    from_y,
-    to_x,
-    to_y,
-    day_type,
-    start,
-    reference,
-    time,
-  ):
-    if self.i == BATCH_SIZE:
-      return
-
-    self.from_x[self.i] = from_x
-    self.from_y[self.i] = from_y
-    self.to_x[self.i] = to_x
-    self.to_y[self.i] = to_y
-    self.day_type[self.i] = day_type
-    self.start[self.i] = start
-    self.reference[self.i] = reference
-    self.time[self.i] = time
-    self.i += 1
-
-
-def batch_to_chunk(batch):
-  return pa.StructArray.from_arrays(
-    [getattr(batch, name) for name, _ in FIELDS],
-    [name for name, _ in FIELDS]
-  )
 
 
 thread_local = threading.local()
@@ -136,6 +78,55 @@ md = prospector.md
 transformer = pyproj.Transformer.from_proj(md.projection, 'WGS84')
 x_dev = np.std(stops.xs)
 y_dev = np.std(stops.ys)
+
+
+@jitclass([
+  ("i", nb.int32),
+  *((name, nbp.from_dtype(dtype)[:]) for name, dtype in FIELDS),
+])
+class Batch:
+  def __init__(self):
+    self.i = 0
+    self.from_x = np.empty(BATCH_SIZE, np.float32)
+    self.from_y = np.empty(BATCH_SIZE, np.float32)
+    self.to_x = np.empty(BATCH_SIZE, np.float32)
+    self.to_y = np.empty(BATCH_SIZE, np.float32)
+    self.day_type = np.empty(BATCH_SIZE, np.int8)
+    self.start = np.empty(BATCH_SIZE, np.float32)
+    self.reference = np.empty(BATCH_SIZE, np.int32)
+    self.time = np.empty(BATCH_SIZE, np.int32)
+
+  def push(
+    self,
+    from_x,
+    from_y,
+    to_x,
+    to_y,
+    day_type,
+    start,
+    reference,
+    time,
+  ):
+    if self.i == BATCH_SIZE:
+      return
+
+    self.from_x[self.i] = from_x / x_dev
+    self.from_y[self.i] = from_y / y_dev
+    self.to_x[self.i] = to_x / x_dev
+    self.to_y[self.i] = to_y / y_dev
+    self.day_type[self.i] = day_type
+    self.start[self.i] = start / (24*60*60)
+    self.reference[self.i] = reference
+    self.time[self.i] = time
+    self.i += 1
+
+
+def batch_to_chunk(batch):
+  return pa.StructArray.from_arrays(
+    [getattr(batch, name) for name, _ in FIELDS],
+    [name for name, _ in FIELDS]
+  )
+
 
 @nb.jit
 def random_pos():
@@ -182,10 +173,10 @@ def process(stops, trips, prospect, from_stop, day_type, services, batch):
   plan = task.solve()
 
   batch.push(
-    prospect.start.x / x_dev,
-    prospect.start.y / y_dev,
-    prospect.destination.x / x_dev,
-    prospect.destination.y / y_dev,
+    prospect.start.x,
+    prospect.start.y,
+    prospect.destination.x,
+    prospect.destination.y,
     day_type,
     start,
     reference(stops, prospect, from_stop, None),
@@ -204,10 +195,10 @@ def process(stops, trips, prospect, from_stop, day_type, services, batch):
     ]
 
     batch.push(
-      prospect.start.x / x_dev,
-      prospect.start.y / y_dev,
-      prospect.destination.x / x_dev,
-      prospect.destination.y / y_dev,
+      prospect.start.x,
+      prospect.start.y,
+      prospect.destination.x,
+      prospect.destination.y,
       day_type,
       start,
       reference(stops, prospect, from_stop, None),
