@@ -38,10 +38,6 @@ with start_osrm("pl_wielkopolskie"):
       case _:
         print(f"Unknow estimator: {sys.argv[1]}")
         sys.exit(-1)
-
-    if len(sys.argv) > 2 and sys.argv[2] == "s2s":
-      estimator = via_nearest(estimator)
-
   else:
     print("Using data.default_estimator")
 

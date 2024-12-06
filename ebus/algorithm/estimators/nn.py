@@ -44,7 +44,4 @@ def nn_estimator(file: Path) -> Estimator:
   def estimate(stops, prospect, from_stop, at_time):
     return inference(stops[from_stop].position, prospect.destination, *at_time)
 
-  def stop_to_stop(stops, a, b, at_time):
-    return inference(stops[a].position, stops[b].position, *at_time)
-
-  return Estimator(estimate, stop_to_stop, 0)
+  return Estimator(estimate, 0)

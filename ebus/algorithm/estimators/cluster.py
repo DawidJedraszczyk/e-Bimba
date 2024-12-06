@@ -3,16 +3,24 @@ import numpy as np
 from pathlib import Path
 
 from algorithm.estimator import *
+from ebus.algorithm_settings import WALKING_SETTINGS
 
 
 def cluster_estimator(clustertimes_path: Path) -> Estimator:
   clustertimes = np.load(clustertimes_path)
-
-  def estimate(stops, prospector, from_stop, at_time):
-    raise Exception("missing")
+  uwdm = WALKING_SETTINGS["DISTANCE_MULTIPLIER"]
+  pace = WALKING_SETTINGS["PACE"]
 
   @nb.jit
-  def stop_to_stop(stops, a, b, at_time):
-    return clustertimes[stops[a].cluster, stops[b].cluster]
+  def estimate(stops, prospect, from_stop, at_time):
+    a = stops[from_stop]
+    result = nb.int32(euclidean_metric(a.position, prospect.destination) * uwdm / pace)
 
-  return via_nearest(Estimator(estimate, stop_to_stop, INF_TIME))
+    for near in prospect.near_destination:
+      b = stops[near.id]
+      ct = clustertimes[a.cluster, b.cluster]
+      result = min(result, nb.int32(ct + nb.int32(near.walk_distance / pace)))
+
+    return result
+
+  return Estimator(estimate, INF_TIME)
