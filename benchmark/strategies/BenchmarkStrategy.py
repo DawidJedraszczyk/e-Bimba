@@ -19,7 +19,7 @@ class BenchmarkStrategy():
     data: Data
     estimator: Estimator
     benchmark_type = None
-    alternative_routes = 1
+    alternative_routes = 3
     total_times = []
     planners = []
     sample_routes = None

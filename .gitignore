@@ -4,6 +4,8 @@ __pycache__
 /.env
 /.venv*
 /data
+/deep_learning/model.tflite
 /benchmark/benchmark_results
 /benchmark/data_analysis_results
+/benchmark_results
 /pipeline/tmp

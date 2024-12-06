@@ -35,6 +35,8 @@ with start_osrm("pl_wielkopolskie"):
         estimator = data.cluster_estimator
       case "nn":
         estimator = data.nn_estimator
+      case "nn-ref":
+        estimator = data.nn_ref_estimator
       case _:
         print(f"Unknow estimator: {sys.argv[1]}")
         sys.exit(-1)

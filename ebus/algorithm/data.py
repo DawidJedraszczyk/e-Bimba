@@ -8,7 +8,7 @@ from typing import Callable, Optional
 
 from .estimator import Estimator, euclidean_estimator
 from .estimators.cluster import cluster_estimator
-from .estimators.nn import nn_estimator
+from .estimators.nn import nn_estimator, nn_ref_estimator
 from .utils import custom_print
 from transit.data.misc import Metadata, Point, Services
 from transit.data.routes import Routes
@@ -73,6 +73,7 @@ class Data:
 
         nn_path = aux_file(".tflite")
         clustertimes_path = aux_file("-clustertimes.npy")
+        nn_ref_path = aux_file("-ref.tflite")
 
         if clustertimes_path.exists():
             self.cluster_estimator = cluster_estimator(clustertimes_path)
@@ -80,12 +81,22 @@ class Data:
             self.cluster_estimator = None
 
         if nn_path.exists():
-            self.nn_estimator = nn_estimator(nn_path)
+            self.nn_estimator = nn_estimator(nn_path, self.stops)
         else:
             self.nn_estimator = None
 
+        if nn_ref_path.exists() and self.cluster_estimator is not None:
+            self.nn_ref_estimator = nn_ref_estimator(
+                nn_ref_path,
+                self.stops,
+                self.cluster_estimator,
+            )
+        else:
+            self.nn_ref_estimator = None
+
         self.default_estimator = (
             self.nn_estimator
+            or self.nn_ref_estimator
             or self.cluster_estimator
             or euclidean_estimator
         )
