@@ -8,6 +8,7 @@ from typing import Callable, Optional
 
 from .estimator import Estimator, euclidean_estimator
 from .estimators.cluster import cluster_estimator
+from .estimators.knn import knn_estimator
 from .estimators.nn import nn_estimator, nn_ref_estimator
 from .utils import custom_print
 from transit.data.misc import Metadata, Point, Services
@@ -74,6 +75,7 @@ class Data:
         nn_path = aux_file(".tflite")
         clustertimes_path = aux_file("-clustertimes.npy")
         nn_ref_path = aux_file("-ref.tflite")
+        knndb_path = aux_file("-knn.db")
 
         if clustertimes_path.exists():
             self.cluster_estimator = cluster_estimator(clustertimes_path)
@@ -93,6 +95,11 @@ class Data:
             )
         else:
             self.nn_ref_estimator = None
+
+        if knndb_path.exists():
+            self.knn_estimator = knn_estimator(knndb_path, self.stops)
+        else:
+            self.knn_estimator = None
 
         self.default_estimator = (
             self.nn_estimator

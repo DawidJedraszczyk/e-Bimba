@@ -11,7 +11,7 @@ from common import *
 from transit.db import *
 
 
-SQL_GTFS_FOLDER = SCRIPT_FOLDER.parent / "ebus" / "transit" / "sql" / "gtfs"
+SQL_GTFS_FOLDER = SCRIPT_FOLDER.parent / "ebus" / "transit" / "transitdb-sql" / "gtfs"
 
 
 def get_import_script(name: str) -> str:

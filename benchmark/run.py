@@ -33,6 +33,8 @@ with start_osrm("pl_wielkopolskie"):
         estimator = euclidean_estimator
       case "cluster":
         estimator = data.cluster_estimator
+      case "knn":
+        estimator = data.knn_estimator
       case "nn":
         estimator = data.nn_estimator
       case "nn-ref":

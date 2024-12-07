@@ -14,7 +14,7 @@ from .db import Db
 
 class TransitDb(Db):
   def __init__(self, path: Path, write=False):
-    scripts = Path(__file__).parent / "sql"
+    scripts = Path(__file__).parent / "transitdb-sql"
     super().__init__(path, scripts, write)
     self.sql("install spatial; load spatial")
 
