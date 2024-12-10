@@ -48,7 +48,12 @@ class AStarPlanner():
         prospecting_time = time.time() - start_init_time
 
         self.data = data
-        self.date = date if isinstance(date, datetime.date) else datetime.date.fromisoformat(date)
+
+        if not isinstance(date, datetime.date):
+            date = datetime.date.fromisoformat(date)
+            custom_print(f'Invalid date format: {date}', 'DEBUG')
+        self.date = date
+    
         self.services = self.data.services_around(self.date)
         self.start_time = start_time
         self.estimator = estimator or data.default_estimator
