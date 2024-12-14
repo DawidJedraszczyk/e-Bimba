@@ -133,7 +133,6 @@
 
             const formData = new FormData(form);
             formData.append('city', '{{city_id}}');
-            document.getElementById('foundRoutes').innerHTML = '<span id="loader" class="show"></span>';
 
             try {
                 const routeResponse = await fetch('{% url 'route_search:FindRoute' city_id %}', {
