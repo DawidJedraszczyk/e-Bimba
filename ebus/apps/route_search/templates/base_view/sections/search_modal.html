@@ -1,97 +1,171 @@
 {% load static %}
 <div id="back-btn">
-  <img id="back-icon" src="{% static 'base_view/img/arrow_icon.svg' %}"/>
-  cofnij
+    <img id="back-icon" src="{% static 'base_view/img/arrow_icon.svg' %}"/>
+    cofnij
 </div>
-<form action="{% url 'route_search:FindRoute' %}" method="post" id="routeForm" class="routeContainer">
-  {% csrf_token %}
-  <div class="form__group field">
-    <input
-      type="text"
-      class="form__field"
-      name="start_location"
-      id="firstStation"
-      required
-    />
-    <label for="firstStation" class="form__label">Przystanek początkowy</label>
-    <span class="suggestion" id="suggestionFirstStation"></span>
-  </div>
-  <div class="form__group field">
-    <input
-      type="text"
-      class="form__field"
-      name="goal_location"
-      id="goalStation"
-      required
-    />
-    <label for="goalStation" class="form__label">Przystanek docelowy</label>
-    <span class="suggestion" id="suggestionSecondStation"></span>
-  </div>
-  <div class="form__group field">
-    <input
-      type="datetime-local"
-      class="form__field"
-      name="datetime"
-      id="datetime"
-      required
-    />
-    <label for="datetime" class="form__label">Godzina i dzień wyjazdu</label>
-  </div>
-  <button type="submit" id="search-btn" class="search-btn">Szukaj</button>
+<form action="{% url 'route_search:FindRoute' city_id %}" method="post" id="routeForm" class="routeContainer">
+    {% csrf_token %}
+    <div class="form__group field">
+        <select
+                class="form__field select2 mt-2"
+                name="start_location"
+                id="firstStation"
+                required
+                style="width: 100%;"
+        ></select>
+        <label for="firstStation" class="form__label">Przystanek początkowy</label>
+    </div>
+    <div class="form__group field">
+        <select
+                class="form__field select2 mt-2"
+                name="goal_location"
+                id="goalStation"
+                required
+                style="width: 100%;"
+        ></select>
+        <label for="goalStation" class="form__label">Przystanek docelowy</label>
+    </div>
+    <div class="form__group field">
+        <input
+                type="datetime-local"
+                class="form__field"
+                name="datetime"
+                id="datetime"
+                required
+        />
+        <label for="datetime" class="form__label">Godzina i dzień wyjazdu</label>
+    </div>
+    <button type="submit" id="search-btn" class="search-btn">Szukaj</button>
 </form>
 
 <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const nominatimURL = "https://nominatim.openstreetmap.org/search";
+        let startMarker = null;
+        let goalMarker = null;
 
-  document.addEventListener("DOMContentLoaded", function() {
-    const form = document.getElementById('routeForm');
+        const select2Options = {
+            ajax: {
+                url: nominatimURL,
+                dataType: "json",
+                delay: 250,
+                data: function (params) {
+                    const term = params.term.split(" ").join("+") || "";
+                    const city = "{{ city_name }}";
 
-    form.addEventListener('submit', async function (e) {
-        e.preventDefault();
-
-        const formData = new FormData(form);
-        formData.append('city', '{{city}}');
-        document.getElementById('foundRoutes').innerHTML = '<span id="loader" class="show"></span>';
-
-        try {
-            const routeResponse = await fetch('{% url 'route_search:FindRoute' %}', {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-CSRFToken': formData.get('csrfmiddlewaretoken'),
+                    return {
+                        q: `${term}+${city}`,
+                        format: "json",
+                        addressdetails: 1,
+                        extratags: 1
+                    };
                 },
-            });
+                processResults: function (data) {
+                    return {
+                        results: data.map(location => ({
+                            id: JSON.stringify({
+                                name: location.display_name,
+                                lat: location.lat,
+                                lon: location.lon
+                            }),
+                            text: location.display_name
+                        }))
+                    };
+                },
+                cache: true
+            },
+            minimumInputLength: 2,
+            placeholder: "Wybierz przystanek",
+            allowClear: true
+        };
 
-            const response = await routeResponse.json();
-            const routeData = response.html;
-            
-            const departureCoordinates = response.coords;
-            sessionStorage.setItem('departureCoordinates', JSON.stringify(departureCoordinates));
-            
-            
+        $("#firstStation").select2(select2Options).on("change", function () {
+            const selectedValue = JSON.parse($(this).val());
+            if (selectedValue) {
+                const lat = parseFloat(selectedValue.lat);
+                const lon = parseFloat(selectedValue.lon);
 
-            const departuresDetailsData = response.details;
-            sessionStorage.setItem('departuresDetails', JSON.stringify(departuresDetailsData))
-            
-            const departuresGtfsData = response.gtfs;
-            sessionStorage.setItem('departuresGTFS', JSON.stringify(departuresGtfsData))
+                if (startMarker) {
+                    map.removeLayer(startMarker);
+                }
 
-            
-            document.getElementById('foundRoutes').innerHTML = '';
-            document.getElementById('foundRoutes').innerHTML = '<span id="loader"></span>'
-            Object.keys(routeData).forEach(key => {
-                const solution = routeData[key];
-                document.getElementById('foundRoutes').innerHTML += solution['div']
+                startMarker = L.marker([lat, lon], {icon: locationIcon}).addTo(map);
+                map.setView([lat, lon], 16);
+            }
+        })
+        .on("select2:clear", function () {
+            if (startMarker) {
+                map.removeLayer(startMarker);
+                startMarker = null;
+            }
+        });
 
-            });
-            current_solution = 0
-            draw_route(departureCoordinates[current_solution])
-            show_departure_details(departuresDetailsData[current_solution])
-            
-        } catch (error) {
-            console.error('Error:', error);
-        }
-    });
-});
-      
+        $("#goalStation").select2(select2Options).on("change", function () {
+            const selectedValue = JSON.parse($(this).val());
+            if (selectedValue) {
+                const lat = parseFloat(selectedValue.lat);
+                const lon = parseFloat(selectedValue.lon);
 
+                if (goalMarker) {
+                    map.removeLayer(goalMarker);
+                }
+                goalMarker = L.marker([lat, lon], {icon: locationIcon}).addTo(map);
+                map.setView([lat, lon], 16);
+            }
+        })
+        .on("select2:clear", function () {
+            if (goalMarker) {
+                map.removeLayer(goalMarker);
+                goalMarker = null;
+            }
+        });
+
+        const form = document.getElementById('routeForm');
+
+        form.addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+
+            const formData = new FormData(form);
+            formData.append('city', '{{city_id}}');
+            document.getElementById('foundRoutes').innerHTML = '<span id="loader" class="show"></span>';
+
+            try {
+                const routeResponse = await fetch('{% url 'route_search:FindRoute' city_id %}', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRFToken': formData.get('csrfmiddlewaretoken'),
+                    },
+                });
+
+                const response = await routeResponse.json();
+                const routeData = response.html;
+
+                const departureCoordinates = response.coords;
+                sessionStorage.setItem('departureCoordinates', JSON.stringify(departureCoordinates));
+
+                const departuresDetailsData = response.details;
+                sessionStorage.setItem('departuresDetails', JSON.stringify(departuresDetailsData));
+
+                const departuresGtfsData = response.gtfs;
+                sessionStorage.setItem('departuresGTFS', JSON.stringify(departuresGtfsData));
+
+                document.getElementById('foundRoutes').innerHTML = '';
+                Object.keys(routeData).forEach(key => {
+                    const solution = routeData[key];
+                    document.getElementById('foundRoutes').innerHTML += solution['div'];
+                });
+
+                current_solution = 0;
+                draw_route(departureCoordinates[current_solution]);
+                show_departure_details(departuresDetailsData[current_solution]);
+
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        });
+    })
+    ;
 </script>
+

@@ -5,5 +5,5 @@ from .views import *
 app_name='route_search'
 urlpatterns = [
     path('<str:city>/', BaseView.as_view(), name='BaseView'),
-    path('algorithm/find-route/', FindRouteView.as_view(), name='FindRoute'),
+    path('algorithm/find-route/<str:city_id>', FindRouteView.as_view(), name='FindRoute'),
 ]

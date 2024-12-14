@@ -8,20 +8,31 @@ import json
 from pathlib import Path
 import redis
 import sys
-
 from .modules.views.functions import *
 from algorithm.astar_planner import AStarPlanner
 from algorithm.utils import time_to_seconds
-from ebus.settings import REDIS_HOST, REDIS_PORT
 from transit.data.misc import Coords
 
 
-r = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, db=0)
+r = redis.Redis(host=settings.REDIS_HOST, port=settings.REDIS_PORT, db=0)
 geolocator = Nominatim(user_agent="ebus")
 
 
-def load_city_data(city):
-    return Data.instance(Path.cwd().parent / "data" / "cities" / f"{city}.db")
+def load_cities_data():
+    with open(settings.CITIES_JSON_PATH, 'r', encoding='utf-8') as file:
+        cities_data = json.load(file)
+    return cities_data
+
+cities = load_cities_data()
+
+def get_city_id(request_path):
+    for city in cities:
+        for key, value in city.items():
+            if key =='name' and value.lower() in request_path.lower():
+                return city['id']
+
+def load_city_data(city_id):
+    return Data.instance(Path.cwd().parent / "data" / "cities" / f"{city_id}.db")
 
 
 class BaseView(TemplateView):
@@ -38,9 +49,11 @@ class BaseView(TemplateView):
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(**kwargs)
-        city_id = kwargs['city']
+        city_full_name = kwargs['city']
+        city_id = get_city_id(city_full_name)
         data = load_city_data(city_id)
-        context['city'] = city_id
+        context['city_id'] = city_id
+        context['city_name'] = city_full_name
         context['center_coordinates'] = [*data.md.center_coords]
         return context
 
@@ -48,19 +61,22 @@ class BaseView(TemplateView):
 class FindRouteView(View):
 
     def post(self, request, *args, **kwargs):
-        city_id = request.POST.get('city')
+        city_id = kwargs['city_id']
         data = load_city_data(city_id)
-        city = data.md.name
+        print(request.POST.get('start_location'))
 
-        start = geolocator.geocode(request.POST.get('start_location') + ',' + city +', Polska')
-        destination = geolocator.geocode(request.POST.get('goal_location') + ',' + city + ', Polska')
+
+
+        start_name, start_latitude, start_longitude = json.loads(request.POST.get('start_location')).values()
+        print(start_name, start_latitude, start_longitude)
+        destination_name, destination_latitude, destination_longitude = json.loads(request.POST.get('goal_location')).values()
 
         _datetime = datetime.strptime(request.POST.get('datetime'), '%Y-%m-%dT%H:%M')
 
         planner = AStarPlanner(
             data,
-            Coords(start.latitude, start.longitude),
-            Coords(destination.latitude, destination.longitude),
+            Coords(start_latitude, start_longitude),
+            Coords(destination_latitude, destination_longitude),
             _datetime.date(),
             time_to_seconds(_datetime.strftime("%H:%M:%S")),
             data.default_estimator,
@@ -79,7 +95,7 @@ class FindRouteView(View):
         }
 
         details = {
-            i: prepare_departure_details(plan, start, destination, data)
+            i: prepare_departure_details(plan, start_name, destination_name, data)
             for i, plan in enumerate(plans)
         }
 
