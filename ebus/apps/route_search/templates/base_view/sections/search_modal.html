@@ -62,14 +62,19 @@
                 },
                 processResults: function (data) {
                     return {
-                        results: data.map(location => ({
-                            id: JSON.stringify({
-                                name: location.display_name,
-                                lat: location.lat,
-                                lon: location.lon
-                            }),
-                            text: location.display_name
-                        }))
+                        results: data.map(location => {
+                            let fullName = location.display_name;
+                            let shortName = fullName.split(",").slice(0, 2).join(",").trim();
+
+                            return {
+                                id: JSON.stringify({
+                                    name: shortName,
+                                    lat: location.lat,
+                                    lon: location.lon
+                                }),
+                                text: fullName
+                            };
+                        })
                     };
                 },
                 cache: true

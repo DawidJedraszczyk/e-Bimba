@@ -1,4 +1,4 @@
-from datetime import datetime
+import datetime
 from django.conf import settings
 from django.http import JsonResponse
 from django.views import View
@@ -63,15 +63,11 @@ class FindRouteView(View):
     def post(self, request, *args, **kwargs):
         city_id = kwargs['city_id']
         data = load_city_data(city_id)
-        print(request.POST.get('start_location'))
-
-
 
         start_name, start_latitude, start_longitude = json.loads(request.POST.get('start_location')).values()
-        print(start_name, start_latitude, start_longitude)
         destination_name, destination_latitude, destination_longitude = json.loads(request.POST.get('goal_location')).values()
 
-        _datetime = datetime.strptime(request.POST.get('datetime'), '%Y-%m-%dT%H:%M')
+        _datetime = datetime.datetime.strptime(request.POST.get('datetime'), '%Y-%m-%dT%H:%M')
 
         planner = AStarPlanner(
             data,
@@ -87,13 +83,11 @@ class FindRouteView(View):
 
         prospect = planner.prospect
         plans = planner.found_plans
-        html = plans_to_html(planner.found_plans, data)
-
+        html = plans_to_html(planner.found_plans, data, _datetime)
         coords = {
             i: prepare_coords(plan, prospect.start_coords, prospect.destination_coords, data)
             for i, plan in enumerate(plans)
         }
-
         details = {
             i: prepare_departure_details(plan, start_name, destination_name, data)
             for i, plan in enumerate(plans)
