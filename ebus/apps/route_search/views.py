@@ -1,6 +1,6 @@
 import datetime
 from django.conf import settings
-from django.http import JsonResponse
+from django.http import JsonResponse, Http404
 from django.views import View
 from django.views.generic import TemplateView
 from geopy.geocoders import Nominatim
@@ -25,14 +25,16 @@ def load_cities_data():
 
 cities = load_cities_data()
 
-def get_city_id(request_path):
+def get_city_id(request_path_city):
     for city in cities:
         for key, value in city.items():
-            if key =='name' and value.lower() in request_path.lower():
+            if key =='name' and value.lower() == request_path_city:
                 return city['id']
 
 def load_city_data(city_id):
-    return Data.instance(Path.cwd().parent / "data" / "cities" / f"{city_id}.db")
+    if city_id:
+        return Data.instance(Path.cwd().parent / "data" / "cities" / f"{city_id}.db")
+    return None
 
 
 class BaseView(TemplateView):
@@ -47,11 +49,19 @@ class BaseView(TemplateView):
     def get(self, request, *args, **kwargs):
         return super().get(request, *args, **kwargs)
 
-    def get_context_data(self, *args, **kwargs):
+    def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        city_full_name = kwargs['city']
+        city_full_name = kwargs.get('city')
+
+        # Validate city against the Enum
+        if city_full_name not in [city.value for city in settings.CITY_ENUM]:
+            raise Http404(f"City '{city_full_name}' is not valid.")
+
         city_id = get_city_id(city_full_name)
         data = load_city_data(city_id)
+        if not data:
+            raise Http404(f"No data found for city: {city_full_name}")
+
         context['city_id'] = city_id
         context['city_name'] = city_full_name
         context['center_coordinates'] = [*data.md.center_coords]
