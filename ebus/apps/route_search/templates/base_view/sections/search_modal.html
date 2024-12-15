@@ -37,8 +37,17 @@
     </div>
     <button type="submit" id="search-btn" class="search-btn">Szukaj</button>
 </form>
+<div id="loading-overlay" style="display: none;" class="flex-column justify-center align-center">
+    <div class="spinner"></div>
+    <span style="color: white; font-size: 30px;">Przetwarzanie...</span>
+</div>
 
 <script>
+    function toggleLoading(show) {
+        const loadingOverlay = document.getElementById("loading-overlay");
+        loadingOverlay.style.display = show ? "flex" : "none";
+    }
+
     document.addEventListener("DOMContentLoaded", function () {
         flatpickr("#datetime", {
             enableTime: true,
@@ -97,28 +106,38 @@
         };
 
         function addDraggableMarker(marker, lat, lon, isStart) {
-            const icon = isStart ? locationIcon : locationIcon; // Customize icons if needed
+            const icon = isStart ? locationIcon : locationIcon;
             if (marker) {
                 map.removeLayer(marker);
             }
             marker = L.marker([lat, lon], {draggable: true, icon: icon}).addTo(map);
 
-            // Handle marker dragging
             marker.on("dragend", async function (e) {
                 const newLatLng = marker.getLatLng();
                 const newLat = newLatLng.lat;
                 const newLon = newLatLng.lng;
+                toggleLoading(true);
 
-                const response = await fetch(
-                    `https://nominatim.openstreetmap.org/reverse?lat=${newLat}&lon=${newLon}&format=json`
-                );
-                const data = await response.json();
-                const newPlaceName = data.display_name || "Unknown Location";
+                try {
+                    // Reverse geocode to find the new place name
+                    const response = await fetch(
+                        `https://nominatim.openstreetmap.org/reverse?lat=${newLat}&lon=${newLon}&format=json`
+                    );
+                    const data = await response.json();
+                    const newPlaceName = data.display_name || "Unknown Location";
 
-                if (isStart) {
-                    updateSelect2("#firstStation", newPlaceName, newLat, newLon);
-                } else {
-                    updateSelect2("#goalStation", newPlaceName, newLat, newLon);
+                    // Update corresponding input fields and Select2 dropdown
+                    if (isStart) {
+                        updateSelect2("#firstStation", newPlaceName, newLat, newLon);
+                    } else {
+                        updateSelect2("#goalStation", newPlaceName, newLat, newLon);
+                    }
+                } catch (error) {
+                    console.error("Error fetching reverse geocoding data:", error);
+                    alert("Unable to fetch location data. Please try again.");
+                } finally {
+                    // Hide loading screen
+                    toggleLoading(false);
                 }
             });
 
