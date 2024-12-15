@@ -251,6 +251,130 @@ main {
     font-weight: bold;
 }
 
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+  color: #fff !important;
+}
+.select2-container--default .select2-selection--single .select2-selection__placeholder {
+  color: #fff !important;
+}
+.select2-container--default .select2-selection--single {
+    border: 1px solid #aaa;
+    background-color: var(--background) !important;
+    border-radius: 4px;
+}
+/* Select2 Container Styling */
+.select2-container--default .select2-selection--single {
+  background-color: var(--background);
+  border: 2px solid var(--text-color);
+  color: var(--text-color) !important;
+  border-radius: 5px;
+  height: 40px;
+  display: flex !important;
+  align-items: center;
+  padding: 5px;
+  transition: border-color 0.2s, background-color 0.2s;
+}
+.select2-container--default .select2-selection--single button {
+  color: var(--text-color) !important;
+  margin-right: 0 !important;
+}
+
+/* Placeholder and Rendered Text */
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+  color: var(--text-color);
+  font-size: 14px;
+  padding-left: 10px;
+}
+
+/* Hover and Focus States */
+.select2-container--default .select2-selection--single:hover,
+.select2-container--default .select2-selection--single:focus {
+  border-color: var(--cyan);
+  background-color: #333;
+}
+
+/* Dropdown Menu */
+.select2-container--default .select2-dropdown {
+  background-color: var(--background);
+  border: 1px solid var(--text-color);
+  border-radius: 5px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+}
+
+/* Dropdown Option Styling */
+.select2-container--default .select2-results__option {
+  color: var(--text-color);
+  padding: 10px;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+/* Highlighted Option */
+.select2-container--default .select2-results__option--highlighted {
+  background-color: var(--cyan);
+  color: #fff;
+}
+
+/* Disabled Option */
+.select2-container--default .select2-results__option[aria-disabled='true'] {
+  color: #555;
+  cursor: not-allowed;
+}
+
+/* Search Input Field */
+.select2-container--default .select2-search--dropdown .select2-search__field {
+  background-color: var(--background);
+  border: 1px solid var(--text-color);
+  color: var(--text-color);
+  border-radius: 5px;
+  padding: 5px;
+  margin: 5px;
+  outline: none;
+}
+
+/* Search Input Placeholder */
+.select2-container--default .select2-search--dropdown .select2-search__field::placeholder {
+  color: #777;
+}
+
+/* Search Input Focus State */
+.select2-container--default .select2-search--dropdown .select2-search__field:focus {
+  border-color: var(--cyan);
+}
+
+/* Disabled Selection */
+.select2-container--default.select2-container--disabled .select2-selection--single {
+  background-color: #333;
+  border-color: #555;
+  color: #777;
+  cursor: not-allowed;
+}
+#loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+  }
+
+  .spinner {
+      border: 8px solid rgba(255, 255, 255, 0.3);
+      border-top: 8px solid #ffffff;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+  }
 @media screen and (max-width: 1000px) {
   main {
     position: relative;
@@ -286,7 +410,6 @@ main {
 
   /*when search bar hidden*/
   .searchContainer__hidden {
-    width: 100%;
     height: 0px;
   }
   .routeContainer__hidden,
@@ -375,13 +498,9 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator {
 .form__field:placeholder-shown ~ .form__label {
   font-size: 1.3rem;
   cursor: text;
-  top: 20px;
 }
 .form__label {
-  position: absolute;
-  top: 0;
   display: block;
-  transition: 0.2s;
   font-size: 1rem;
   color: #ffffff;
 }
@@ -394,10 +513,7 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator {
   border-image-slice: 1;
 }
 .form__field:focus ~ .form__label {
-  position: absolute;
-  top: 0;
   display: block;
-  transition: 0.2s;
   font-size: 1rem;
   color: var(--cyan);
   font-weight: 700;
@@ -762,7 +878,7 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator {
   top: 4px;
 }
 .rotateImg {
-  transform: rotate(0px);
+  transform: rotate(0);
 }
 .stopsContainer{
   display: none;

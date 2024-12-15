@@ -14,6 +14,9 @@ from .algorithm_settings import *
 from pathlib import Path
 import os
 import sys
+from enum import Enum
+import json
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -29,7 +32,7 @@ SECRET_KEY = 'django-insecure-shs(*a59%j9zr1r%$+84v0fl)b0scs9en*mg=$kwwm(cfu6d5l
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -55,6 +58,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'route_search.middleware.RequestCityMiddleware',
 ]
 
 ROOT_URLCONF = 'ebus.urls'
@@ -133,9 +137,9 @@ LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
 
 USE_I18N = True
-
+USE_ASCI=True
 USE_TZ = True
-
+USE_UNICODE_SLUGS = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
@@ -165,3 +169,14 @@ CACHES = {
 }
 
 CELERY_BROKER_URL = 'redis://localhost:6379'
+
+class CITY_ENUM(Enum):
+    pass
+
+# Dynamically create the Enum
+def generate_city_enum():
+    with open(CITIES_JSON_PATH, 'r', encoding='utf-8') as file:
+        cities_json = json.load(file)
+    return {city["name"]: city["name"].lower() for city in cities_json}
+
+CITY_ENUM = Enum('CITY_ENUM', generate_city_enum())

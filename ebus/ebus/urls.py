@@ -19,6 +19,6 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('route/', include('route_search.urls', namespace='route_search')),
+    path('', include('route_search.urls', namespace='route_search')),
     path('gtfs-realtime', include('gtfs_realtime.urls', namespace='gtfs_realtime')),
 ]

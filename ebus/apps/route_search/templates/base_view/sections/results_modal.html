@@ -24,9 +24,10 @@
 
     document.addEventListener('DOMContentLoaded', () => {
         document.body.addEventListener('click', function (event) {
-            if (event.target.classList.contains('solution')) {
-                current_solution = event.target.id;
-                handle_route_click(event.target.id)
+            const solutionElement = event.target.closest('.solution');
+            if (solutionElement) {
+                const current_solution = solutionElement.id;
+                handle_route_click(current_solution);
             }
         });
     });
@@ -56,12 +57,10 @@
 
         const departureDetailsSessionStorage = sessionStorage.getItem('departuresDetails');
 
-        if (departureDetailsSessionStorage) {
-            const departureDetails = JSON.parse(departureDetailsSessionStorage);
+        const departureDetails = JSON.parse(departureDetailsSessionStorage);
 
-            details = departureDetails[solution_id];
-            show_departure_details(details);
-        }
+        details = departureDetails[solution_id];
+        show_departure_details(details);
 
 
         show_vehicles(solution_id)
@@ -72,28 +71,22 @@
     const show_departure_details = (details) => {
         const departureDetailsContainer = document.getElementById('departureDetailsContent');
         departureDetailsContainer.innerHTML = '';
+        if (Object.keys(details).length > 0) {
+            Object.values(details).forEach(departureDiv => {
+                departureDetailsContainer.innerHTML += departureDiv;
+                document.getElementById('departureDetails').style.display = "flex";
 
-        // Append all departure details
-        Object.values(details).forEach(departureDiv => {
-            departureDetailsContainer.innerHTML += departureDiv;
-        });
-
-        document.getElementById('departureDetails').style.display = "flex";
-        document.getElementById("arrow-icon-hours").addEventListener("click", function () {
+                document.getElementById("arrow-icon-hours").addEventListener("click", function () {
+                    document.getElementById('departureDetails').style.display = "none";
+                });
+            });
+        } else {
             document.getElementById('departureDetails').style.display = "none";
-        });
-
+        }
     }
 
     const show_vehicles = (solution_id) => {
         const departureGTFSSessionStorage = sessionStorage.getItem('departuresGTFS');
-    const createDiv = (divClass, divId, divContent) => {
-        let div = document.createElement('div');
-        div.id = divId;
-        div.classList.add(divClass);
-        div.innerHTML = divContent;
-        return div;
-    }
 
         if (departureGTFSSessionStorage) {
             const departureGTFS = JSON.parse(departureGTFSSessionStorage);
