@@ -71,6 +71,7 @@ class AStarPlanner():
         self.discovered_stops = {}
         self.walk_times = {}
         self.estimates = {}
+        self.pace = user.pace if user is not None else WALKING_SETTINGS["PACE"],
 
         self.metrics = {
             'iterations': 0, #i
@@ -88,14 +89,13 @@ class AStarPlanner():
             'plan_accepting_time': 0,
             'extended_plans_initialization_time': 0,
             'prospecting_time': prospecting_time,
-            'pace': user.pace if user is not None else WALKING_SETTINGS["PACE"],
         }
 
         for near in self.prospect.near_destination:
-            self.walk_times[near.id] = int(near.walk_distance / self.metrics['pace'])
+            self.walk_times[near.id] = int(near.walk_distance / self.pace)
 
         for near in self.prospect.near_start:
-            walk_time = int(near.walk_distance / self.metrics['pace'])
+            walk_time = int(near.walk_distance / self.pace)
             dstop = self.discover_stop(near.id)
             plan = Plan.initial(near.id, start_time, walk_time)
             plan.walk_time = self.get_walk_time(near.id)
@@ -123,7 +123,7 @@ class AStarPlanner():
 
         if wt is None:
             distance = self.data.stops[stop_id].position.distance(self.prospect.destination)
-            wt = int(distance * WALKING_SETTINGS["DISTANCE_MULTIPLIER"] / self.metrics['pace'])
+            wt = int(distance * WALKING_SETTINGS["DISTANCE_MULTIPLIER"] / self.pace)
             self.walk_times[stop_id] = wt
 
         return wt
@@ -216,7 +216,7 @@ class AStarPlanner():
                 services = self.services,
                 time = fastest_known_plan.current_time,
                 transfer_time = transfer_time,
-                pace = self.metrics['pace'],
+                pace = self.pace,
             )
 
             end_time_get_trips = time.time()
