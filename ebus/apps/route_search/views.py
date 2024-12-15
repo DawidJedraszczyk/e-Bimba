@@ -86,6 +86,7 @@ class FindRouteView(View):
             _datetime.date(),
             time_to_seconds(_datetime.strftime("%H:%M:%S")),
             data.default_estimator,
+            user=request.user
         )
 
         for _ in range(5):

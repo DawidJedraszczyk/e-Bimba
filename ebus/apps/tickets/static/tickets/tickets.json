@@ -1,0 +1,57 @@
+{
+  "Poznań": {
+    "okazjonalne": {
+      "15": {
+        "Czas": "<15 minut",
+        "Strefa": "A+B+C+D",
+        "Normalny": 4,
+        "Ulgowy": 2,
+        "Waluta": "PLN"
+      },
+      "45": {
+        "Czas": "<45 minut",
+        "Strefa": "A+B+C+D",
+        "Normalny": 6,
+        "Ulgowy": 3,
+        "Waluta": "PLN"
+      },
+      "90": {
+        "Czas": "<90 minut",
+        "Strefa": "A+B+C+D",
+        "Normalny": 8,
+        "Ulgowy": 4,
+        "Waluta": "PLN"
+      }
+    },
+    "krótkookresowe": {
+      "24-godzinny": {
+        "Czas": "24 godziny",
+        "Strefa": "A",
+        "Normalny": 15,
+        "Ulgowy": 7.5,
+        "Waluta": "PLN"
+      },
+      "24-godzinny (A+B+C+D)": {
+        "Czas": "24 godziny",
+        "Strefa": "A+B+C+D",
+        "Normalny": 20,
+        "Ulgowy": 10,
+        "Waluta": "PLN"
+      },
+      "7-dobowy": {
+        "Czas": "7 dobowy",
+        "Strefa": "A",
+        "Normalny": 50,
+        "Ulgowy": 25,
+        "Waluta": "PLN"
+      },
+      "7-dobowy (A+B+C+D)": {
+        "Czas": "7 dobowy",
+        "Strefa": "A+B+C+D",
+        "Normalny": 80,
+        "Ulgowy": 40,
+        "Waluta": "PLN"
+      }
+    }
+  }
+}

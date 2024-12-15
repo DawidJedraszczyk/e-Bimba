@@ -4,13 +4,14 @@ from itertools import combinations
 import numba as nb
 import numba.types as nbt
 import time
+from django.contrib.auth.models import User
 
 from .data import Data
 from .discovered_stop import DiscoveredStop
 from .estimator import Estimate, Estimator, Instant
 from .plan import Plan, PlanTrip
 from .utils import *
-from ebus.algorithm_settings import *
+from ebus.custom_settings.algorithm_settings import *
 from transit.data.misc import Coords, INF_TIME, Services
 from transit.data.stops import Stops
 from transit.data.trips import Trips
@@ -42,14 +43,15 @@ class AStarPlanner():
         date: datetime.date,
         start_time,
         estimator=None,
+        user: User = None,
     ):
         start_init_time = time.time()
         self.prospect = data.prospector.prospect(
             start,
             destination,
-            start_radius=PROSPECTING_SETTINGS["START_RADIUS"],
+            start_radius=user.max_distance if user else PROSPECTING_SETTINGS["START_RADIUS"],
             start_min_count=PROSPECTING_SETTINGS["START_MIN_COUNT"],
-            destination_radius=PROSPECTING_SETTINGS["DESTINATION_RADIUS"],
+            destination_radius=user.max_distance if user else PROSPECTING_SETTINGS["DESTINATION_RADIUS"],
             destination_min_count=PROSPECTING_SETTINGS["DESTINATION_MIN_COUNT"],
         )
         prospecting_time = time.time() - start_init_time
@@ -86,13 +88,14 @@ class AStarPlanner():
             'plan_accepting_time': 0,
             'extended_plans_initialization_time': 0,
             'prospecting_time': prospecting_time,
+            'pace': user.pace if user is not None else WALKING_SETTINGS["PACE"],
         }
 
         for near in self.prospect.near_destination:
-            self.walk_times[near.id] = int(near.walk_distance / WALKING_SETTINGS["PACE"])
+            self.walk_times[near.id] = int(near.walk_distance / self.metrics['pace'])
 
         for near in self.prospect.near_start:
-            walk_time = int(near.walk_distance / WALKING_SETTINGS["PACE"])
+            walk_time = int(near.walk_distance / self.metrics['pace'])
             dstop = self.discover_stop(near.id)
             plan = Plan.initial(near.id, start_time, walk_time)
             plan.walk_time = self.get_walk_time(near.id)
@@ -120,7 +123,7 @@ class AStarPlanner():
 
         if wt is None:
             distance = self.data.stops[stop_id].position.distance(self.prospect.destination)
-            wt = int(distance * WALKING_SETTINGS["DISTANCE_MULTIPLIER"] / WALKING_SETTINGS["PACE"])
+            wt = int(distance * WALKING_SETTINGS["DISTANCE_MULTIPLIER"] / self.metrics['pace'])
             self.walk_times[stop_id] = wt
 
         return wt
@@ -213,7 +216,7 @@ class AStarPlanner():
                 services = self.services,
                 time = fastest_known_plan.current_time,
                 transfer_time = transfer_time,
-                pace = WALKING_SETTINGS["PACE"],
+                pace = self.metrics['pace'],
             )
 
             end_time_get_trips = time.time()

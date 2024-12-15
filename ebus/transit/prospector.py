@@ -10,7 +10,6 @@ from .data.misc import *
 from .data.stops import Stops
 from .osrm import *
 from .transitdb import TransitDb
-from ebus.algorithm_settings import WALKING_SETTINGS
 
 
 class NearStop(NamedTuple):

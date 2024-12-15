@@ -6,7 +6,7 @@ from .estimator import Estimate
 from .utils import time_to_seconds, seconds_to_time
 from transit.data.misc import INF_TIME
 from transit.prospector import NearStop
-from ebus.algorithm_settings import INCONVENIENCE_SETTINGS
+from ebus.custom_settings.algorithm_settings import INCONVENIENCE_SETTINGS
 
 
 class PlanTrip(NamedTuple):
