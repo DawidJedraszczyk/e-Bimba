@@ -1,12 +1,4 @@
-function setCurrentTime() {
-  var currentTime = new Date();
-  var warsawOffset = 1 * 60; // Warsaw is 1 hours ahead of UTC
-  currentTime.setMinutes(currentTime.getMinutes() + warsawOffset);
-  var dateString = currentTime.toISOString().slice(0, -8);
-  document.getElementById("datetime").value = dateString;
-}
 document.addEventListener("DOMContentLoaded", function() {
-  setCurrentTime()
   document.getElementById("search-btn").addEventListener("click", function() {
     document.getElementById("routeForm").style.display = "none";
     let loader = document.getElementById("loader")

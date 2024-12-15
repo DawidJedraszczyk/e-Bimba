@@ -77,7 +77,7 @@ class FindRouteView(View):
         start_name, start_latitude, start_longitude = json.loads(request.POST.get('start_location')).values()
         destination_name, destination_latitude, destination_longitude = json.loads(request.POST.get('goal_location')).values()
 
-        _datetime = datetime.datetime.strptime(request.POST.get('datetime'), '%Y-%m-%dT%H:%M')
+        _datetime = datetime.datetime.strptime(request.POST.get('datetime'), '%d-%m-%Y %H:%M')
 
         planner = AStarPlanner(
             data,
