@@ -18,7 +18,8 @@
                     <div class="card-body">
                         <p><strong>Email:</strong> {{ user.email }}</p>
                         <p><strong>Data dołączenia:</strong> {{ user.date_joined|date:"d-m-Y" }}</p>
-                        <a href="{% url 'account_change_password' %}" class="btn btn-outline-primary mt-3">Zmień hasło</a>
+                        <a href="{% url 'account_change_password' %}" class="btn btn-outline-primary mt-3">Zmień
+                            hasło</a>
                     </div>
                 </div>
             </div>
@@ -30,8 +31,9 @@
                     </div>
                     <div class="card-body">
                         <p><i class="bi bi-speedometer2"></i> Prędkość chodzenia: <b>{{ object.pace }} m / s</b></p>
-                        <p><i class="bi bi-person-walking"></i> Maksymalna odległość pieszo: <b>{{ object.max_distance }} metrów</b></p>
-                        <a href="{% url 'users:user_metrics'  %}" class="btn btn-outline-primary mt-3">Edytuj</a>
+                        <p><i class="bi bi-person-walking"></i> Maksymalna odległość pieszo:
+                            <b>{{ object.max_distance }} metrów</b></p>
+                        <a href="{% url 'users:user_metrics' %}" class="btn btn-outline-primary mt-3">Edytuj</a>
                     </div>
                 </div>
             </div>
@@ -40,50 +42,70 @@
         <div class="row mt-4">
             <div class="col-md-12">
                 <div class="card shadow-sm">
-                    <div class="card-header bg-success text-white">
-                        <h5 class="mb-0">Twoje zgłoszenia</h5>
+                    <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Twoje bilety</h5>
                     </div>
                     <div class="card-body">
-                        {% if tickets %}
-                            <table class="table table-hover">
-                                <thead class="table-dark">
-                                <tr>
-                                    <th>#</th>
-                                    <th>Tytuł zgłoszenia</th>
-                                    <th>Status</th>
-                                    <th>Data utworzenia</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                {% for ticket in tickets %}
+                        {% if user.tickets %}
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead class="table-dark">
                                     <tr>
-                                        <td>{{ forloop.counter }}</td>
-                                        <td>{{ ticket.title }}</td>
-                                        <td>
-                                                <span class="badge
-                                                    {% if ticket.status == 'otwarte' %}
-                                                        bg-warning
-                                                    {% elif ticket.status == 'zamknięte' %}
-                                                        bg-secondary
-                                                    {% else %}
-                                                        bg-success
-                                                    {% endif %}
-                                                ">
-                                                    {{ ticket.status }}
-                                                </span>
-                                        </td>
-                                        <td>{{ ticket.created_at|date:"d-m-Y" }}</td>
+                                        <th>Rodzaj biletu</th>
+                                        <th>Status</th>
+                                        <th>Data zakupu</th>
+                                        <th>Data zakończenia</th>
+                                        <th>Kod QR</th>
                                     </tr>
-                                {% endfor %}
-                                </tbody>
-                            </table>
+                                    </thead>
+                                    <tbody>
+                                    {% for ticket in user.tickets.all %}
+                                        <tr>
+                                            <td>{{ ticket.ticket_type }}</td>
+                                            <td>
+                                            <span class="badge
+                                                {% if ticket.status == 'otwarte' %}
+                                                    bg-warning
+                                                {% elif ticket.status == 'zamknięte' %}
+                                                    bg-secondary
+                                                {% else %}
+                                                    bg-success
+                                                {% endif %}
+                                            ">
+                                                {{ ticket.get_status_display }}
+                                            </span>
+                                            </td>
+                                            <td>{{ ticket.created_at|date:"d-m-Y H:i" }}</td>
+                                            <td>{{ ticket.ending_datetime|date:"d-m-Y H:i" }}</td>
+                                            <td>
+                                                <a href="{% url 'tickets:use_ticket' ticket.id %}"
+                                                   class="btn btn-secondary" data-toggle="tooltip" data-placement="top"
+                                                   title="Wygenerowanie kodu QR oznacza użycie biletu">
+                                                    <i class="bi bi-qr-code"></i>
+                                                    {% if ticket.status == 'in_use' %}
+                                                        Pokaż do kontroli
+                                                    {% elif ticket.status %}
+                                                        Bilet zakończony
+                                                    {% elif ticket.status == 'unused' %}
+                                                        Wygeneruj kod i wykorzystaj bilet
+                                                    {% endif %}
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
                         {% else %}
-                            <p class="text-muted">Nie masz jeszcze żadnych zgłoszeń.</p>
+                            <div class="alert alert-info text-center" role="alert">
+                                Nie masz jeszcze żadnych biletów.
+                            </div>
                         {% endif %}
                     </div>
                 </div>
             </div>
         </div>
+
     </div>
 
 

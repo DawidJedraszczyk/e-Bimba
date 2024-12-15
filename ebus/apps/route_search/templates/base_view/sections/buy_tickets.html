@@ -1,0 +1,66 @@
+
+<div class="modal fade" id="buyTicketModal" tabindex="-1" aria-labelledby="buyTicketModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title" id="buyTicketModalLabel">Kup bilet</h5>
+                <button type="button" class="btn-close text-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                {% for category, tickets in ticket_types_by_category.items %}
+                <div class="mb-4">
+                    <h5 class="text-success border-bottom pb-2">{{ category|upper }}</h5>
+                    <div class="row">
+                        {% for ticket in tickets %}
+                        <div class="col-md-4 mb-3">
+                            <div class="card shadow-sm">
+                                <div class="card-header bg-dark text-white">
+                                    <h6 class="mb-0">{{ ticket }}</h6>
+                                </div>
+                                <div class="card-body">
+                                    <p class="mb-1"><strong>Strefa:</strong> {{ ticket.zone }}</p>
+                                    <p class="mb-1"><strong>Cena </strong> {{ ticket.price }} {{ ticket.currency }}</p>
+                                    <div class="text-center mt-3 w-100">
+                                        <a href="{% url 'tickets:buy_ticket' ticket.id %}" class="btn btn-success btn-sm w-100">Kup bilet</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Swiper Initialization -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        new Swiper('.swiper-container', {
+            loop: true,
+            slidesPerView: 1,
+            spaceBetween: 10,
+            navigation: {
+                nextEl: '.swiper-button-next',
+                prevEl: '.swiper-button-prev',
+            },
+            pagination: {
+                el: '.swiper-pagination',
+                clickable: true,
+            },
+            breakpoints: {
+                768: {
+                    slidesPerView: 2,
+                    spaceBetween: 20,
+                },
+                1200: {
+                    slidesPerView: 3,
+                    spaceBetween: 30,
+                },
+            },
+        });
+    });
+</script>

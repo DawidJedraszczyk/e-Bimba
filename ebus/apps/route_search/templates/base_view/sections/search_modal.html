@@ -37,6 +37,10 @@
     </div>
     <button type="submit" id="search-btn" class="search-btn">Szukaj</button>
 </form>
+<a href="{% url 'users:user_detail' %}" class="user-icon"><i class="bi bi-person-circle"></i></a>
+
+<i class="bi bi-ticket-detailed ticket" id="buy-ticket"></i>
+
 <div id="loading-overlay" style="display: none;" class="flex-column justify-center align-center">
     <div class="spinner"></div>
     <span style="color: white; font-size: 30px;">Przetwarzanie...</span>
@@ -183,12 +187,13 @@
                 goalMarker = addDraggableMarker(goalMarker, lat, lon, false);
                 map.setView([lat, lon], 16);
             }
-        }).on("select2:clear", function () {
-            if (goalMarker) {
-                map.removeLayer(goalMarker);
-                goalMarker = null;
-            }
-        });
+        })
+            .on("select2:clear", function () {
+                if (goalMarker) {
+                    map.removeLayer(goalMarker);
+                    goalMarker = null;
+                }
+            });
 
         const form = document.getElementById('routeForm');
 
@@ -234,7 +239,14 @@
                 console.error('Error:', error);
             }
         });
-    })
-    ;
+
+        const buyTicketIcon = document.getElementById("buy-ticket");
+
+        buyTicketIcon.addEventListener("click", function () {
+            const modalElement = new bootstrap.Modal(document.getElementById("buyTicketModal"));
+            modalElement.show();
+        });
+
+    });
 </script>
 

@@ -1,22 +1,28 @@
 {
   "Poznań": {
     "okazjonalne": {
-      "15": {
+      "15 minutowy": {
         "Czas": "<15 minut",
+        "Timestamp": 15,
+        "TimestampType": "minutes",
         "Strefa": "A+B+C+D",
         "Normalny": 4,
         "Ulgowy": 2,
         "Waluta": "PLN"
       },
-      "45": {
+      "45 minutowy": {
         "Czas": "<45 minut",
+        "Timestamp": 45,
+        "TimestampType": "minutes",
         "Strefa": "A+B+C+D",
         "Normalny": 6,
         "Ulgowy": 3,
         "Waluta": "PLN"
       },
-      "90": {
+      "90 minutowy": {
         "Czas": "<90 minut",
+        "Timestamp": 90,
+        "TimestampType": "minutes",
         "Strefa": "A+B+C+D",
         "Normalny": 8,
         "Ulgowy": 4,
@@ -26,6 +32,8 @@
     "krótkookresowe": {
       "24-godzinny": {
         "Czas": "24 godziny",
+        "Timestamp": 1,
+        "TimestampType": "days",
         "Strefa": "A",
         "Normalny": 15,
         "Ulgowy": 7.5,
@@ -33,6 +41,8 @@
       },
       "24-godzinny (A+B+C+D)": {
         "Czas": "24 godziny",
+        "Timestamp": 1,
+        "TimestampType": "days",
         "Strefa": "A+B+C+D",
         "Normalny": 20,
         "Ulgowy": 10,
@@ -40,6 +50,8 @@
       },
       "7-dobowy": {
         "Czas": "7 dobowy",
+        "Timestamp": 7,
+        "TimestampType": "days",
         "Strefa": "A",
         "Normalny": 50,
         "Ulgowy": 25,
@@ -47,6 +59,8 @@
       },
       "7-dobowy (A+B+C+D)": {
         "Czas": "7 dobowy",
+        "Timestamp": 7,
+        "TimestampType": "days",
         "Strefa": "A+B+C+D",
         "Normalny": 80,
         "Ulgowy": 40,

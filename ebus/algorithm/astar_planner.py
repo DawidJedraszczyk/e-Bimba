@@ -4,7 +4,7 @@ from itertools import combinations
 import numba as nb
 import numba.types as nbt
 import time
-from django.contrib.auth.models import User
+from django.conf import settings
 
 from .data import Data
 from .discovered_stop import DiscoveredStop
@@ -34,6 +34,7 @@ class AStarPlanner():
     discovered_stops: dict[int, DiscoveredStop]
     walk_times: dict[int, int]
     estimates: dict[int, Estimate]
+    pace: float
 
     def __init__(
         self,
@@ -43,7 +44,7 @@ class AStarPlanner():
         date: datetime.date,
         start_time,
         estimator=None,
-        user: User = None,
+        user: settings.AUTH_USER_MODEL = None,
     ):
         start_init_time = time.time()
         self.prospect = data.prospector.prospect(
@@ -71,7 +72,7 @@ class AStarPlanner():
         self.discovered_stops = {}
         self.walk_times = {}
         self.estimates = {}
-        self.pace = user.pace if user is not None else WALKING_SETTINGS["PACE"],
+        self.pace = user.pace if user else WALKING_SETTINGS["PACE"]
 
         self.metrics = {
             'iterations': 0, #i
