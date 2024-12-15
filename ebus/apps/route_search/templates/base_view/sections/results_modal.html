@@ -24,9 +24,10 @@
 
     document.addEventListener('DOMContentLoaded', () => {
         document.body.addEventListener('click', function (event) {
-            if (event.target.classList.contains('solution')) {
-                current_solution = event.target.id;
-                handle_route_click(event.target.id)
+            const solutionElement = event.target.closest('.solution');
+            if (solutionElement) {
+                const current_solution = solutionElement.id;
+                handle_route_click(current_solution);
             }
         });
     });

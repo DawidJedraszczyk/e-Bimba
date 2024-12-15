@@ -8,12 +8,6 @@ import re
 CITY_REGEX = "|".join(
     re.escape(city.value) for city in settings.CITY_ENUM
 )
-# Iterate through the CITY_ENUM to print all cities
-for city in settings.CITY_ENUM:
-    print(city.name, city.value)
-
-print("Generated CITY_REGEX:", CITY_REGEX)
-
 
 app_name='route_search'
 urlpatterns = [
