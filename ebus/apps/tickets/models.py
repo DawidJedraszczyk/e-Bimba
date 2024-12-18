@@ -25,6 +25,8 @@ class TicketType(models.Model):
     discounted = models.BooleanField(default=False)
     currency = models.CharField(max_length=10)
 
+
+
     objects = models.Manager()
     active_tickets = ActiveManager()
 
@@ -48,11 +50,7 @@ class Ticket(models.Model):
     ending_datetime = models.DateTimeField(null=True, blank=True)
     qr_code = models.ImageField(upload_to='qr_codes/', blank=True, null=True)
 
-    STATUS_CHOICES = (
-        ('unused', 'Nie użyty'),
-        ('in_use', 'Aktywny'),
-        ('ended', 'Zakończony')
-    )
+
 
     def __str__(self):
         return f"Ticket {self.ticket_type.name} for {self.user.username}"
@@ -72,6 +70,13 @@ class Ticket(models.Model):
             return 'ended'
         else:
             return 'in_use'
+
+
+    STATUS_CHOICES = (
+        ('unused', 'Nie użyty'),
+        ('in_use', 'Aktywny'),
+        ('ended', 'Zakończony')
+    )
 
     @property
     def get_status_display(self):

@@ -2,6 +2,7 @@ from django.contrib.auth.models import AbstractUser
 from django.utils.text import slugify
 from django.db import models
 from django.conf import settings
+from django.utils.timezone import now
 
 
 class User(AbstractUser):
@@ -27,4 +28,7 @@ class User(AbstractUser):
         super().save(*args, **kwargs)
 
 
-
+    @property
+    def avaible_tickets(self):
+        date = now()
+        return self.tickets.exclude(ending_datetime__lte=date)

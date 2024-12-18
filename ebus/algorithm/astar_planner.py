@@ -5,7 +5,6 @@ import numba as nb
 import numba.types as nbt
 import time
 from django.conf import settings
-
 from .data import Data
 from .discovered_stop import DiscoveredStop
 from .estimator import Estimate, Estimator, Instant
@@ -50,9 +49,9 @@ class AStarPlanner():
         self.prospect = data.prospector.prospect(
             start,
             destination,
-            start_radius=user.max_distance if user else PROSPECTING_SETTINGS["START_RADIUS"],
+            start_radius=user.max_distance if user and user.is_authenticated else PROSPECTING_SETTINGS["START_RADIUS"],
             start_min_count=PROSPECTING_SETTINGS["START_MIN_COUNT"],
-            destination_radius=user.max_distance if user else PROSPECTING_SETTINGS["DESTINATION_RADIUS"],
+            destination_radius=user.max_distance if user and user.is_authenticated else PROSPECTING_SETTINGS["DESTINATION_RADIUS"],
             destination_min_count=PROSPECTING_SETTINGS["DESTINATION_MIN_COUNT"],
         )
         prospecting_time = time.time() - start_init_time
@@ -72,7 +71,7 @@ class AStarPlanner():
         self.discovered_stops = {}
         self.walk_times = {}
         self.estimates = {}
-        self.pace = user.pace if user else WALKING_SETTINGS["PACE"]
+        self.pace = user.pace if user and user.is_authenticated else WALKING_SETTINGS["PACE"]
 
         self.metrics = {
             'iterations': 0, #i

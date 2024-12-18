@@ -54,7 +54,7 @@
                             {% endif %}
                         </p>
 
-                        {% if not ticket.status == 'in_use' %}
+                        {% if ticket.status == 'unused' %}
                             <a href="{% url 'tickets:use_ticket' ticket.id %}" class="btn btn-secondary">
                                 Wykorzystaj bilet
                             </a>

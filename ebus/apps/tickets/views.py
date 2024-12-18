@@ -29,8 +29,6 @@ class PaymentSuccessView(LoginRequiredMixin, View):
         Ticket.objects.create(
             user=request.user,
             ticket_type=ticket_type,
-            status='unused',
-            ending_datetime=ticket_type.calculate_expiration(),
         )
 
         messages.success(request, f"Pomyślnie zakupiono bilet: {ticket_type.name}")
@@ -42,10 +40,11 @@ class UseTicket(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         ticket = get_object_or_404(Ticket, id=kwargs['id'])
 
-        ticket.ending_datetime = ticket.ticket_type.calculate_expiration()
-        ticket.save()
+        if not ticket.ending_datetime:
+            ticket.ending_datetime = ticket.ticket_type.calculate_expiration()
+            ticket.save()
 
-        messages.success(request, f"Pomyślnie wygenerowano kod QR. Bilet zakończy się: {ticket.ending_datetime}")
+            messages.success(request, f"Pomyślnie wygenerowano kod QR. Bilet zakończy się: {ticket.ending_datetime}")
 
         return redirect('tickets:ticket_detail', pk=ticket.id)
 
