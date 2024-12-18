@@ -11,6 +11,7 @@ import sys
 from .modules.views.functions import *
 from algorithm.astar_planner import AStarPlanner
 from algorithm.utils import time_to_seconds
+from tickets.models import TicketType, Ticket
 from transit.data.misc import Coords
 
 
@@ -62,9 +63,18 @@ class BaseView(TemplateView):
         if not data:
             raise Http404(f"No data found for city: {city_full_name}")
 
+        ticket_types = TicketType.active_tickets.all()
+        ticket_types_by_category = {}
+
+        for ticket in ticket_types:
+            if ticket.category not in ticket_types_by_category:
+                ticket_types_by_category[ticket.category] = []
+            ticket_types_by_category[ticket.category].append(ticket)
+
         context['city_id'] = city_id
         context['city_name'] = city_full_name
         context['center_coordinates'] = [*data.md.center_coords]
+        context['ticket_types_by_category'] = ticket_types_by_category
         return context
 
 
@@ -86,6 +96,7 @@ class FindRouteView(View):
             _datetime.date(),
             time_to_seconds(_datetime.strftime("%H:%M:%S")),
             data.default_estimator,
+            user=request.user
         )
 
         for _ in range(5):

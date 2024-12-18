@@ -7,7 +7,7 @@ from typing import Callable, NamedTuple
 from transit.data.misc import Point, DAY, INF_TIME
 from transit.data.stops import Stops
 from transit.prospector import Prospect
-from ebus.algorithm_settings import HEURISTIC_SETTINGS, WALKING_SETTINGS
+from ebus.custom_settings.algorithm_settings import HEURISTIC_SETTINGS, WALKING_SETTINGS
 
 
 class Estimate(NamedTuple):

@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block title %}Szczegóły biletu{% endblock %}
+
+{% block content %}
+    <div class="container py-5">
+        <div class="row">
+            <div class="col-md-12 text-center mb-4">
+                <h1 class="display-4">Szczegóły biletu</h1>
+                <p class="text-secondary">Informacje dotyczące wybranego biletu</p>
+                {% if ticket.qr_code %}
+                    <img src="{{ ticket.qr_code.url }}" alt="QR Code" class="img-thumbnail">
+                {% else %}
+                    <p>Kod QR nie został wygenerowany.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">Bilet: {{ ticket.ticket_type }}</h5>
+                    </div>
+                    <div class="card-body">
+                        <p><strong>Data zakupu:</strong> {{ ticket.created_at|date:"d-m-Y H:i" }}</p>
+                        <p><strong>Status:</strong>
+                            <span class="badge
+                            {% if ticket.status == 'unused' %}
+                                bg-warning
+                            {% elif ticket.status == 'in_use' %}
+                                bg-success
+                            {% elif ticket.status == 'ended' %}
+                                bg-danger
+                            {% endif %}
+                        ">
+                            {{ ticket.get_status_display }}
+                        </span>
+                        </p>
+                        <p><strong>Data zakończenia:</strong>
+                            {% if ticket.ending_datetime %}
+                                {{ ticket.ending_datetime|date:"d-m-Y H:i" }}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </p>
+                        <p><strong>Strefa:</strong> {{ ticket.ticket_type.zone }}</p>
+                        <p><strong>Cena:</strong> {{ ticket.ticket_type.price }} {{ ticket.ticket_type.currency }}</p>
+                        <p><strong>Rodzaj biletu:</strong>
+                            {% if ticket.ticket_type.discounted %}
+                                Ulgowy
+                            {% else %}
+                                Normalny
+                            {% endif %}
+                        </p>
+
+                        {% if ticket.status == 'unused' %}
+                            <a href="{% url 'tickets:use_ticket' ticket.id %}" class="btn btn-secondary">
+                                Wykorzystaj bilet
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

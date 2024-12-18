@@ -3,7 +3,7 @@ import numpy as np
 from pathlib import Path
 
 from algorithm.estimator import *
-from ebus.algorithm_settings import WALKING_SETTINGS
+from ebus.custom_settings.algorithm_settings import WALKING_SETTINGS
 
 
 def cluster_estimator(clustertimes: np.ndarray|Path) -> Estimator:

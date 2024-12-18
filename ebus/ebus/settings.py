@@ -9,13 +9,19 @@ https://docs.djangoproject.com/en/5.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
-from .algorithm_settings import *
+from .custom_settings.algorithm_settings import *
 
 from pathlib import Path
 import os
 import sys
 from enum import Enum
+from dotenv import load_dotenv
 import json
+
+from .custom_settings.user_settings import *
+from .custom_settings.email_settings import *
+
+load_dotenv()
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -37,6 +43,8 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
+    'allauth',
+    'allauth.account',
     'channels',
     'daphne',
     'rest_framework',
@@ -46,8 +54,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'crispy_forms',
+    "crispy_bootstrap5",
+    "users",
     'route_search',
-    'gtfs_realtime'
+    'gtfs_realtime',
+    'tickets',
 ]
 
 MIDDLEWARE = [
@@ -59,6 +71,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'route_search.middleware.RequestCityMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
 ]
 
 ROOT_URLCONF = 'ebus.urls'
@@ -66,7 +79,7 @@ ROOT_URLCONF = 'ebus.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -132,9 +145,11 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 
+SITE_ID = 1
+
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Warsaw'
 
 USE_I18N = True
 USE_ASCI=True
@@ -145,9 +160,15 @@ USE_UNICODE_SLUGS = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
-MEDIAL_URL = 'media/'
+MEDIA_URL = 'media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, '../media')
+
+
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+CRISPY_TEMPLATE_PACK = "bootstrap5"
+
 
 
 # Default primary key field type
