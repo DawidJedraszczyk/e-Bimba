@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block title %}Sukces zakupu{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="alert alert-success">
+        <h4 class="alert-heading">Zakup zakończony sukcesem!</h4>
+        <p>Pomyślnie zakupiono bilet: {{ ticket_type.name }}</p>
+        <hr>
+        <a href="{% url 'tickets:my_tickets' %}" class="btn btn-success">Przejdź do moich biletów</a>
+    </div>
+</div>
+{% endblock %}

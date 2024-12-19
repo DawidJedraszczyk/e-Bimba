@@ -16,9 +16,23 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from allauth.account.views import SignupView, LoginView, LogoutView, PasswordChangeView, PasswordResetView
+from django.views.i18n import set_language
+from django.conf import settings
+from django.conf.urls.static import static
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('route/', include('route_search.urls', namespace='route_search')),
+    path('', include('route_search.urls', namespace='route_search')),
     path('gtfs-realtime', include('gtfs_realtime.urls', namespace='gtfs_realtime')),
-]
+    path('accounts/', include('allauth.urls')),
+    path('użytkownik/', include('apps.users.urls')),
+    path('bilety/', include('tickets.urls')),
+    path('zarejestruj/', SignupView.as_view(), name='account_signup'),
+    path('zaloguj/', LoginView.as_view(), name='account_login'),
+    path('wyloguj/', LogoutView.as_view(), name='account_logout'),
+    path('zmień-hasło/', PasswordChangeView.as_view(), name='account_change_password'),
+    path('resetuj-hasło/', PasswordResetView.as_view(), name='account_reset_password'),
+    path('set_language/', set_language, name='set_language'),
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

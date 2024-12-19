@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+{% block title %}Profil użytkownika{% endblock %}
+{% block content %}
+    <div class="container py-5">
+        <div class="row">
+            <div class="col-md-12 text-center mb-4">
+                <h1 class="display-4">Profil użytkownika</h1>
+                <p class="text-secondary">Szczegóły dotyczące Twojego konta</p>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">Ustawienia użytkownika</h5>
+                    </div>
+                    <div class="card-body">
+                        <p><strong>Email:</strong> {{ user.email }}</p>
+                        <p><strong>Data dołączenia:</strong> {{ user.date_joined|date:"d-m-Y" }}</p>
+                        <a href="{% url 'account_change_password' %}" class="btn btn-outline-primary mt-3">Zmień
+                            hasło</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0">Inne ustawienia</h5>
+                    </div>
+                    <div class="card-body">
+                        <p><i class="bi bi-speedometer2"></i> Prędkość chodzenia: <b>{{ object.pace }} m / s</b></p>
+                        <p><i class="bi bi-person-walking"></i> Maksymalna odległość pieszo:
+                            <b>{{ object.max_distance }} metrów</b></p>
+                        <a href="{% url 'users:user_metrics' %}" class="btn btn-outline-primary mt-3">Edytuj</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Twoje bilety</h5>
+                    </div>
+                    <div class="card-body">
+                        {% if user.tickets %}
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead class="table-dark">
+                                    <tr>
+                                        <th>Rodzaj biletu</th>
+                                        <th>Status</th>
+                                        <th>Data zakupu</th>
+                                        <th>Data zakończenia</th>
+                                        <th>Kod QR</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for ticket in user.tickets.all %}
+                                        <tr>
+                                            <td>{{ ticket.ticket_type }}</td>
+                                            <td>
+                                            <span class="badge
+                                                {% if ticket.status == 'otwarte' %}
+                                                    bg-warning
+                                                {% elif ticket.status == 'zamknięte' %}
+                                                    bg-secondary
+                                                {% else %}
+                                                    bg-success
+                                                {% endif %}
+                                            ">
+                                                {{ ticket.get_status_display }}
+                                            </span>
+                                            </td>
+                                            <td>{{ ticket.created_at|date:"d-m-Y H:i" }}</td>
+                                            <td>{{ ticket.ending_datetime|date:"d-m-Y H:i" }}</td>
+                                            <td>
+                                                <a href="{% url 'tickets:use_ticket' ticket.id %}"
+                                                   class="btn btn-secondary" data-toggle="tooltip" data-placement="top"
+                                                   title="Wygenerowanie kodu QR oznacza użycie biletu">
+                                                    <i class="bi bi-qr-code"></i>
+                                                    {% if ticket.status == 'in_use' %}
+                                                        Pokaż do kontroli
+                                                    {% elif ticket.status == 'ended' %}
+                                                        Bilet zakończony
+                                                    {% elif ticket.status == 'unused' %}
+                                                        Wygeneruj kod i wykorzystaj bilet
+                                                    {% endif %}
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        {% else %}
+                            <div class="alert alert-info text-center" role="alert">
+                                Nie masz jeszcze żadnych biletów.
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+
+{% endblock %}

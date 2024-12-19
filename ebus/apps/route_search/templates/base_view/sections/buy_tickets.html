@@ -1,0 +1,154 @@
+<div class="modal fade" id="buyTicketModal" tabindex="-1" aria-labelledby="buyTicketModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title" id="buyTicketModalLabel">Bilety</h5>
+                <button type="button" class="btn-close text-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Toggle Buttons -->
+                <div class="d-flex justify-content-center mb-4">
+                    <button id="ownedTicketsBtn" class="btn btn-outline-success me-2">Twoje bilety</button>
+                    <button id="buyTicketsBtn" class="btn btn-outline-success">Kup nowy bilet</button>
+                </div>
+
+                <!-- Tickets Owned by User Section -->
+                <div id="ownedTicketsSection" class="d-none">
+                    <h5 class="text-success border-bottom pb-2">Twoje bilety</h5>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                            <tr>
+                                <th>Rodzaj biletu</th>
+                                <th>Strefa</th>
+                                <th>Data zakupu</th>
+                                <th>Data zakończenia</th>
+                                <th>Akcja</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for ticket in user.avaible_tickets %}
+                                <tr>
+                                    <td>{{ ticket.ticket_type.name }}</td>
+                                    <td>{{ ticket.ticket_type.zone }}</td>
+                                    <td>{{ ticket.created_at|date:"d-m-Y H:i" }}</td>
+                                    <td>{{ ticket.ending_datetime|date:"d-m-Y H:i" }}</td>
+                                    <td>
+                                        {% if ticket.ending_datetime %}
+                                            <!-- Trigger for Ticket Detail Modal -->
+                                            <button class="btn btn-info btn-sm" data-bs-toggle="modal"
+                                                    data-bs-target="#ticketDetailModal{{ ticket.id }}">
+                                                Wyświetl bilet do kontroli
+                                            </button>
+                                        {% else %}
+                                            <a href="{% url 'tickets:use_ticket' ticket.id %}"
+                                               class="btn btn-primary btn-sm">Użyj bilet</a>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Buy New Tickets Section -->
+                <div id="buyTicketsSection">
+                    <h5 class="text-success border-bottom pb-2">Kup nowy bilet</h5>
+                    {% for category, tickets in ticket_types_by_category.items %}
+                        <div class="mb-4">
+                            <h6 class="text-success border-bottom pb-2">{{ category|upper }}</h6>
+                            <div class="row">
+                                {% for ticket in tickets %}
+                                    <div class="col-md-4 mb-3">
+                                        <div class="card shadow-sm">
+                                            <div class="card-header bg-dark text-white">
+                                                <h6 class="mb-0">{{ ticket }}</h6>
+                                            </div>
+                                            <div class="card-body">
+                                                <p class="mb-1"><strong>Strefa:</strong> {{ ticket.zone }}</p>
+                                                <p class="mb-1">
+                                                    <strong>Cena:</strong> {{ ticket.price }} {{ ticket.currency }}</p>
+                                                <div class="text-center mt-3 w-100">
+                                                    <a href="{% url 'tickets:buy_ticket' ticket.id %}"
+                                                       class="btn btn-success btn-sm w-100">Kup bilet</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Nested Ticket Detail Modals -->
+{% for ticket in user.avaible_tickets %}
+    <div class="modal fade" id="ticketDetailModal{{ ticket.id }}" tabindex="-1"
+         aria-labelledby="ticketDetailModalLabel{{ ticket.id }}" aria-hidden="true" data-bs-backdrop="static"
+         data-bs-keyboard="false">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="ticketDetailModalLabel{{ ticket.id }}">
+                        Szczegóły Biletu
+                    </h5>
+                    <button type="button" class="btn-close text-white" data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p><strong>Rodzaj biletu:</strong> {{ ticket.ticket_type.name }}</p>
+                    <p><strong>Strefa:</strong> {{ ticket.ticket_type.zone }}</p>
+                    <p><strong>Data zakupu:</strong> {{ ticket.created_at|date:"d-m-Y H:i" }}</p>
+                    <p><strong>Data zakończenia:</strong> {{ ticket.ending_datetime|date:"d-m-Y H:i" }}</p>
+
+                    {% if ticket.ending_datetime %}
+                        <div>
+                            <p><strong>Pozostały czas:</strong>
+                                TODO
+                            </p>
+                        </div>
+                    {% endif %}
+
+                    {% if ticket.qr_code %}
+                        <div class="text-center mt-3">
+                            <img src="{{ ticket.qr_code.url }}" alt="Kod QR" class="img-thumbnail">
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Zamknij</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endfor %}
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const ownedTicketsBtn = document.getElementById('ownedTicketsBtn');
+        const buyTicketsBtn = document.getElementById('buyTicketsBtn');
+        const ownedTicketsSection = document.getElementById('ownedTicketsSection');
+        const buyTicketsSection = document.getElementById('buyTicketsSection');
+
+        // Toggle sections
+        ownedTicketsBtn.addEventListener('click', function () {
+            ownedTicketsSection.classList.remove('d-none');
+            buyTicketsSection.classList.add('d-none');
+        });
+
+        buyTicketsBtn.addEventListener('click', function () {
+            buyTicketsSection.classList.remove('d-none');
+            ownedTicketsSection.classList.add('d-none');
+        });
+
+        // Set default visibility
+        buyTicketsSection.classList.remove('d-none');
+        ownedTicketsSection.classList.add('d-none');
+        
+    });
+
+</script>

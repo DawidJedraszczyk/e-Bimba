@@ -1,4 +1,4 @@
-from ebus.algorithm_settings import PRINTING_SETTINGS
+from ebus.custom_settings.algorithm_settings import PRINTING_SETTINGS
 
 
 def time_to_seconds(time_str: str) -> int:

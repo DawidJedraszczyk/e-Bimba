@@ -1,97 +1,252 @@
 {% load static %}
 <div id="back-btn">
-  <img id="back-icon" src="{% static 'base_view/img/arrow_icon.svg' %}"/>
-  cofnij
+    <img id="back-icon" src="{% static 'base_view/img/arrow_icon.svg' %}"/>
+    cofnij
 </div>
-<form action="{% url 'route_search:FindRoute' %}" method="post" id="routeForm" class="routeContainer">
-  {% csrf_token %}
-  <div class="form__group field">
-    <input
-      type="text"
-      class="form__field"
-      name="start_location"
-      id="firstStation"
-      required
-    />
-    <label for="firstStation" class="form__label">Przystanek początkowy</label>
-    <span class="suggestion" id="suggestionFirstStation"></span>
-  </div>
-  <div class="form__group field">
-    <input
-      type="text"
-      class="form__field"
-      name="goal_location"
-      id="goalStation"
-      required
-    />
-    <label for="goalStation" class="form__label">Przystanek docelowy</label>
-    <span class="suggestion" id="suggestionSecondStation"></span>
-  </div>
-  <div class="form__group field">
-    <input
-      type="datetime-local"
-      class="form__field"
-      name="datetime"
-      id="datetime"
-      required
-    />
-    <label for="datetime" class="form__label">Godzina i dzień wyjazdu</label>
-  </div>
-  <button type="submit" id="search-btn" class="search-btn">Szukaj</button>
+<form action="{% url 'route_search:FindRoute' city_id %}" method="post" id="routeForm" class="routeContainer">
+    {% csrf_token %}
+    <div class="form__group field">
+        <label for="firstStation" class="form__label">Przystanek początkowy</label>
+        <select
+                class="form__field select2 mt-2"
+                name="start_location"
+                id="firstStation"
+                required
+                style="width: 100%;"
+        ></select>
+    </div>
+    <div class="form__group field">
+        <label for="goalStation" class="form__label">Przystanek docelowy</label>
+        <select
+                class="form__field select2 mt-2"
+                name="goal_location"
+                id="goalStation"
+                required
+                style="width: 100%;"
+        ></select>
+    </div>
+    <div class="form__group field">
+        <label for="datetime" class="form__label">Godzina i dzień wyjazdu</label>
+        <input
+                type="datetime-local"
+                class="form__field"
+                name="datetime"
+                id="datetime"
+                required
+        />
+    </div>
+    <button type="submit" id="search-btn" class="search-btn">Szukaj</button>
 </form>
+<a href="{% url 'users:user_detail' %}" class="user-icon"><i class="bi bi-person-circle"></i></a>
+
+<i class="bi bi-ticket-detailed ticket" id="buy-ticket"></i>
+
+<div id="loading-overlay" style="display: none;" class="flex-column justify-center align-center">
+    <div class="spinner"></div>
+    <span style="color: white; font-size: 30px;">Przetwarzanie...</span>
+</div>
 
 <script>
+    function toggleLoading(show) {
+        const loadingOverlay = document.getElementById("loading-overlay");
+        loadingOverlay.style.display = show ? "flex" : "none";
+    }
 
-  document.addEventListener("DOMContentLoaded", function() {
-    const form = document.getElementById('routeForm');
+    document.addEventListener("DOMContentLoaded", function () {
+        flatpickr("#datetime", {
+            enableTime: true,
+            dateFormat: "d-m-Y H:i",
+            time_24hr: true,
+            defaultDate: new Date(),
+            locale: "pl",
+            minDate: new Date(new Date().setDate(new Date().getDate() - 2)),
+            maxDate: new Date(new Date().setDate(new Date().getDate() + 7))
+        });
 
-    form.addEventListener('submit', async function (e) {
-        e.preventDefault();
 
-        const formData = new FormData(form);
-        formData.append('city', '{{city}}');
-        document.getElementById('foundRoutes').innerHTML = '<span id="loader" class="show"></span>';
+        const nominatimURL = "https://nominatim.openstreetmap.org/search";
+        let startMarker = null;
+        let goalMarker = null;
 
-        try {
-            const routeResponse = await fetch('{% url 'route_search:FindRoute' %}', {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-CSRFToken': formData.get('csrfmiddlewaretoken'),
+        const select2Options = {
+            ajax: {
+                url: nominatimURL,
+                dataType: "json",
+                delay: 250,
+                data: function (params) {
+                    const term = params.term.split(" ").join("+") || "";
+                    const city = "{{ city_name }}";
+
+                    return {
+                        q: `${term}+${city}`,
+                        format: "json",
+                        addressdetails: 1,
+                        extratags: 1
+                    };
                 },
+                processResults: function (data) {
+                    return {
+                        results: data.map(location => {
+                            let fullName = location.display_name;
+                            let shortName = fullName.split(",").slice(0, 2).join(",").trim();
+
+                            return {
+                                id: JSON.stringify({
+                                    name: shortName,
+                                    lat: location.lat,
+                                    lon: location.lon
+                                }),
+                                text: fullName
+                            };
+                        })
+                    };
+                },
+                cache: true
+            },
+            minimumInputLength: 2,
+            language: "pl",
+            placeholder: "Wybierz przystanek",
+            allowClear: true
+        };
+
+        function addDraggableMarker(marker, lat, lon, isStart) {
+            const icon = isStart ? locationIcon : locationIcon;
+            if (marker) {
+                map.removeLayer(marker);
+            }
+            marker = L.marker([lat, lon], {draggable: true, icon: icon}).addTo(map);
+
+            marker.on("dragend", async function (e) {
+                const newLatLng = marker.getLatLng();
+                const newLat = newLatLng.lat;
+                const newLon = newLatLng.lng;
+                toggleLoading(true);
+
+                try {
+                    // Reverse geocode to find the new place name
+                    const response = await fetch(
+                        `https://nominatim.openstreetmap.org/reverse?lat=${newLat}&lon=${newLon}&format=json`
+                    );
+                    const data = await response.json();
+                    const newPlaceName = data.display_name || "Unknown Location";
+
+                    // Update corresponding input fields and Select2 dropdown
+                    if (isStart) {
+                        updateSelect2("#firstStation", newPlaceName, newLat, newLon);
+                    } else {
+                        updateSelect2("#goalStation", newPlaceName, newLat, newLon);
+                    }
+                } catch (error) {
+                    console.error("Error fetching reverse geocoding data:", error);
+                    alert("Unable to fetch location data. Please try again.");
+                } finally {
+                    // Hide loading screen
+                    toggleLoading(false);
+                }
             });
 
-            const response = await routeResponse.json();
-            const routeData = response.html;
-            
-            const departureCoordinates = response.coords;
-            sessionStorage.setItem('departureCoordinates', JSON.stringify(departureCoordinates));
-            
-            
-
-            const departuresDetailsData = response.details;
-            sessionStorage.setItem('departuresDetails', JSON.stringify(departuresDetailsData))
-            
-            const departuresGtfsData = response.gtfs;
-            sessionStorage.setItem('departuresGTFS', JSON.stringify(departuresGtfsData))
-
-            
-            document.getElementById('foundRoutes').innerHTML = '';
-            document.getElementById('foundRoutes').innerHTML = '<span id="loader"></span>'
-            Object.keys(routeData).forEach(key => {
-                const solution = routeData[key];
-                document.getElementById('foundRoutes').innerHTML += solution['div']
-
-            });
-            current_solution = 0
-            draw_route(departureCoordinates[current_solution])
-            show_departure_details(departuresDetailsData[current_solution])
-            
-        } catch (error) {
-            console.error('Error:', error);
+            return marker;
         }
-    });
-});
-      
 
+        function updateSelect2(selectId, placeName, lat, lon) {
+            const selectElement = $(selectId);
+            const newOptionValue = JSON.stringify({name: placeName, lat: lat, lon: lon});
+
+            const optionExists = selectElement.find(`option[value='${newOptionValue}']`).length > 0;
+            if (!optionExists) {
+                const newOption = new Option(placeName, newOptionValue, true, true);
+                selectElement.append(newOption).trigger("change");
+            } else {
+                selectElement.val(newOptionValue).trigger("change");
+            }
+        }
+
+        $("#firstStation").select2(select2Options).on("change", function () {
+            const selectedValue = JSON.parse($(this).val());
+            if (selectedValue) {
+                const lat = parseFloat(selectedValue.lat);
+                const lon = parseFloat(selectedValue.lon);
+
+                startMarker = addDraggableMarker(startMarker, lat, lon, true);
+                map.setView([lat, lon], 16);
+            }
+        })
+            .on("select2:clear", function () {
+                if (startMarker) {
+                    map.removeLayer(startMarker);
+                    startMarker = null;
+                }
+            });
+
+        $("#goalStation").select2(select2Options).on("change", function () {
+            const selectedValue = JSON.parse($(this).val());
+            if (selectedValue) {
+                const lat = parseFloat(selectedValue.lat);
+                const lon = parseFloat(selectedValue.lon);
+
+                goalMarker = addDraggableMarker(goalMarker, lat, lon, false);
+                map.setView([lat, lon], 16);
+            }
+        })
+            .on("select2:clear", function () {
+                if (goalMarker) {
+                    map.removeLayer(goalMarker);
+                    goalMarker = null;
+                }
+            });
+
+        const form = document.getElementById('routeForm');
+
+        form.addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+
+            const formData = new FormData(form);
+            formData.append('city', '{{city_id}}');
+
+            try {
+                const routeResponse = await fetch('{% url 'route_search:FindRoute' city_id %}', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRFToken': formData.get('csrfmiddlewaretoken'),
+                    },
+                });
+
+                const response = await routeResponse.json();
+                const routeData = response.html;
+
+                const departureCoordinates = response.coords;
+                sessionStorage.setItem('departureCoordinates', JSON.stringify(departureCoordinates));
+
+                const departuresDetailsData = response.details;
+                sessionStorage.setItem('departuresDetails', JSON.stringify(departuresDetailsData));
+
+                const departuresGtfsData = response.gtfs;
+                sessionStorage.setItem('departuresGTFS', JSON.stringify(departuresGtfsData));
+
+                document.getElementById('foundRoutes').innerHTML = '';
+                Object.keys(routeData).forEach(key => {
+                    const solution = routeData[key];
+                    document.getElementById('foundRoutes').innerHTML += solution['div'];
+                });
+
+                current_solution = 0;
+                draw_route(departureCoordinates[current_solution]);
+                show_departure_details(departuresDetailsData[current_solution]);
+
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        });
+
+        const buyTicketIcon = document.getElementById("buy-ticket");
+
+        buyTicketIcon.addEventListener("click", function () {
+            const modalElement = new bootstrap.Modal(document.getElementById("buyTicketModal"));
+            modalElement.show();
+        });
+
+    });
 </script>
+
