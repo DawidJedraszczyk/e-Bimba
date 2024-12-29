@@ -110,10 +110,17 @@
         };
 
         function addDraggableMarker(marker, lat, lon, isStart) {
-            const icon = isStart ? locationIcon : locationIcon;
+            const icon = L.divIcon({
+                className: "custom-div-icon",
+                html: `<div class="marker-label">${isStart ? "Start" : "Cel"}</div>`,
+                iconSize: [50, 20],
+                iconAnchor: [25, 10],
+            });
+
             if (marker) {
                 map.removeLayer(marker);
             }
+
             marker = L.marker([lat, lon], {draggable: true, icon: icon}).addTo(map);
 
             marker.on("dragend", async function (e) {
