@@ -10,6 +10,8 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 from .custom_settings.algorithm_settings import *
+from .custom_settings.user_settings import *
+from .custom_settings.email_settings import *
 
 from pathlib import Path
 import os
@@ -18,8 +20,6 @@ from enum import Enum
 from dotenv import load_dotenv
 import json
 
-from .custom_settings.user_settings import *
-from .custom_settings.email_settings import *
 
 load_dotenv()
 
