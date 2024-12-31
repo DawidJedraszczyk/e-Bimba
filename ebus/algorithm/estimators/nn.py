@@ -8,7 +8,7 @@ from typing import Callable
 from algorithm.estimator import *
 from transit.data.misc import INF_TIME, Point
 from transit.data.stops import Stops
-
+from algorithm.utils import custom_print
 try:
   from ai_edge_litert.interpreter import Interpreter
 except:
@@ -47,7 +47,13 @@ def nn_estimator(file: Path, stops: Stops) -> Estimator:
     interpreter.set_tensor(in_idx, inputs)
     interpreter.invoke()
     output = interpreter.get_tensor(out_idx)
-    return int(output[0, 0])
+
+    result = output[0, 0]
+    if result > 21600:
+        custom_print("NN result big", 'WARNINGS')
+        return 21600
+    else:
+        return int(output[0, 0])
 
   return Estimator(estimate, 0)
 

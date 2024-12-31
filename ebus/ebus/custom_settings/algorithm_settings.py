@@ -46,4 +46,5 @@ PRINTING_SETTINGS = {
     'BENCHMARK' : True,
     'PRINT_PLAN' : True,
     'ALGORITHM_ITERATIONS' : True,
+    'WARNINGS' : True,
     }

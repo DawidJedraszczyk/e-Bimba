@@ -4,13 +4,24 @@ import os
 from pathlib import Path
 import sys
 
-ROOT = Path(__file__).parents[1]
+# Define the root directory of the project
+ROOT = Path(__file__).resolve().parents[1]
+
+# Add necessary directories to the Python path
 sys.path.extend([
-  str(ROOT / "benchmark"),
-  str(ROOT / "ebus"),
-  str(ROOT / "pipeline"),
+    str(ROOT / "benchmark"),
+    str(ROOT / "ebus"),
+    str(ROOT / "pipeline"),
 ])
 
+# Set up Django environment
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "ebus.settings")
+
+# Import Django and initialize it
+import django
+django.setup()
+
+# Import project-specific modules
 from algorithm.data import *
 from algorithm.estimator import *
 from components.SampleRoute import SampleRoute
@@ -19,6 +30,9 @@ from strategies.CustomBenchmark import CustomBenchmark
 from strategies.SmallAutoBenchmark import SmallAutoBenchmark
 from strategies.FullAutoBenchmark import FullAutoBenchmark
 from common import OSRM_PORT, start_osrm
+
+
+
 
 with start_osrm("pl_wielkopolskie"):
   os.environ["OSRM_URL_pl_wielkopolskie"] = f"http://localhost:{OSRM_PORT}"
