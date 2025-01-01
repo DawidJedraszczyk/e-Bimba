@@ -1,0 +1,1636 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-01-01 18:50+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:6
+#: apps/tickets/models.py:77
+msgid "Tickets"
+msgstr "티켓"
+
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:12
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:18
+#: apps/users/templates/users/user_detail.html:45
+msgid "Your Tickets"
+msgstr "귀하의 티켓"
+
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:13
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:58
+msgid "Buy New Ticket"
+msgstr "새로운 티켓 구매"
+
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:23
+#: apps/tickets/models.py:41 apps/tickets/models.py:69
+#: apps/tickets/templates/tickets/payment_page.html:14
+#: apps/users/templates/users/user_detail.html:53
+msgid "Ticket Type"
+msgstr "티켓 유형"
+
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:24
+#: apps/tickets/models.py:32
+msgid "Zone"
+msgstr "존"
+
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:25
+#: apps/users/templates/users/user_detail.html:55
+msgid "Purchase Date"
+msgstr "구매 날짜"
+
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:26
+#: apps/users/templates/users/user_detail.html:56
+msgid "Ending Date"
+msgstr "종료일"
+
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:27
+msgid "Action"
+msgstr "행동"
+
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:42
+msgid "View Ticket for Inspection"
+msgstr "검사를 위해 티켓 보기"
+
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:46
+#: apps/tickets/templates/tickets/ticket_detail.html:60
+msgid "Use Ticket"
+msgstr "티켓 사용"
+
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:70
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:105
+#: apps/tickets/templates/tickets/ticket_detail.html:48
+msgid "Zone:"
+msgstr "존:"
+
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:72
+#: apps/tickets/templates/tickets/ticket_detail.html:49
+msgid "Price:"
+msgstr "가격:"
+
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:75
+msgid "Buy Ticket"
+msgstr "티켓 구매"
+
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:98
+#: apps/tickets/templates/tickets/ticket_detail.html:4
+#: apps/tickets/templates/tickets/ticket_detail.html:10
+msgid "Ticket Details"
+msgstr "티켓 세부 정보"
+
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:104
+#: apps/tickets/templates/tickets/ticket_detail.html:50
+msgid "Ticket Type:"
+msgstr "티켓 유형:"
+
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:106
+#: apps/tickets/templates/tickets/ticket_detail.html:27
+msgid "Purchase Date:"
+msgstr "구매 날짜:"
+
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:107
+#: apps/tickets/templates/tickets/ticket_detail.html:41
+msgid "Ending Date:"
+msgstr "종료일:"
+
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:111
+msgid "Remaining Time:"
+msgstr "남은 시간:"
+
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:119
+#: apps/tickets/models.py:72
+#: apps/tickets/templates/tickets/ticket_detail.html:13
+#: apps/users/templates/users/user_detail.html:57
+msgid "QR Code"
+msgstr "QR 코드"
+
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:124
+msgid "Close"
+msgstr "닫다"
+
+#: apps/route_search/templates/base_view/sections/choose_city.html:4
+#: apps/route_search/templates/choose_city_view/index.html:4
+#: apps/route_search/templates/choose_city_view/index.html:8
+msgid "Choose a city"
+msgstr "도시를 선택하세요"
+
+#: apps/route_search/templates/base_view/sections/choose_language.html:4
+#: templates/header.html:20
+msgid "Language"
+msgstr "언어"
+
+#: apps/route_search/templates/base_view/sections/map.html:84
+#: apps/route_search/templates/base_view/sections/search_modal.html:13
+#: apps/route_search/templates/base_view/sections/search_modal.html:121
+msgid "Start"
+msgstr "시작"
+
+#: apps/route_search/templates/base_view/sections/map.html:93
+msgid "First stop"
+msgstr "첫 번째 정거장"
+
+#: apps/route_search/templates/base_view/sections/map.html:104
+msgid "Last stop"
+msgstr "마지막 정거장"
+
+#: apps/route_search/templates/base_view/sections/map.html:114
+msgid "Destintion"
+msgstr "목적지"
+
+#: apps/route_search/templates/base_view/sections/results_modal.html:111
+msgid "Vehicle ID"
+msgstr "차량 ID"
+
+#: apps/route_search/templates/base_view/sections/results_modal.html:112
+msgid "Departure ID"
+msgstr "출발 ID"
+
+#: apps/route_search/templates/base_view/sections/results_modal.html:113
+msgid "Date"
+msgstr "날짜"
+
+#: apps/route_search/templates/base_view/sections/search_modal.html:4
+msgid "back"
+msgstr "뒤쪽에"
+
+#: apps/route_search/templates/base_view/sections/search_modal.html:23
+#: apps/route_search/templates/base_view/sections/search_modal.html:121
+msgid "Destination"
+msgstr "목적지"
+
+#: apps/route_search/templates/base_view/sections/search_modal.html:33
+msgid "Date and time of departure"
+msgstr "출발일시"
+
+#: apps/route_search/templates/base_view/sections/search_modal.html:42
+msgid "Search"
+msgstr "찾다"
+
+#: apps/route_search/templates/base_view/sections/search_modal.html:52
+msgid "Processing ..."
+msgstr "처리 중..."
+
+#: apps/route_search/templates/base_view/sections/search_modal.html:114
+msgid "Choose stop"
+msgstr "정류장을 선택하세요"
+
+#: apps/route_search/templates/base_view/sections/search_modal.html:144
+msgid "Unknown Location"
+msgstr "알 수 없는 위치"
+
+#: apps/route_search/templates/base_view/sections/search_modal.html:154
+msgid "Unable to fetch location data. Please try again."
+msgstr "위치 데이터를 가져올 수 없습니다. 다시 시도하세요."
+
+#: apps/route_search/templates/choose_city_view/index.html:16
+msgid "Realtime Available"
+msgstr "실시간으로 이용 가능"
+
+#: apps/route_search/templates/choose_city_view/index.html:19
+msgid "Tickets Available"
+msgstr "티켓 가능"
+
+#: apps/route_search/views.py:55
+#, python-brace-format
+msgid "City '{city_full_name}' is not valid."
+msgstr "도시 '{city_full_name}'이 올바르지 않습니다."
+
+#: apps/route_search/views.py:61
+#, python-brace-format
+msgid "No data found for city: {city_full_name}"
+msgstr "도시 {city_full_name}에 대한 데이터를 찾을 수 없습니다."
+
+#: apps/route_search/views.py:97
+msgid "Invalid start or destination location data."
+msgstr "시작 또는 목적지 위치 데이터가 잘못되었습니다."
+
+#: apps/route_search/views.py:102
+msgid "Invalid date and time format."
+msgstr "날짜 및 시간 형식이 잘못되었습니다."
+
+#: apps/tickets/models.py:18
+msgid "Active"
+msgstr "활동적인"
+
+#: apps/tickets/models.py:19
+msgid "Name"
+msgstr "이름"
+
+#: apps/tickets/models.py:20
+msgid "City"
+msgstr "도시"
+
+#: apps/tickets/models.py:21
+msgid "Category"
+msgstr "범주"
+
+#: apps/tickets/models.py:22
+msgid "Duration"
+msgstr "지속"
+
+#: apps/tickets/models.py:23
+msgid "Timestamp"
+msgstr "타임스탬프"
+
+#: apps/tickets/models.py:27
+msgid "Minutes"
+msgstr "분"
+
+#: apps/tickets/models.py:28
+msgid "Days"
+msgstr "날"
+
+#: apps/tickets/models.py:30
+msgid "Timestamp Type"
+msgstr "타임스탬프 유형"
+
+#: apps/tickets/models.py:33
+msgid "Price"
+msgstr "가격"
+
+#: apps/tickets/models.py:34 apps/tickets/models.py:45
+#: apps/tickets/templates/tickets/ticket_detail.html:52
+msgid "Discounted"
+msgstr "할인된"
+
+#: apps/tickets/models.py:35
+msgid "Currency"
+msgstr "통화"
+
+#: apps/tickets/models.py:42
+msgid "Ticket Types"
+msgstr "티켓 유형"
+
+#: apps/tickets/models.py:45
+#: apps/tickets/templates/tickets/ticket_detail.html:54
+msgid "Regular"
+msgstr "정기적인"
+
+#: apps/tickets/models.py:57
+msgid "ID"
+msgstr "ID"
+
+#: apps/tickets/models.py:62
+#, fuzzy
+#| msgid "User Form"
+msgid "User"
+msgstr "사용자"
+
+#: apps/tickets/models.py:64
+#, fuzzy
+#| msgid "Create"
+msgid "Created At"
+msgstr "생성됨"
+
+#: apps/tickets/models.py:71
+msgid "Ending Datetime"
+msgstr "종료 날짜시간"
+
+#: apps/tickets/models.py:76
+#: apps/tickets/templates/tickets/ticket_detail.html:24
+msgid "Ticket"
+msgstr "표"
+
+#: apps/tickets/models.py:80
+#, python-brace-format
+msgid "Ticket {ticket_type} for {user}"
+msgstr "{user}의 티켓 {ticket_type}"
+
+#: apps/tickets/models.py:99
+#, fuzzy
+#| msgid "Unused codes"
+msgid "Unused"
+msgstr "사용하지 않음"
+
+#: apps/tickets/models.py:100
+msgid "In Use"
+msgstr "사용 중"
+
+#: apps/tickets/models.py:101
+msgid "Ended"
+msgstr "종료됨"
+
+#: apps/tickets/models.py:106
+#, fuzzy
+#| msgid "Unknown Account"
+msgid "Unknown"
+msgstr "알려지지 않은"
+
+#: apps/tickets/templates/tickets/payment_page.html:7
+msgid "Dummy Payment Gateway"
+msgstr "더미 결제 게이트웨이"
+
+#: apps/tickets/templates/tickets/payment_page.html:12
+msgid "Payment for Ticket"
+msgstr "티켓 결제"
+
+#: apps/tickets/templates/tickets/payment_page.html:13
+msgid "Amount"
+msgstr "양"
+
+#: apps/tickets/templates/tickets/payment_page.html:17
+#, fuzzy
+#| msgid "Primary"
+msgid "Pay"
+msgstr "지불하다"
+
+#: apps/tickets/templates/tickets/payment_success.html:3
+msgid "Purchase Success"
+msgstr "구매 성공"
+
+#: apps/tickets/templates/tickets/payment_success.html:8
+#, fuzzy
+#| msgid "Password successfully set."
+msgid "Purchase completed successfully!"
+msgstr "구매가 성공적으로 완료되었습니다!"
+
+#: apps/tickets/templates/tickets/payment_success.html:9
+msgid "You have successfully purchased the ticket:"
+msgstr "티켓을 성공적으로 구매하셨습니다:"
+
+#: apps/tickets/templates/tickets/payment_success.html:11
+msgid "Go to My Tickets"
+msgstr "내 티켓으로 이동"
+
+#: apps/tickets/templates/tickets/ticket_detail.html:11
+msgid "Information about the selected ticket"
+msgstr "선택한 티켓에 대한 정보"
+
+#: apps/tickets/templates/tickets/ticket_detail.html:15
+#, fuzzy
+#| msgid "A new set of recovery codes has been generated."
+msgid "QR Code has not been generated."
+msgstr "QR 코드가 생성되지 않았습니다."
+
+#: apps/tickets/templates/tickets/ticket_detail.html:28
+msgid "Status:"
+msgstr "상태:"
+
+#: apps/tickets/urls.py:9
+msgid "zakup-bilet/<str:ticket_type_id>/"
+msgstr "티켓 구매/<str:ticket_type_id>/"
+
+#: apps/tickets/urls.py:12
+msgid "pomyślna-płatność/<int:ticket_type_id>/"
+msgstr "pomyślna-płatność/<int:ticket_type_id>/"
+
+#: apps/tickets/urls.py:15
+msgid "użyj-biletu/<uuid:id>/"
+msgstr "użyj-biletu/<uuid:id>/"
+
+#: apps/tickets/urls.py:18
+msgid "bilet/<uuid:pk>/"
+msgstr "빌렛/<uuid:pk>/"
+
+#: apps/tickets/views.py:36
+#, python-brace-format
+msgid "Successfully purchased ticket: {ticket_type.name}"
+msgstr "티켓을 성공적으로 구매했습니다: {ticket_type.name}"
+
+#: apps/tickets/views.py:52
+#, python-brace-format
+msgid ""
+"QR code successfully generated. The ticket will expire: "
+"{ticket.ending_datetime}"
+msgstr "QR 코드가 성공적으로 생성되었습니다. 티켓이 만료됩니다: {ticket.ending_datetime}"
+
+#: apps/users/models.py:11
+#| msgid "Walking Speed:"
+msgid "Walking speed [m/s]"
+msgstr "보행속도 [m/s]"
+
+#: apps/users/models.py:12
+#| msgid "Maximum Walking Distance:"
+msgid "Maximal walking distance [m]"
+msgstr "최대 도보 거리 [m]"
+
+#: apps/users/templates/users/user_detail.html:3
+#: apps/users/templates/users/user_detail.html:8
+#, fuzzy
+#| msgid "Profile"
+msgid "User Profile"
+msgstr "사용자 프로필"
+
+#: apps/users/templates/users/user_detail.html:9
+msgid "Details about your account"
+msgstr "귀하의 계정에 대한 세부 정보"
+
+#: apps/users/templates/users/user_detail.html:17
+msgid "User Settings"
+msgstr "사용자 설정"
+
+#: apps/users/templates/users/user_detail.html:20
+#, fuzzy
+#| msgid "Add Email"
+msgid "Email:"
+msgstr "이메일:"
+
+#: apps/users/templates/users/user_detail.html:21
+msgid "Date Joined:"
+msgstr "가입 날짜:"
+
+#: apps/users/templates/users/user_detail.html:22
+#: templates/account/password_change.html:4
+#: templates/account/password_change.html:8
+#: templates/account/password_change.html:20
+#: templates/account/password_reset_from_key.html:5
+#: templates/account/password_reset_from_key.html:12
+#: templates/account/password_reset_from_key.html:30
+#: templates/account/password_reset_from_key_done.html:5
+#: templates/account/password_reset_from_key_done.html:9
+#: templates/allauth/layouts/base.html:37
+msgid "Change Password"
+msgstr "비밀번호 변경"
+
+#: apps/users/templates/users/user_detail.html:30
+#, fuzzy
+#| msgid "Other options"
+msgid "Other Settings"
+msgstr "기타 설정"
+
+#: apps/users/templates/users/user_detail.html:33
+msgid "Walking Speed:"
+msgstr "걷는 속도:"
+
+#: apps/users/templates/users/user_detail.html:34
+msgid "Maximum Walking Distance:"
+msgstr "최대 도보 거리:"
+
+#: apps/users/templates/users/user_detail.html:35
+#: templates/mfa/webauthn/authenticator_list.html:56
+msgid "Edit"
+msgstr "편집하다"
+
+#: apps/users/templates/users/user_detail.html:54
+msgid "Status"
+msgstr "상태"
+
+#: apps/users/templates/users/user_detail.html:82
+msgid "Generating a QR code will use the ticket."
+msgstr "QR 코드를 생성하면 티켓이 사용됩니다."
+
+#: apps/users/templates/users/user_detail.html:85
+msgid "Show for Inspection"
+msgstr "검사를 위해 보여주세요"
+
+#: apps/users/templates/users/user_detail.html:87
+msgid "Ticket Ended"
+msgstr "티켓 종료"
+
+#: apps/users/templates/users/user_detail.html:89
+msgid "Generate QR Code and Use Ticket"
+msgstr "QR 코드 생성 및 티켓 사용"
+
+#: apps/users/templates/users/user_detail.html:100
+msgid "You don't have any tickets yet."
+msgstr "아직 티켓이 없습니다."
+
+#: apps/users/templates/users/user_metrics_form.html:10
+msgid "User Form"
+msgstr "사용자 양식"
+
+#: apps/users/templates/users/user_metrics_form.html:29
+msgid "Submit"
+msgstr "제출하다"
+
+#: apps/users/urls.py:12
+msgid "adjust-parameters/"
+msgstr "조정-매개변수/"
+
+#: ebus/urls.py:36
+msgid "accounts/"
+msgstr "계정/"
+
+#: ebus/urls.py:39
+msgid "user/"
+msgstr "사용자/"
+
+#: ebus/urls.py:42
+msgid "tickets/"
+msgstr "티켓/"
+
+#: ebus/urls.py:45
+#, fuzzy
+#| msgid "sign up"
+msgid "signup/"
+msgstr "가입/"
+
+#: ebus/urls.py:46
+#, fuzzy
+#| msgid "Login"
+msgid "login/"
+msgstr "로그인/"
+
+#: ebus/urls.py:47
+#, fuzzy
+#| msgid "Logout"
+msgid "logout/"
+msgstr "로그아웃/"
+
+#: ebus/urls.py:48
+#, fuzzy
+#| msgid "Change Password"
+msgid "change-password/"
+msgstr "비밀번호 변경/"
+
+#: ebus/urls.py:49
+#, fuzzy
+#| msgid "Reset My Password"
+msgid "reset-password/"
+msgstr "비밀번호 재설정/"
+
+#: templates/account/account_inactive.html:5
+#: templates/account/account_inactive.html:9
+msgid "Account Inactive"
+msgstr "계정 비활성화"
+
+#: templates/account/account_inactive.html:12
+msgid "This account is inactive."
+msgstr "현재 이 계정은 비활성화되어 있습니다."
+
+#: templates/account/base_reauthenticate.html:5
+#: templates/account/base_reauthenticate.html:9
+msgid "Confirm Access"
+msgstr "접근 확인"
+
+#: templates/account/base_reauthenticate.html:12
+msgid "Please reauthenticate to safeguard your account."
+msgstr "계정을 보호하려면 다시 인증하세요."
+
+#: templates/account/base_reauthenticate.html:19
+#: templates/mfa/authenticate.html:37
+msgid "Alternative options"
+msgstr "대안 옵션"
+
+#: templates/account/confirm_email_verification_code.html:5
+msgid "Email Verification"
+msgstr "이메일 확인"
+
+#: templates/account/confirm_email_verification_code.html:9
+msgid "Enter Email Verification Code"
+msgstr "이메일 인증 코드를 입력하세요"
+
+#: templates/account/confirm_email_verification_code.html:15
+#: templates/account/confirm_login_code.html:15
+#, python-format
+msgid ""
+"We’ve sent a code to %(email_link)s. The code expires shortly, so please "
+"enter it soon."
+msgstr "%(email_link)s로 코드를 보냈습니다. 코드가 곧 만료되므로 곧 입력하세요."
+
+#: templates/account/confirm_email_verification_code.html:27
+#: templates/account/email_confirm.html:29
+#: templates/account/reauthenticate.html:18
+#: templates/mfa/reauthenticate.html:18
+msgid "Confirm"
+msgstr "확인하다"
+
+#: templates/account/confirm_email_verification_code.html:31
+#: templates/account/confirm_email_verification_code.html:35
+#: templates/account/confirm_login_code.html:32
+#: templates/mfa/authenticate.html:28 templates/mfa/authenticate.html:44
+#: templates/mfa/webauthn/signup_form.html:26
+msgid "Cancel"
+msgstr "취소"
+
+#: templates/account/confirm_login_code.html:5
+#: templates/account/confirm_login_code.html:27 templates/account/login.html:4
+#: templates/account/login.html:10 templates/account/login.html:32
+#: templates/account/request_login_code.html:5
+#: templates/allauth/layouts/base.html:68 templates/mfa/authenticate.html:6
+#: templates/mfa/authenticate.html:24 templates/openid/login.html:5
+#: templates/openid/login.html:9 templates/openid/login.html:20
+#: templates/socialaccount/login.html:5
+#: templates/socialaccount/login_redirect.html:5
+msgid "Sign In"
+msgstr "로그인"
+
+#: templates/account/confirm_login_code.html:9
+msgid "Enter Sign-In Code"
+msgstr "로그인 코드를 입력하세요"
+
+#: templates/account/email.html:4 templates/account/email.html:8
+msgid "Email Addresses"
+msgstr "이메일 주소"
+
+#: templates/account/email.html:12
+msgid "The following email addresses are associated with your account:"
+msgstr "귀하의 계정과 연결된 이메일 주소는 다음과 같습니다."
+
+#: templates/account/email.html:25
+msgid "Verified"
+msgstr "검증됨"
+
+#: templates/account/email.html:29
+msgid "Unverified"
+msgstr "검증되지 않음"
+
+#: templates/account/email.html:34
+msgid "Primary"
+msgstr "주요한"
+
+#: templates/account/email.html:44
+msgid "Make Primary"
+msgstr "기본으로 만들기"
+
+#: templates/account/email.html:47 templates/account/email_change.html:37
+msgid "Re-send Verification"
+msgstr "다시 보내기 확인"
+
+#: templates/account/email.html:50
+#: templates/mfa/webauthn/authenticator_confirm_delete.html:16
+#: templates/mfa/webauthn/authenticator_list.html:60
+#: templates/socialaccount/connections.html:40
+msgid "Remove"
+msgstr "제거하다"
+
+#: templates/account/email.html:59
+msgid "Add Email Address"
+msgstr "이메일 주소 추가"
+
+#: templates/account/email.html:70
+msgid "Add Email"
+msgstr "이메일 추가"
+
+#: templates/account/email.html:79
+msgid "Do you really want to remove the selected email address?"
+msgstr "선택한 이메일 주소를 제거하시겠습니까?"
+
+#: templates/account/email/account_already_exists_message.txt:4
+#, python-format
+msgid ""
+"You are receiving this email because you or someone else tried to signup for an\n"
+"account using email address:\n"
+"\n"
+"%(email)s\n"
+"\n"
+"However, an account using that email address already exists.  In case you have\n"
+"forgotten about this, please use the password forgotten procedure to recover\n"
+"your account:\n"
+"\n"
+"%(password_reset_url)s"
+msgstr ""
+"귀하 또는 다른 사람이 이메일 주소:\n"
+"\n"
+"%(email)s를 사용하여 계정에 가입하려고 했기 때문에 이 이메일을 받았습니다.\n"
+"\n"
+"하지만 해당 이메일 주소를 사용하는 계정이 이미 존재합니다. 이를 잊으셨다면 비밀번호 분실 절차를 사용하여 계정을 복구하세요.\n"
+"\n"
+"%(password_reset_url)s"
+
+#: templates/account/email/account_already_exists_subject.txt:3
+msgid "Account Already Exists"
+msgstr "계정이 이미 존재합니다"
+
+#: templates/account/email/base_message.txt:1
+#, python-format
+msgid "Hello from %(site_name)s!"
+msgstr "안녕하세요, %(site_name)s에서 인사드립니다!"
+
+#: templates/account/email/base_message.txt:5
+#, python-format
+msgid ""
+"Thank you for using %(site_name)s!\n"
+"%(site_domain)s"
+msgstr ""
+"%(site_name)s를 사용해주셔서 감사합니다!\n"
+"%(site_domain)s"
+
+#: templates/account/email/base_notification.txt:5
+msgid ""
+"You are receiving this mail because the following change was made to your "
+"account:"
+msgstr "귀하의 계정에 다음과 같은 변경 사항이 적용되어 이 메일을 받으셨습니다."
+
+#: templates/account/email/base_notification.txt:10
+#, python-format
+msgid ""
+"If you do not recognize this change then please take proper security precautions immediately. The change to your account originates from:\n"
+"\n"
+"- IP address: %(ip)s\n"
+"- Browser: %(user_agent)s\n"
+"- Date: %(timestamp)s"
+msgstr ""
+"이 변경 사항을 인식하지 못하는 경우 즉시 적절한 보안 조치를 취하십시오. 귀하의 계정에 대한 변경 사항은 다음에서 비롯됩니다.\n"
+"\n"
+"- IP 주소: %(ip)s\n"
+"- 브라우저: %(user_agent)s\n"
+"- 날짜: %(timestamp)s"
+
+#: templates/account/email/email_changed_message.txt:4
+#, python-format
+msgid "Your email has been changed from %(from_email)s to %(to_email)s."
+msgstr "귀하의 이메일이 %(from_email)s에서 %(to_email)s(으)로 변경되었습니다."
+
+#: templates/account/email/email_changed_subject.txt:3
+msgid "Email Changed"
+msgstr "이메일이 변경되었습니다"
+
+#: templates/account/email/email_confirm_message.txt:4
+msgid "Your email has been confirmed."
+msgstr "이메일이 확인되었습니다."
+
+#: templates/account/email/email_confirm_subject.txt:3
+msgid "Email Confirmation"
+msgstr "이메일 확인"
+
+#: templates/account/email/email_confirmation_message.txt:5
+#, python-format
+msgid ""
+"You're receiving this email because user %(user_display)s has given your "
+"email address to register an account on %(site_domain)s."
+msgstr ""
+"%(user_display)s 사용자가 %(site_domain)s에 계정을 등록하기 위해 귀하의 이메일 주소를 제공했기 때문에 이 "
+"이메일을 받으셨습니다."
+
+#: templates/account/email/email_confirmation_message.txt:7
+msgid ""
+"Your email verification code is listed below. Please enter it in your open "
+"browser window."
+msgstr "귀하의 이메일 확인 코드는 아래에 나열되어 있습니다. 열린 브라우저 창에 입력하세요."
+
+#: templates/account/email/email_confirmation_message.txt:9
+#, python-format
+msgid "To confirm this is correct, go to %(activate_url)s"
+msgstr "이것이 맞는지 확인하려면 %(activate_url)s로 이동하세요."
+
+#: templates/account/email/email_confirmation_subject.txt:3
+msgid "Please Confirm Your Email Address"
+msgstr "이메일 주소를 확인해 주세요"
+
+#: templates/account/email/email_deleted_message.txt:4
+#, python-format
+msgid "Email address %(deleted_email)s has been removed from your account."
+msgstr "이메일 주소 %(deleted_email)s이 귀하의 계정에서 제거되었습니다."
+
+#: templates/account/email/email_deleted_subject.txt:3
+msgid "Email Removed"
+msgstr "이메일 삭제됨"
+
+#: templates/account/email/login_code_message.txt:5
+msgid ""
+"Your sign-in code is listed below. Please enter it in your open browser "
+"window."
+msgstr "귀하의 로그인 코드는 아래에 나와 있습니다. 열려 있는 브라우저 창에 입력하세요."
+
+#: templates/account/email/login_code_message.txt:9
+#: templates/account/email/unknown_account_message.txt:6
+msgid "This mail can be safely ignored if you did not initiate this action."
+msgstr "귀하가 해당 작업을 시작하지 않았다면 이 메일은 무시해도 됩니다."
+
+#: templates/account/email/login_code_subject.txt:3
+msgid "Sign-In Code"
+msgstr "로그인 코드"
+
+#: templates/account/email/password_changed_message.txt:4
+msgid "Your password has been changed."
+msgstr "비밀번호가 변경되었습니다."
+
+#: templates/account/email/password_changed_subject.txt:3
+msgid "Password Changed"
+msgstr "비밀번호가 변경되었습니다"
+
+#: templates/account/email/password_reset_key_message.txt:4
+msgid ""
+"You're receiving this email because you or someone else has requested a password reset for your user account.\n"
+"It can be safely ignored if you did not request a password reset. Click the link below to reset your password."
+msgstr ""
+"귀하 또는 다른 사람이 사용자 계정에 대한 비밀번호 재설정을 요청했기 때문에 이 이메일을 받았습니다.\n"
+"비밀번호 재설정을 요청하지 않았다면 안전하게 무시할 수 있습니다. 아래 링크를 클릭하여 비밀번호를 재설정하세요."
+
+#: templates/account/email/password_reset_key_message.txt:9
+#, python-format
+msgid "In case you forgot, your username is %(username)s."
+msgstr "혹시 잊으셨다면, 귀하의 사용자 이름은 %(username)s입니다."
+
+#: templates/account/email/password_reset_key_subject.txt:3
+msgid "Password Reset Email"
+msgstr "비밀번호 재설정 이메일"
+
+#: templates/account/email/password_reset_message.txt:4
+msgid "Your password has been reset."
+msgstr "비밀번호가 재설정되었습니다."
+
+#: templates/account/email/password_reset_subject.txt:3
+#: templates/account/password_reset.html:4
+#: templates/account/password_reset.html:8
+#: templates/account/password_reset_done.html:6
+#: templates/account/password_reset_done.html:10
+msgid "Password Reset"
+msgstr "비밀번호 재설정"
+
+#: templates/account/email/password_set_message.txt:4
+msgid "Your password has been set."
+msgstr "비밀번호가 설정되었습니다."
+
+#: templates/account/email/password_set_subject.txt:3
+msgid "Password Set"
+msgstr "비밀번호 설정"
+
+#: templates/account/email/unknown_account_message.txt:4
+#, python-format
+msgid ""
+"You are receiving this email because you, or someone else, tried to access "
+"an account with email %(email)s. However, we do not have any record of such "
+"an account in our database."
+msgstr ""
+"귀하 또는 다른 누군가가 이메일 %(email)s로 계정에 접근하려고 했기 때문에 이 이메일을 받게 되었습니다. 그러나 저희 "
+"데이터베이스에는 그러한 계정에 대한 기록이 없습니다."
+
+#: templates/account/email/unknown_account_message.txt:8
+msgid "If it was you, you can sign up for an account using the link below."
+msgstr "만약 당신이 그랬다면, 아래 링크를 이용해 계정에 가입하실 수 있습니다."
+
+#: templates/account/email/unknown_account_subject.txt:3
+msgid "Unknown Account"
+msgstr "알 수 없는 계정"
+
+#: templates/account/email_change.html:5 templates/account/email_change.html:9
+msgid "Email Address"
+msgstr "이메일 주소"
+
+#: templates/account/email_change.html:21
+#: templates/account/email_change.html:29
+msgid "Current email"
+msgstr "현재 이메일"
+
+#: templates/account/email_change.html:31
+msgid "Changing to"
+msgstr "로 변경"
+
+#: templates/account/email_change.html:35
+msgid "Your email address is still pending verification."
+msgstr "귀하의 이메일 주소는 아직 검증 중입니다."
+
+#: templates/account/email_change.html:41
+msgid "Cancel Change"
+msgstr "변경 취소"
+
+#: templates/account/email_change.html:49
+msgid "Change to"
+msgstr "변경하다"
+
+#: templates/account/email_change.html:55
+#: templates/allauth/layouts/base.html:31
+msgid "Change Email"
+msgstr "이메일 변경"
+
+#: templates/account/email_confirm.html:4
+#: templates/account/email_confirm.html:8
+msgid "Confirm Email Address"
+msgstr "이메일 주소 확인"
+
+#: templates/account/email_confirm.html:14
+msgid "Please confirm that"
+msgstr "확인해주세요"
+
+#: templates/account/email_confirm.html:16
+msgid "is an email address for user"
+msgstr "사용자의 이메일 주소입니다"
+
+#: templates/account/email_confirm.html:34
+#, python-format
+msgid ""
+"\n"
+"                    Unable to confirm %(email)s because it is already confirmed by a different account.\n"
+"                "
+msgstr ""
+"\n"
+"                    %(email)s은 다른 계정에서 이미 확인되었기 때문에 확인할 수 없습니다.\n"
+"                "
+
+#: templates/account/email_confirm.html:42
+#, python-format
+msgid ""
+"\n"
+"                This email confirmation link expired or is invalid. Please <a href=\"%(email_url)s\">issue a new email confirmation request</a>.\n"
+"            "
+msgstr ""
+"\n"
+"                이 이메일 확인 링크가 만료되었거나 잘못되었습니다. <a href=\"%(email_url)s\">새로운 이메일 확인 요청을 발행하세요</a>.\n"
+"            "
+
+#: templates/account/login.html:15
+msgid "If you have not created an account yet, then please"
+msgstr "아직 계정을 생성하지 않으셨다면,"
+
+#: templates/account/login.html:16
+msgid "sign up"
+msgstr "가입하다"
+
+#: templates/account/login.html:17
+msgid "first"
+msgstr "첫 번째"
+
+#: templates/account/login.html:41
+msgid "Sign in with a passkey"
+msgstr "패스키로 로그인"
+
+#: templates/account/login.html:44 templates/account/request_login_code.html:9
+msgid "Mail me a sign-in code"
+msgstr "나에게 로그인 코드를 메일로 보내주세요"
+
+#: templates/account/logout.html:4 templates/account/logout.html:8
+#: templates/account/logout.html:21 templates/allauth/layouts/base.html:61
+#: templates/usersessions/usersession_list.html:64
+msgid "Sign Out"
+msgstr "로그아웃"
+
+#: templates/account/logout.html:11
+msgid "Are you sure you want to sign out?"
+msgstr "정말로 로그아웃하시겠습니까?"
+
+#: templates/account/messages/cannot_delete_primary_email.txt:2
+#, python-format
+msgid "You cannot remove your primary email address (%(email)s)."
+msgstr "기본 이메일 주소 (%(email)s)는 제거할 수 없습니다."
+
+#: templates/account/messages/email_confirmation_failed.txt:2
+#, python-format
+msgid ""
+"Unable to confirm %(email)s because it is already confirmed by a different "
+"account."
+msgstr "%(email)s은 다른 계정에서 이미 확인되었기 때문에 확인할 수 없습니다."
+
+#: templates/account/messages/email_confirmation_sent.txt:2
+#, python-format
+msgid "Confirmation email sent to %(email)s."
+msgstr "확인 이메일이 %(email)s로 전송되었습니다."
+
+#: templates/account/messages/email_confirmed.txt:2
+#, python-format
+msgid "You have confirmed %(email)s."
+msgstr "%(email)s을 확인하셨습니다."
+
+#: templates/account/messages/email_deleted.txt:2
+#, python-format
+msgid "Removed email address %(email)s."
+msgstr "이메일 주소 %(email)s이 삭제되었습니다."
+
+#: templates/account/messages/logged_in.txt:4
+#, python-format
+msgid "Successfully signed in as %(name)s."
+msgstr "%(name)s(으)로 성공적으로 로그인되었습니다."
+
+#: templates/account/messages/logged_out.txt:2
+msgid "You have signed out."
+msgstr "로그아웃되었습니다."
+
+#: templates/account/messages/login_code_sent.txt:2
+#, python-format
+msgid "A sign-in code has been mailed to %(email)s."
+msgstr "로그인 코드가 %(email)s로 전송되었습니다."
+
+#: templates/account/messages/password_changed.txt:2
+msgid "Password successfully changed."
+msgstr "비밀번호가 성공적으로 변경되었습니다."
+
+#: templates/account/messages/password_set.txt:2
+msgid "Password successfully set."
+msgstr "비밀번호가 성공적으로 설정되었습니다."
+
+#: templates/account/messages/primary_email_set.txt:2
+msgid "Primary email address set."
+msgstr "기본 이메일 주소가 설정되었습니다."
+
+#: templates/account/messages/unverified_primary_email.txt:2
+msgid "Your primary email address must be verified."
+msgstr "기본 이메일 주소를 인증해야 합니다."
+
+#: templates/account/password_change.html:22
+msgid "Forgot Password?"
+msgstr "비밀번호를 잊으셨나요?"
+
+#: templates/account/password_reset.html:14
+msgid ""
+"Forgotten your password? Enter your email address below, and we'll send you "
+"an email allowing you to reset it."
+msgstr "비밀번호를 잊으셨나요? 아래에 이메일 주소를 입력하시면, 비밀번호를 재설정할 수 있는 이메일을 보내드리겠습니다."
+
+#: templates/account/password_reset.html:25
+msgid "Reset My Password"
+msgstr "내 비밀번호 재설정"
+
+#: templates/account/password_reset.html:30
+msgid "Please contact us if you have any trouble resetting your password."
+msgstr "비밀번호 재설정에 문제가 있으면 저희에게 문의해 주세요."
+
+#: templates/account/password_reset_done.html:16
+msgid ""
+"We have sent you an email. If you have not received it please check your "
+"spam folder. Otherwise contact us if you do not receive it in a few minutes."
+msgstr ""
+"이메일을 보냈습니다. 받지 못하셨다면 스팸 폴더를 확인해 주세요. 그렇지 않으면 몇 분 안에 받지 못하셨다면 저희에게 연락해 주세요."
+
+#: templates/account/password_reset_from_key.html:10
+msgid "Bad Token"
+msgstr "나쁜 토큰"
+
+#: templates/account/password_reset_from_key.html:18
+#, python-format
+msgid ""
+"The password reset link was invalid, possibly because it has already been "
+"used.  Please request a <a href=\"%(passwd_reset_url)s\">new password "
+"reset</a>."
+msgstr ""
+"비밀번호 재설정 링크가 잘못되었습니다. 아마도 이미 사용되었을 수 있습니다. <a "
+"href=\"%(passwd_reset_url)s\">새 비밀번호 재설정</a>을 요청하세요."
+
+#: templates/account/password_reset_from_key_done.html:12
+msgid "Your password is now changed."
+msgstr "비밀번호가 변경되었습니다."
+
+#: templates/account/password_set.html:5 templates/account/password_set.html:9
+#: templates/account/password_set.html:21
+msgid "Set Password"
+msgstr "비밀번호 설정"
+
+#: templates/account/reauthenticate.html:6
+msgid "Enter your password:"
+msgstr "비밀번호를 입력하세요:"
+
+#: templates/account/request_login_code.html:12
+msgid ""
+"You will receive an email containing a special code for a password-free "
+"sign-in."
+msgstr "비밀번호 없이 로그인할 수 있는 특별 코드가 담긴 이메일을 받게 됩니다."
+
+#: templates/account/request_login_code.html:24
+msgid "Request Code"
+msgstr "요청 코드"
+
+#: templates/account/request_login_code.html:30
+msgid "Other sign-in options"
+msgstr "기타 로그인 옵션"
+
+#: templates/account/signup.html:4 templates/account/signup.html:9
+#: templates/account/signup.html:14
+#: templates/account/signup_by_passkey.html:29
+#: templates/allauth/layouts/base.html:74 templates/header.html:15
+#: templates/socialaccount/signup.html:9
+#: templates/socialaccount/signup.html:25
+msgid "Sign Up"
+msgstr "가입하기"
+
+#: templates/account/signup.html:18
+msgid "Already have an account? Log In!"
+msgstr "이미 계정이 있으신가요? 로그인하세요!"
+
+#: templates/account/signup_by_passkey.html:4
+#: templates/socialaccount/signup.html:5
+msgid "Signup"
+msgstr "가입하기"
+
+#: templates/account/signup_by_passkey.html:8
+msgid "Passkey Sign Up"
+msgstr "패스키 가입"
+
+#: templates/account/signup_by_passkey.html:17
+#, python-format
+msgid "Already have an account? Then please %(link)ssign in%(end_link)s."
+msgstr "이미 계정이 있으신가요? 그럼 %(link)s로그인%(end_link)s해 주세요."
+
+#: templates/account/signup_by_passkey.html:36
+msgid "Other options"
+msgstr "다른 옵션"
+
+#: templates/account/signup_closed.html:5
+#: templates/account/signup_closed.html:9
+msgid "Sign Up Closed"
+msgstr "가입 마감"
+
+#: templates/account/signup_closed.html:12
+msgid "We are sorry, but the sign up is currently closed."
+msgstr "죄송합니다. 현재 가입이 종료되었습니다."
+
+#: templates/account/snippets/already_logged_in.html:7
+msgid "Note"
+msgstr "메모"
+
+#: templates/account/snippets/already_logged_in.html:7
+#, python-format
+msgid "You are already logged in as %(user_display)s."
+msgstr "%(user_display)s로 이미 로그인되어 있습니다."
+
+#: templates/account/snippets/warn_no_email.html:3
+msgid "Warning:"
+msgstr "경고:"
+
+#: templates/account/snippets/warn_no_email.html:3
+msgid ""
+"You currently do not have any email address set up. You should really add an"
+" email address so you can receive notifications, reset your password, etc."
+msgstr "현재 이메일 주소가 설정되어 있지 않습니다. 알림을 받고, 비밀번호를 재설정하고, 등을 위해 이메일 주소를 추가해야 합니다."
+
+#: templates/account/verification_sent.html:5
+#: templates/account/verification_sent.html:9
+#: templates/account/verified_email_required.html:5
+#: templates/account/verified_email_required.html:9
+msgid "Verify Your Email Address"
+msgstr "이메일 주소를 확인하세요"
+
+#: templates/account/verification_sent.html:12
+msgid ""
+"We have sent an email to you for verification. Follow the link provided to "
+"finalize the signup process. If you do not see the verification email in "
+"your main inbox, check your spam folder. Please contact us if you do not "
+"receive the verification email within a few minutes."
+msgstr ""
+"귀하에게 검증을 위한 이메일을 보냈습니다. 제공된 링크를 따라 가입 절차를 마무리하세요. 메인 받은 편지함에 검증 이메일이 보이지 않으면"
+" 스팸 폴더를 확인하세요. 몇 분 안에 검증 이메일을 받지 못하면 저희에게 연락하세요."
+
+#: templates/account/verified_email_required.html:13
+msgid ""
+"This part of the site requires us to verify that\n"
+"you are who you claim to be. For this purpose, we require that you\n"
+"verify ownership of your email address. "
+msgstr ""
+"사이트의 이 부분에서는\n"
+"당신이 주장하는 사람인지 확인해야 합니다. 이를 위해\n"
+"당신의 이메일 주소 소유권을 확인해야 합니다."
+
+#: templates/account/verified_email_required.html:18
+msgid ""
+"We have sent an email to you for\n"
+"verification. Please click on the link inside that email. If you do not see the verification email in your main inbox, check your spam folder. Otherwise\n"
+"contact us if you do not receive it within a few minutes."
+msgstr ""
+"귀하에게\n"
+"확인을 위한 이메일을 보냈습니다. 해당 이메일 내의 링크를 클릭해 주세요. 메인 받은 편지함에 확인 이메일이 보이지 않으면 스팸 폴더를 확인하세요. 그렇지 않으면\n"
+"몇 분 안에 받지 못하면 저희에게 연락해 주세요."
+
+#: templates/account/verified_email_required.html:23
+#, python-format
+msgid ""
+"<strong>Note:</strong> you can still <a href=\"%(email_url)s\">change your "
+"email address</a>."
+msgstr ""
+"<strong>참고:</strong> 여전히 <a href=\"%(email_url)s\">이메일 주소를 변경</a>할 수 있습니다."
+
+#: templates/allauth/layouts/base.html:18
+msgid "Messages:"
+msgstr "메시지:"
+
+#: templates/allauth/layouts/base.html:25
+msgid "Menu:"
+msgstr "메뉴:"
+
+#: templates/allauth/layouts/base.html:43
+#: templates/socialaccount/connections.html:5
+#: templates/socialaccount/connections.html:9
+msgid "Account Connections"
+msgstr "계정 연결"
+
+#: templates/allauth/layouts/base.html:49 templates/mfa/authenticate.html:10
+#: templates/mfa/index.html:5 templates/mfa/index.html:9
+msgid "Two-Factor Authentication"
+msgstr "2단계 인증"
+
+#: templates/allauth/layouts/base.html:55
+#: templates/usersessions/usersession_list.html:6
+#: templates/usersessions/usersession_list.html:10
+msgid "Sessions"
+msgstr "세션"
+
+#: templates/header.html:11
+msgid "Profile"
+msgstr "윤곽"
+
+#: templates/header.html:12
+msgid "Logout"
+msgstr "로그아웃"
+
+#: templates/header.html:14
+msgid "Login"
+msgstr "로그인"
+
+#: templates/mfa/authenticate.html:13
+msgid ""
+"Your account is protected by two-factor authentication. Please enter an "
+"authenticator code:"
+msgstr "귀하의 계정은 2단계 인증으로 보호됩니다. 인증 코드를 입력하세요:"
+
+#: templates/mfa/authenticate.html:41
+#: templates/mfa/webauthn/reauthenticate.html:15
+msgid "Use a security key"
+msgstr "보안 키 사용"
+
+#: templates/mfa/email/recovery_codes_generated_message.txt:4
+msgid ""
+"A new set of Two-Factor Authentication recovery codes has been generated."
+msgstr "새로운 2단계 인증 복구 코드 세트가 생성되었습니다."
+
+#: templates/mfa/email/recovery_codes_generated_subject.txt:3
+msgid "New Recovery Codes Generated"
+msgstr "새로운 복구 코드 생성됨"
+
+#: templates/mfa/email/totp_activated_message.txt:4
+#: templates/mfa/messages/totp_activated.txt:2
+msgid "Authenticator app activated."
+msgstr "인증앱이 활성화되었습니다."
+
+#: templates/mfa/email/totp_activated_subject.txt:3
+msgid "Authenticator App Activated"
+msgstr "인증기 앱 활성화됨"
+
+#: templates/mfa/email/totp_deactivated_message.txt:4
+#: templates/mfa/messages/totp_deactivated.txt:2
+msgid "Authenticator app deactivated."
+msgstr "인증기 앱이 비활성화되었습니다."
+
+#: templates/mfa/email/totp_deactivated_subject.txt:3
+msgid "Authenticator App Deactivated"
+msgstr "인증기 앱 비활성화됨"
+
+#: templates/mfa/email/webauthn_added_message.txt:4
+msgid "A new security key has been added."
+msgstr "새로운 보안 키가 추가되었습니다."
+
+#: templates/mfa/email/webauthn_added_subject.txt:3
+msgid "Security Key Added"
+msgstr "보안 키 추가됨"
+
+#: templates/mfa/email/webauthn_removed_message.txt:4
+msgid "A security key has been removed."
+msgstr "보안 키가 제거되었습니다."
+
+#: templates/mfa/email/webauthn_removed_subject.txt:3
+msgid "Security Key Removed"
+msgstr "보안 키 제거됨"
+
+#: templates/mfa/index.html:14 templates/mfa/totp/base.html:4
+msgid "Authenticator App"
+msgstr "인증 앱"
+
+#: templates/mfa/index.html:19
+msgid "Authentication using an authenticator app is active."
+msgstr "인증 앱을 사용한 인증이 활성화되어 있습니다."
+
+#: templates/mfa/index.html:23
+msgid "An authenticator app is not active."
+msgstr "인증 앱이 활성화되어 있지 않습니다."
+
+#: templates/mfa/index.html:32 templates/mfa/totp/deactivate_form.html:24
+msgid "Deactivate"
+msgstr "비활성화"
+
+#: templates/mfa/index.html:36 templates/mfa/totp/activate_form.html:32
+msgid "Activate"
+msgstr "활성화"
+
+#: templates/mfa/index.html:45
+#: templates/mfa/webauthn/authenticator_list.html:8
+#: templates/mfa/webauthn/base.html:4
+msgid "Security Keys"
+msgstr "보안 키"
+
+#: templates/mfa/index.html:50
+#, python-format
+msgid "You have added %(count)s security key."
+msgid_plural "You have added %(count)s security keys."
+msgstr[0] ""
+msgstr[1] ""
+
+#: templates/mfa/index.html:54
+#: templates/mfa/webauthn/authenticator_list.html:12
+msgid "No security keys have been added."
+msgstr "보안 키가 추가되지 않았습니다."
+
+#: templates/mfa/index.html:62
+msgid "Manage"
+msgstr "관리하다"
+
+#: templates/mfa/index.html:67 templates/mfa/webauthn/add_form.html:18
+#: templates/mfa/webauthn/authenticator_list.html:70
+msgid "Add"
+msgstr "추가하다"
+
+#: templates/mfa/index.html:77 templates/mfa/recovery_codes/base.html:4
+#: templates/mfa/recovery_codes/generate.html:6
+#: templates/mfa/recovery_codes/index.html:6
+msgid "Recovery Codes"
+msgstr "복구 코드"
+
+#: templates/mfa/index.html:82 templates/mfa/recovery_codes/index.html:9
+#, python-format
+msgid ""
+"There is %(unused_count)s out of %(total_count)s recovery codes available."
+msgid_plural ""
+"There are %(unused_count)s out of %(total_count)s recovery codes available."
+msgstr[0] ""
+msgstr[1] ""
+
+#: templates/mfa/index.html:86
+msgid "No recovery codes set up."
+msgstr "복구 코드가 설정되지 않았습니다."
+
+#: templates/mfa/index.html:96
+msgid "View"
+msgstr "보다"
+
+#: templates/mfa/index.html:102
+msgid "Download"
+msgstr "다운로드"
+
+#: templates/mfa/index.html:110 templates/mfa/recovery_codes/generate.html:29
+msgid "Generate"
+msgstr "생성하다"
+
+#: templates/mfa/messages/recovery_codes_generated.txt:2
+msgid "A new set of recovery codes has been generated."
+msgstr "새로운 복구 코드 세트가 생성되었습니다."
+
+#: templates/mfa/messages/webauthn_added.txt:2
+msgid "Security key added."
+msgstr "보안 키가 추가되었습니다."
+
+#: templates/mfa/messages/webauthn_removed.txt:2
+msgid "Security key removed."
+msgstr "보안 키가 제거되었습니다."
+
+#: templates/mfa/reauthenticate.html:6
+msgid "Enter an authenticator code:"
+msgstr "인증 코드를 입력하세요:"
+
+#: templates/mfa/recovery_codes/generate.html:9
+msgid ""
+"You are about to generate a new set of recovery codes for your account."
+msgstr "귀하의 계정에 대한 새로운 복구 코드 세트를 생성하려고 합니다."
+
+#: templates/mfa/recovery_codes/generate.html:11
+msgid "This action will invalidate your existing codes."
+msgstr "이 작업을 수행하면 기존 코드가 무효화됩니다."
+
+#: templates/mfa/recovery_codes/generate.html:13
+msgid "Are you sure?"
+msgstr "정말이에요?"
+
+#: templates/mfa/recovery_codes/index.html:13
+msgid "Unused codes"
+msgstr "사용하지 않는 코드"
+
+#: templates/mfa/recovery_codes/index.html:25
+msgid "Download codes"
+msgstr "다운로드 코드"
+
+#: templates/mfa/recovery_codes/index.html:30
+msgid "Generate new codes"
+msgstr "새로운 코드 생성"
+
+#: templates/mfa/totp/activate_form.html:4
+#: templates/mfa/totp/activate_form.html:8
+msgid "Activate Authenticator App"
+msgstr "인증기 앱 활성화"
+
+#: templates/mfa/totp/activate_form.html:11
+msgid ""
+"To protect your account with two-factor authentication, scan the QR code "
+"below with your authenticator app. Then, input the verification code "
+"generated by the app below."
+msgstr ""
+"2단계 인증으로 계정을 보호하려면 인증 앱으로 아래 QR 코드를 스캔하세요. 그런 다음 앱에서 생성한 아래 확인 코드를 입력하세요."
+
+#: templates/mfa/totp/activate_form.html:21
+msgid "Authenticator secret"
+msgstr "인증자 비밀"
+
+#: templates/mfa/totp/activate_form.html:24
+msgid ""
+"You can store this secret and use it to reinstall your authenticator app at "
+"a later time."
+msgstr "이 비밀번호를 저장하여 나중에 인증 앱을 다시 설치하는 데 사용할 수 있습니다."
+
+#: templates/mfa/totp/deactivate_form.html:5
+#: templates/mfa/totp/deactivate_form.html:9
+msgid "Deactivate Authenticator App"
+msgstr "인증기 앱 비활성화"
+
+#: templates/mfa/totp/deactivate_form.html:12
+msgid ""
+"You are about to deactivate authenticator app based authentication. Are you "
+"sure?"
+msgstr "인증 앱 기반 인증을 비활성화하려고 합니다. 정말이신가요?"
+
+#: templates/mfa/webauthn/add_form.html:7
+msgid "Add Security Key"
+msgstr "보안 키 추가"
+
+#: templates/mfa/webauthn/authenticator_confirm_delete.html:6
+msgid "Remove Security Key"
+msgstr "보안 키 제거"
+
+#: templates/mfa/webauthn/authenticator_confirm_delete.html:9
+msgid "Are you sure you want to remove this security key?"
+msgstr "이 보안 키를 제거하시겠습니까?"
+
+#: templates/mfa/webauthn/authenticator_list.html:18
+msgid "Key"
+msgstr "열쇠"
+
+#: templates/mfa/webauthn/authenticator_list.html:21
+msgid "Usage"
+msgstr "용법"
+
+#: templates/mfa/webauthn/authenticator_list.html:33
+msgid "Passkey"
+msgstr "곁쇠"
+
+#: templates/mfa/webauthn/authenticator_list.html:37
+msgid "Security key"
+msgstr "보안 키"
+
+#: templates/mfa/webauthn/authenticator_list.html:40
+msgid "This key does not indicate whether it is a passkey."
+msgstr "이 키는 패스키인지 여부를 나타내지 않습니다."
+
+#: templates/mfa/webauthn/authenticator_list.html:41
+msgid "Unspecified"
+msgstr "지정되지 않음"
+
+#: templates/mfa/webauthn/authenticator_list.html:46
+#, python-format
+msgid "Added on %(created_at)s"
+msgstr "%(created_at)s에 추가됨"
+
+#: templates/mfa/webauthn/authenticator_list.html:48
+#, python-format
+msgid "Last used %(last_used)s"
+msgstr "마지막 사용 %(last_used)s"
+
+#: templates/mfa/webauthn/edit_form.html:7
+msgid "Edit Security Key"
+msgstr "보안 키 편집"
+
+#: templates/mfa/webauthn/edit_form.html:18
+msgid "Save"
+msgstr "구하다"
+
+#: templates/mfa/webauthn/signup_form.html:7
+msgid "Create Passkey"
+msgstr "패스키 생성"
+
+#: templates/mfa/webauthn/signup_form.html:10
+msgid ""
+"You are about to create a passkey for your account. As you can add "
+"additional keys later on, you can use a descriptive name to tell the keys "
+"apart."
+msgstr "계정에 대한 패스키를 만들려고 합니다. 나중에 키를 추가할 수 있으므로 설명적 이름을 사용하여 키를 구별할 수 있습니다."
+
+#: templates/mfa/webauthn/signup_form.html:21
+msgid "Create"
+msgstr "만들다"
+
+#: templates/mfa/webauthn/snippets/scripts.html:2
+msgid "This functionality requires JavaScript."
+msgstr "이 기능을 사용하려면 JavaScript가 필요합니다."
+
+#: templates/socialaccount/authentication_error.html:5
+#: templates/socialaccount/authentication_error.html:9
+msgid "Third-Party Login Failure"
+msgstr "타사 로그인 실패"
+
+#: templates/socialaccount/authentication_error.html:12
+msgid ""
+"An error occurred while attempting to login via your third-party account."
+msgstr "타사 계정을 통해 로그인을 시도하는 동안 오류가 발생했습니다."
+
+#: templates/socialaccount/connections.html:13
+msgid ""
+"You can sign in to your account using any of the following third-party "
+"accounts:"
+msgstr "다음 타사 계정을 사용하여 계정에 로그인할 수 있습니다."
+
+#: templates/socialaccount/connections.html:46
+msgid "You currently have no third-party accounts connected to this account."
+msgstr "현재 이 계정에 연결된 타사 계정이 없습니다."
+
+#: templates/socialaccount/connections.html:50
+msgid "Add a Third-Party Account"
+msgstr "타사 계정 추가"
+
+#: templates/socialaccount/email/account_connected_message.txt:4
+#, python-format
+msgid ""
+"A third-party account from %(provider)s has been connected to your account."
+msgstr "%(provider)s의 타사 계정이 귀하의 계정에 연결되었습니다."
+
+#: templates/socialaccount/email/account_connected_subject.txt:3
+msgid "Third-Party Account Connected"
+msgstr "제3자 계정 연결됨"
+
+#: templates/socialaccount/email/account_disconnected_message.txt:4
+#, python-format
+msgid ""
+"A third-party account from %(provider)s has been disconnected from your "
+"account."
+msgstr "%(provider)s의 타사 계정이 귀하의 계정에서 연결 해제되었습니다."
+
+#: templates/socialaccount/email/account_disconnected_subject.txt:3
+msgid "Third-Party Account Disconnected"
+msgstr "타사 계정 연결 해제됨"
+
+#: templates/socialaccount/login.html:10
+#, python-format
+msgid "Connect %(provider)s"
+msgstr "%(provider)s 연결"
+
+#: templates/socialaccount/login.html:13
+#, python-format
+msgid "You are about to connect a new third-party account from %(provider)s."
+msgstr "%(provider)s에서 새로운 타사 계정을 연결하려고 합니다."
+
+#: templates/socialaccount/login.html:17
+#, python-format
+msgid "Sign In Via %(provider)s"
+msgstr "%(provider)s를 통해 로그인"
+
+#: templates/socialaccount/login.html:20
+#, python-format
+msgid ""
+"You are about to sign in using a third-party account from %(provider)s."
+msgstr "%(provider)s의 타사 계정을 사용하여 로그인하려고 합니다."
+
+#: templates/socialaccount/login.html:27
+#: templates/socialaccount/login_redirect.html:10
+msgid "Continue"
+msgstr "계속하다"
+
+#: templates/socialaccount/login_cancelled.html:5
+#: templates/socialaccount/login_cancelled.html:9
+msgid "Login Cancelled"
+msgstr "로그인 취소됨"
+
+#: templates/socialaccount/login_cancelled.html:13
+#, python-format
+msgid ""
+"You decided to cancel logging in to our site using one of your existing "
+"accounts. If this was a mistake, please proceed to <a "
+"href=\"%(login_url)s\">sign in</a>."
+msgstr ""
+"기존 계정 중 하나를 사용하여 당사 사이트에 로그인하는 것을 취소하기로 결정했습니다. 실수였다면 <a "
+"href=\"%(login_url)s\">로그인</a>으로 진행하세요."
+
+#: templates/socialaccount/messages/account_connected.txt:2
+msgid "The third-party account has been connected."
+msgstr "타사 계정이 연결되었습니다."
+
+#: templates/socialaccount/messages/account_connected_other.txt:2
+msgid "The third-party account is already connected to a different account."
+msgstr "타사 계정이 이미 다른 계정에 연결되어 있습니다."
+
+#: templates/socialaccount/messages/account_disconnected.txt:2
+msgid "The third-party account has been disconnected."
+msgstr "타사 계정이 연결 해제되었습니다."
+
+#: templates/socialaccount/signup.html:12
+#, python-format
+msgid ""
+"You are about to use your %(provider_name)s account to login to\n"
+"%(site_name)s. As a final step, please complete the following form:"
+msgstr ""
+"%(provider_name)s 계정을 사용하여\n"
+"%(site_name)s에 로그인하려고 합니다. 마지막 단계로 다음 양식을 작성하세요."
+
+#: templates/socialaccount/snippets/login.html:10
+msgid "Or use a third-party"
+msgstr "또는 제3자를 사용하세요"
+
+#: templates/usersessions/messages/sessions_logged_out.txt:2
+msgid "Signed out of all other sessions."
+msgstr "다른 모든 세션에서 로그아웃되었습니다."
+
+#: templates/usersessions/usersession_list.html:23
+msgid "Started At"
+msgstr "시작"
+
+#: templates/usersessions/usersession_list.html:24
+msgid "IP Address"
+msgstr "IP 주소"
+
+#: templates/usersessions/usersession_list.html:25
+msgid "Browser"
+msgstr "브라우저"
+
+#: templates/usersessions/usersession_list.html:27
+msgid "Last seen at"
+msgstr "마지막으로 본 시간"
+
+#: templates/usersessions/usersession_list.html:47
+msgid "Current"
+msgstr "현재의"
+
+#: templates/usersessions/usersession_list.html:60
+msgid "Sign Out Other Sessions"
+msgstr "다른 세션에서 로그아웃"

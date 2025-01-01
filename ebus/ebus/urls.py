@@ -20,19 +20,35 @@ from allauth.account.views import SignupView, LoginView, LogoutView, PasswordCha
 from django.conf import settings
 from django.conf.urls.static import static
 from django.conf.urls.i18n import set_language
+from django.utils.translation import gettext_lazy as _
 
 urlpatterns = [
+    # Admin site
     path('admin/', admin.site.urls),
+
+    # Route Search App
     path('', include('route_search.urls', namespace='route_search')),
-    path('gtfs-realtime', include('gtfs_realtime.urls', namespace='gtfs_realtime')),
-    path('accounts/', include('allauth.urls')),
-    path('użytkownik/', include('apps.users.urls')),
-    path('bilety/', include('tickets.urls')),
-    path('zarejestruj/', SignupView.as_view(), name='account_signup'),
-    path('zaloguj/', LoginView.as_view(), name='account_login'),
-    path('wyloguj/', LogoutView.as_view(), name='account_logout'),
-    path('zmień-hasło/', PasswordChangeView.as_view(), name='account_change_password'),
-    path('resetuj-hasło/', PasswordResetView.as_view(), name='account_reset_password'),
+
+    # GTFS Realtime Integration
+    path('gtfs-realtime/', include('gtfs_realtime.urls', namespace='gtfs_realtime')),
+
+    # User Authentication (Allauth)
+    path(_('accounts/'), include('allauth.urls')),
+
+    # User-specific routes
+    path(_('user/'), include('apps.users.urls')),
+
+    # Tickets module
+    path(_('tickets/'), include('tickets.urls')),
+
+    # Authentication views with translated paths
+    path(_('signup/'), SignupView.as_view(), name='account_signup'),
+    path(_('login/'), LoginView.as_view(), name='account_login'),
+    path(_('logout/'), LogoutView.as_view(), name='account_logout'),
+    path(_('change-password/'), PasswordChangeView.as_view(), name='account_change_password'),
+    path(_('reset-password/'), PasswordResetView.as_view(), name='account_reset_password'),
+
+    # Language settings
     path('set_language/', set_language, name='set_language'),
     path("i18n/", include("django.conf.urls.i18n")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

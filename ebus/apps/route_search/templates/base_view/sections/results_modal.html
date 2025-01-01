@@ -1,4 +1,4 @@
-{% load static %}
+{% load i18n static %}
 
 <div id="foundRoutes">
   <span id="loader"></span>
@@ -108,9 +108,9 @@
                             iconAnchor: [12.5, 12.5], // Center the icon
                         }),
                     }).bindPopup(
-                        `<b>ID pojazdu:</b> ${vehicle.vehicle_id}<br>
-                     <b>ID odjazdu:</b> ${vehicle.route_id}<br>
-                     <b>Data:</b> ${vehicle.timestamp}`
+                        `<b>{% trans "Vehicle ID" %}:</b> ${vehicle.vehicle_id}<br>
+                     <b>{% trans "Departure ID" %}:</b> ${vehicle.route_id}<br>
+                     <b>{% trans "Date" %}:</b> ${vehicle.timestamp}`
                     );
 
                     // Add the marker to the map

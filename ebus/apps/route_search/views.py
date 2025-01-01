@@ -1,6 +1,8 @@
 import datetime
 from django.conf import settings
 from django.http import JsonResponse, Http404
+from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _
 from django.views import View
 from django.views.generic import TemplateView
 from geopy.geocoders import Nominatim
@@ -29,7 +31,7 @@ cities = load_cities_data()
 def get_city(request_path_city):
     for city in cities:
         for key, value in city.items():
-            if key =='name' and value.lower() == request_path_city:
+            if key == 'name' and value.lower() == request_path_city:
                 return city
 
 def load_city_data(city_id):
@@ -50,13 +52,13 @@ class BaseView(TemplateView):
 
         # Validate city against the Enum
         if city_full_name not in [city.value for city in settings.CITY_ENUM]:
-            raise Http404(f"City '{city_full_name}' is not valid.")
+            raise Http404(_(f"City '{city_full_name}' is not valid."))
 
         city = get_city(city_full_name)
         city_id = city['id']
         data = load_city_data(city_id)
         if not data:
-            raise Http404(f"No data found for city: {city_full_name}")
+            raise Http404(_(f"No data found for city: {city_full_name}"))
 
         ticket_types = TicketType.active_tickets.all()
         ticket_types_by_category = {}
@@ -80,7 +82,6 @@ class ChooseCityView(TemplateView):
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(**kwargs)
         context['cities'] = cities
-
         return context
 
 class FindRouteView(View):
@@ -89,10 +90,16 @@ class FindRouteView(View):
         city_id = kwargs['city_id']
         data = load_city_data(city_id)
 
-        start_name, start_latitude, start_longitude = json.loads(request.POST.get('start_location')).values()
-        destination_name, destination_latitude, destination_longitude = json.loads(request.POST.get('goal_location')).values()
+        try:
+            start_name, start_latitude, start_longitude = json.loads(request.POST.get('start_location')).values()
+            destination_name, destination_latitude, destination_longitude = json.loads(request.POST.get('goal_location')).values()
+        except (ValueError, KeyError):
+            return JsonResponse({'error': _('Invalid start or destination location data.')}, status=400)
 
-        _datetime = datetime.datetime.strptime(request.POST.get('datetime'), '%d-%m-%Y %H:%M')
+        try:
+            _datetime = datetime.datetime.strptime(request.POST.get('datetime'), '%d-%m-%Y %H:%M')
+        except ValueError:
+            return JsonResponse({'error': _('Invalid date and time format.')}, status=400)
 
         planner = AStarPlanner(
             data,

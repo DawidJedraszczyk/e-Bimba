@@ -1,9 +1,11 @@
 {% extends 'base.html' %}
-{% block title %}Wybierz miasto{% endblock %}
+{% load i18n %}
+
+{% block title %}{% trans "Choose a city" %}{% endblock %}
 
 {% block content %}
 <div class="container my-5">
-    <h1 class="text-center mb-4">Wybierz miasto</h1>
+    <h1 class="text-center mb-4">{% trans "Choose a city" %}</h1>
     <div class="list-group">
         {% for city in cities %}
             {% if city.available_on_website %}
@@ -11,10 +13,10 @@
                     {{ city.name }}
                     <div>
                         {% if city.realtime %}
-                            <i class="bi bi-broadcast text-success me-2" title="Realtime Available"></i>
+                            <i class="bi bi-broadcast text-success me-2" title="{% trans 'Realtime Available' %}"></i>
                         {% endif %}
                         {% if city.tickets %}
-                            <i class="bi bi-ticket-detailed text-warning" title="Tickets Available"></i>
+                            <i class="bi bi-ticket-detailed text-warning" title="{% trans 'Tickets Available' %}"></i>
                         {% endif %}
                     </div>
 

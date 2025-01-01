@@ -1,0 +1,1710 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-01-01 18:50+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);\n"
+
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:6
+#: apps/tickets/models.py:77
+msgid "Tickets"
+msgstr "Билеты"
+
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:12
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:18
+#: apps/users/templates/users/user_detail.html:45
+msgid "Your Tickets"
+msgstr "Ваши билеты"
+
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:13
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:58
+msgid "Buy New Ticket"
+msgstr "Купить новый билет"
+
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:23
+#: apps/tickets/models.py:41 apps/tickets/models.py:69
+#: apps/tickets/templates/tickets/payment_page.html:14
+#: apps/users/templates/users/user_detail.html:53
+msgid "Ticket Type"
+msgstr "Тип билета"
+
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:24
+#: apps/tickets/models.py:32
+msgid "Zone"
+msgstr "Зона"
+
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:25
+#: apps/users/templates/users/user_detail.html:55
+msgid "Purchase Date"
+msgstr "Дата покупки"
+
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:26
+#: apps/users/templates/users/user_detail.html:56
+msgid "Ending Date"
+msgstr "Дата окончания"
+
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:27
+msgid "Action"
+msgstr "Действие"
+
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:42
+msgid "View Ticket for Inspection"
+msgstr "Просмотреть тикет для осмотра"
+
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:46
+#: apps/tickets/templates/tickets/ticket_detail.html:60
+msgid "Use Ticket"
+msgstr "Использовать тикет"
+
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:70
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:105
+#: apps/tickets/templates/tickets/ticket_detail.html:48
+msgid "Zone:"
+msgstr "Зона:"
+
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:72
+#: apps/tickets/templates/tickets/ticket_detail.html:49
+msgid "Price:"
+msgstr "Цена:"
+
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:75
+msgid "Buy Ticket"
+msgstr "Купить билет"
+
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:98
+#: apps/tickets/templates/tickets/ticket_detail.html:4
+#: apps/tickets/templates/tickets/ticket_detail.html:10
+msgid "Ticket Details"
+msgstr "Подробности билета"
+
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:104
+#: apps/tickets/templates/tickets/ticket_detail.html:50
+msgid "Ticket Type:"
+msgstr "Тип билета:"
+
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:106
+#: apps/tickets/templates/tickets/ticket_detail.html:27
+msgid "Purchase Date:"
+msgstr "Дата покупки:"
+
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:107
+#: apps/tickets/templates/tickets/ticket_detail.html:41
+msgid "Ending Date:"
+msgstr "Дата окончания:"
+
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:111
+msgid "Remaining Time:"
+msgstr "Оставшееся время:"
+
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:119
+#: apps/tickets/models.py:72
+#: apps/tickets/templates/tickets/ticket_detail.html:13
+#: apps/users/templates/users/user_detail.html:57
+#, fuzzy
+#| msgid "Request Code"
+msgid "QR Code"
+msgstr "QR-код"
+
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:124
+msgid "Close"
+msgstr "Закрывать"
+
+#: apps/route_search/templates/base_view/sections/choose_city.html:4
+#: apps/route_search/templates/choose_city_view/index.html:4
+#: apps/route_search/templates/choose_city_view/index.html:8
+msgid "Choose a city"
+msgstr "Выберите город"
+
+#: apps/route_search/templates/base_view/sections/choose_language.html:4
+#: templates/header.html:20
+msgid "Language"
+msgstr "Язык"
+
+#: apps/route_search/templates/base_view/sections/map.html:84
+#: apps/route_search/templates/base_view/sections/search_modal.html:13
+#: apps/route_search/templates/base_view/sections/search_modal.html:121
+#, fuzzy
+#| msgid "Started At"
+msgid "Start"
+msgstr "Начинать"
+
+#: apps/route_search/templates/base_view/sections/map.html:93
+msgid "First stop"
+msgstr "Первая остановка"
+
+#: apps/route_search/templates/base_view/sections/map.html:104
+#, fuzzy
+#| msgid "Last seen at"
+msgid "Last stop"
+msgstr "Последняя остановка"
+
+#: apps/route_search/templates/base_view/sections/map.html:114
+msgid "Destintion"
+msgstr "Место назначения"
+
+#: apps/route_search/templates/base_view/sections/results_modal.html:111
+msgid "Vehicle ID"
+msgstr "Идентификатор транспортного средства"
+
+#: apps/route_search/templates/base_view/sections/results_modal.html:112
+msgid "Departure ID"
+msgstr "Идентификатор отправления"
+
+#: apps/route_search/templates/base_view/sections/results_modal.html:113
+msgid "Date"
+msgstr "Дата"
+
+#: apps/route_search/templates/base_view/sections/search_modal.html:4
+msgid "back"
+msgstr "назад"
+
+#: apps/route_search/templates/base_view/sections/search_modal.html:23
+#: apps/route_search/templates/base_view/sections/search_modal.html:121
+msgid "Destination"
+msgstr "Место назначения"
+
+#: apps/route_search/templates/base_view/sections/search_modal.html:33
+msgid "Date and time of departure"
+msgstr "Дата и время отправления"
+
+#: apps/route_search/templates/base_view/sections/search_modal.html:42
+msgid "Search"
+msgstr "Поиск"
+
+#: apps/route_search/templates/base_view/sections/search_modal.html:52
+msgid "Processing ..."
+msgstr "Обработка ..."
+
+#: apps/route_search/templates/base_view/sections/search_modal.html:114
+msgid "Choose stop"
+msgstr "Выбрать остановку"
+
+#: apps/route_search/templates/base_view/sections/search_modal.html:144
+#, fuzzy
+#| msgid "Unknown Account"
+msgid "Unknown Location"
+msgstr "Неизвестное местоположение"
+
+#: apps/route_search/templates/base_view/sections/search_modal.html:154
+msgid "Unable to fetch location data. Please try again."
+msgstr "Невозможно получить данные о местоположении. Попробуйте еще раз."
+
+#: apps/route_search/templates/choose_city_view/index.html:16
+msgid "Realtime Available"
+msgstr "Доступно в реальном времени"
+
+#: apps/route_search/templates/choose_city_view/index.html:19
+msgid "Tickets Available"
+msgstr "Билеты доступны"
+
+#: apps/route_search/views.py:55
+#, python-brace-format
+msgid "City '{city_full_name}' is not valid."
+msgstr "Город '{city_full_name}' недействителен."
+
+#: apps/route_search/views.py:61
+#, python-brace-format
+msgid "No data found for city: {city_full_name}"
+msgstr "Данные по городу: {city_full_name} не найдены"
+
+#: apps/route_search/views.py:97
+msgid "Invalid start or destination location data."
+msgstr "Неверные данные о местоположении отправления или назначения."
+
+#: apps/route_search/views.py:102
+msgid "Invalid date and time format."
+msgstr "Неверный формат даты и времени."
+
+#: apps/tickets/models.py:18
+#, fuzzy
+#| msgid "Activate"
+msgid "Active"
+msgstr "Активный"
+
+#: apps/tickets/models.py:19
+msgid "Name"
+msgstr "Имя"
+
+#: apps/tickets/models.py:20
+msgid "City"
+msgstr "Город"
+
+#: apps/tickets/models.py:21
+msgid "Category"
+msgstr "Категория"
+
+#: apps/tickets/models.py:22
+msgid "Duration"
+msgstr "Продолжительность"
+
+#: apps/tickets/models.py:23
+msgid "Timestamp"
+msgstr "Временная метка"
+
+#: apps/tickets/models.py:27
+msgid "Minutes"
+msgstr "Минуты"
+
+#: apps/tickets/models.py:28
+msgid "Days"
+msgstr "Дни"
+
+#: apps/tickets/models.py:30
+msgid "Timestamp Type"
+msgstr "Тип временной метки"
+
+#: apps/tickets/models.py:33
+msgid "Price"
+msgstr "Цена"
+
+#: apps/tickets/models.py:34 apps/tickets/models.py:45
+#: apps/tickets/templates/tickets/ticket_detail.html:52
+msgid "Discounted"
+msgstr "Со скидкой"
+
+#: apps/tickets/models.py:35
+#, fuzzy
+#| msgid "Current"
+msgid "Currency"
+msgstr "Валюта"
+
+#: apps/tickets/models.py:42
+msgid "Ticket Types"
+msgstr "Типы билетов"
+
+#: apps/tickets/models.py:45
+#: apps/tickets/templates/tickets/ticket_detail.html:54
+msgid "Regular"
+msgstr "Обычный"
+
+#: apps/tickets/models.py:57
+msgid "ID"
+msgstr "ИДЕНТИФИКАТОР"
+
+#: apps/tickets/models.py:62
+#, fuzzy
+#| msgid "User Form"
+msgid "User"
+msgstr "Пользователь"
+
+#: apps/tickets/models.py:64
+#, fuzzy
+#| msgid "Create"
+msgid "Created At"
+msgstr "Создано в"
+
+#: apps/tickets/models.py:71
+msgid "Ending Datetime"
+msgstr "Дата и время окончания"
+
+#: apps/tickets/models.py:76
+#: apps/tickets/templates/tickets/ticket_detail.html:24
+msgid "Ticket"
+msgstr "Билет"
+
+#: apps/tickets/models.py:80
+#, python-brace-format
+msgid "Ticket {ticket_type} for {user}"
+msgstr "Билет {ticket_type} для {user}"
+
+#: apps/tickets/models.py:99
+#, fuzzy
+#| msgid "Unused codes"
+msgid "Unused"
+msgstr "Неиспользованный"
+
+#: apps/tickets/models.py:100
+msgid "In Use"
+msgstr "В использовании"
+
+#: apps/tickets/models.py:101
+msgid "Ended"
+msgstr "Закончено"
+
+#: apps/tickets/models.py:106
+#, fuzzy
+#| msgid "Unknown Account"
+msgid "Unknown"
+msgstr "Неизвестный"
+
+#: apps/tickets/templates/tickets/payment_page.html:7
+msgid "Dummy Payment Gateway"
+msgstr "Фиктивный платежный шлюз"
+
+#: apps/tickets/templates/tickets/payment_page.html:12
+msgid "Payment for Ticket"
+msgstr "Оплата билета"
+
+#: apps/tickets/templates/tickets/payment_page.html:13
+msgid "Amount"
+msgstr "Количество"
+
+#: apps/tickets/templates/tickets/payment_page.html:17
+#, fuzzy
+#| msgid "Primary"
+msgid "Pay"
+msgstr "Платить"
+
+#: apps/tickets/templates/tickets/payment_success.html:3
+msgid "Purchase Success"
+msgstr "Покупка прошла успешно"
+
+#: apps/tickets/templates/tickets/payment_success.html:8
+#, fuzzy
+#| msgid "Password successfully set."
+msgid "Purchase completed successfully!"
+msgstr "Покупка успешно завершена!"
+
+#: apps/tickets/templates/tickets/payment_success.html:9
+msgid "You have successfully purchased the ticket:"
+msgstr "Вы успешно приобрели билет:"
+
+#: apps/tickets/templates/tickets/payment_success.html:11
+msgid "Go to My Tickets"
+msgstr "Перейти к моим билетам"
+
+#: apps/tickets/templates/tickets/ticket_detail.html:11
+msgid "Information about the selected ticket"
+msgstr "Информация о выбранном билете"
+
+#: apps/tickets/templates/tickets/ticket_detail.html:15
+#, fuzzy
+#| msgid "A new set of recovery codes has been generated."
+msgid "QR Code has not been generated."
+msgstr "QR-код не был сгенерирован."
+
+#: apps/tickets/templates/tickets/ticket_detail.html:28
+msgid "Status:"
+msgstr "Статус:"
+
+#: apps/tickets/urls.py:9
+msgid "zakup-bilet/<str:ticket_type_id>/"
+msgstr "zakup-bilet/<str:ticket_type_id>/"
+
+#: apps/tickets/urls.py:12
+msgid "pomyślna-płatność/<int:ticket_type_id>/"
+msgstr "pomyślna-płatność/<int:ticket_type_id>/"
+
+#: apps/tickets/urls.py:15
+msgid "użyj-biletu/<uuid:id>/"
+msgstr "użyj-biletu/<uuid:id>/"
+
+#: apps/tickets/urls.py:18
+msgid "bilet/<uuid:pk>/"
+msgstr "билет/<uuid:pk>/"
+
+#: apps/tickets/views.py:36
+#, python-brace-format
+msgid "Successfully purchased ticket: {ticket_type.name}"
+msgstr "Успешно купленный билет: {ticket_type.name}"
+
+#: apps/tickets/views.py:52
+#, python-brace-format
+msgid ""
+"QR code successfully generated. The ticket will expire: "
+"{ticket.ending_datetime}"
+msgstr "QR-код успешно сгенерирован. Билет истекает: {ticket.ending_datetime}"
+
+#: apps/users/models.py:11
+#| msgid "Walking Speed:"
+msgid "Walking speed [m/s]"
+msgstr "Скорость ходьбы [м/с]"
+
+#: apps/users/models.py:12
+#| msgid "Maximum Walking Distance:"
+msgid "Maximal walking distance [m]"
+msgstr "Максимальное расстояние, которое можно пройти пешком [м]"
+
+#: apps/users/templates/users/user_detail.html:3
+#: apps/users/templates/users/user_detail.html:8
+#, fuzzy
+#| msgid "Profile"
+msgid "User Profile"
+msgstr "Профиль пользователя"
+
+#: apps/users/templates/users/user_detail.html:9
+msgid "Details about your account"
+msgstr "Подробная информация о вашем аккаунте"
+
+#: apps/users/templates/users/user_detail.html:17
+msgid "User Settings"
+msgstr "Настройки пользователя"
+
+#: apps/users/templates/users/user_detail.html:20
+#, fuzzy
+#| msgid "Add Email"
+msgid "Email:"
+msgstr "Электронная почта:"
+
+#: apps/users/templates/users/user_detail.html:21
+msgid "Date Joined:"
+msgstr "Дата присоединения:"
+
+#: apps/users/templates/users/user_detail.html:22
+#: templates/account/password_change.html:4
+#: templates/account/password_change.html:8
+#: templates/account/password_change.html:20
+#: templates/account/password_reset_from_key.html:5
+#: templates/account/password_reset_from_key.html:12
+#: templates/account/password_reset_from_key.html:30
+#: templates/account/password_reset_from_key_done.html:5
+#: templates/account/password_reset_from_key_done.html:9
+#: templates/allauth/layouts/base.html:37
+msgid "Change Password"
+msgstr "Изменить пароль"
+
+#: apps/users/templates/users/user_detail.html:30
+#, fuzzy
+#| msgid "Other options"
+msgid "Other Settings"
+msgstr "Другие настройки"
+
+#: apps/users/templates/users/user_detail.html:33
+msgid "Walking Speed:"
+msgstr "Скорость ходьбы:"
+
+#: apps/users/templates/users/user_detail.html:34
+msgid "Maximum Walking Distance:"
+msgstr "Максимальное расстояние, которое можно пройти пешком:"
+
+#: apps/users/templates/users/user_detail.html:35
+#: templates/mfa/webauthn/authenticator_list.html:56
+msgid "Edit"
+msgstr "Редактировать"
+
+#: apps/users/templates/users/user_detail.html:54
+msgid "Status"
+msgstr "Статус"
+
+#: apps/users/templates/users/user_detail.html:82
+msgid "Generating a QR code will use the ticket."
+msgstr "При создании QR-кода будет использоваться билет."
+
+#: apps/users/templates/users/user_detail.html:85
+msgid "Show for Inspection"
+msgstr "Показать для осмотра"
+
+#: apps/users/templates/users/user_detail.html:87
+msgid "Ticket Ended"
+msgstr "Билет закончился"
+
+#: apps/users/templates/users/user_detail.html:89
+msgid "Generate QR Code and Use Ticket"
+msgstr "Сгенерируйте QR-код и используйте билет"
+
+#: apps/users/templates/users/user_detail.html:100
+msgid "You don't have any tickets yet."
+msgstr "У вас пока нет билетов."
+
+#: apps/users/templates/users/user_metrics_form.html:10
+msgid "User Form"
+msgstr "Форма пользователя"
+
+#: apps/users/templates/users/user_metrics_form.html:29
+msgid "Submit"
+msgstr "Представлять на рассмотрение"
+
+#: apps/users/urls.py:12
+msgid "adjust-parameters/"
+msgstr "настроить-параметры/"
+
+#: ebus/urls.py:36
+msgid "accounts/"
+msgstr "счета/"
+
+#: ebus/urls.py:39
+msgid "user/"
+msgstr "пользователь/"
+
+#: ebus/urls.py:42
+msgid "tickets/"
+msgstr "билеты/"
+
+#: ebus/urls.py:45
+#, fuzzy
+#| msgid "sign up"
+msgid "signup/"
+msgstr "зарегистрироваться/"
+
+#: ebus/urls.py:46
+#, fuzzy
+#| msgid "Login"
+msgid "login/"
+msgstr "авторизоваться/"
+
+#: ebus/urls.py:47
+#, fuzzy
+#| msgid "Logout"
+msgid "logout/"
+msgstr "выход из системы/"
+
+#: ebus/urls.py:48
+#, fuzzy
+#| msgid "Change Password"
+msgid "change-password/"
+msgstr "изменить пароль/"
+
+#: ebus/urls.py:49
+#, fuzzy
+#| msgid "Reset My Password"
+msgid "reset-password/"
+msgstr "сброс пароля/"
+
+#: templates/account/account_inactive.html:5
+#: templates/account/account_inactive.html:9
+msgid "Account Inactive"
+msgstr "Аккаунт неактивен"
+
+#: templates/account/account_inactive.html:12
+msgid "This account is inactive."
+msgstr "Эта учетная запись неактивна."
+
+#: templates/account/base_reauthenticate.html:5
+#: templates/account/base_reauthenticate.html:9
+msgid "Confirm Access"
+msgstr "Подтвердите доступ"
+
+#: templates/account/base_reauthenticate.html:12
+msgid "Please reauthenticate to safeguard your account."
+msgstr ""
+"Пожалуйста, пройдите повторную аутентификацию, чтобы защитить свой аккаунт."
+
+#: templates/account/base_reauthenticate.html:19
+#: templates/mfa/authenticate.html:37
+msgid "Alternative options"
+msgstr "Альтернативные варианты"
+
+#: templates/account/confirm_email_verification_code.html:5
+msgid "Email Verification"
+msgstr "Проверка электронной почты"
+
+#: templates/account/confirm_email_verification_code.html:9
+msgid "Enter Email Verification Code"
+msgstr "Введите код подтверждения электронной почты"
+
+#: templates/account/confirm_email_verification_code.html:15
+#: templates/account/confirm_login_code.html:15
+#, python-format
+msgid ""
+"We’ve sent a code to %(email_link)s. The code expires shortly, so please "
+"enter it soon."
+msgstr ""
+"Мы отправили код на %(email_link)s. Код скоро истечет, поэтому, пожалуйста, "
+"введите его скорее."
+
+#: templates/account/confirm_email_verification_code.html:27
+#: templates/account/email_confirm.html:29
+#: templates/account/reauthenticate.html:18
+#: templates/mfa/reauthenticate.html:18
+msgid "Confirm"
+msgstr "Подтверждать"
+
+#: templates/account/confirm_email_verification_code.html:31
+#: templates/account/confirm_email_verification_code.html:35
+#: templates/account/confirm_login_code.html:32
+#: templates/mfa/authenticate.html:28 templates/mfa/authenticate.html:44
+#: templates/mfa/webauthn/signup_form.html:26
+msgid "Cancel"
+msgstr "Отмена"
+
+#: templates/account/confirm_login_code.html:5
+#: templates/account/confirm_login_code.html:27 templates/account/login.html:4
+#: templates/account/login.html:10 templates/account/login.html:32
+#: templates/account/request_login_code.html:5
+#: templates/allauth/layouts/base.html:68 templates/mfa/authenticate.html:6
+#: templates/mfa/authenticate.html:24 templates/openid/login.html:5
+#: templates/openid/login.html:9 templates/openid/login.html:20
+#: templates/socialaccount/login.html:5
+#: templates/socialaccount/login_redirect.html:5
+msgid "Sign In"
+msgstr "Войти"
+
+#: templates/account/confirm_login_code.html:9
+msgid "Enter Sign-In Code"
+msgstr "Введите код входа"
+
+#: templates/account/email.html:4 templates/account/email.html:8
+msgid "Email Addresses"
+msgstr "Адреса электронной почты"
+
+#: templates/account/email.html:12
+msgid "The following email addresses are associated with your account:"
+msgstr "С вашей учетной записью связаны следующие адреса электронной почты:"
+
+#: templates/account/email.html:25
+msgid "Verified"
+msgstr "Проверено"
+
+#: templates/account/email.html:29
+msgid "Unverified"
+msgstr "Непроверено"
+
+#: templates/account/email.html:34
+msgid "Primary"
+msgstr "Начальный"
+
+#: templates/account/email.html:44
+msgid "Make Primary"
+msgstr "Сделать основным"
+
+#: templates/account/email.html:47 templates/account/email_change.html:37
+msgid "Re-send Verification"
+msgstr "Повторно отправить подтверждение"
+
+#: templates/account/email.html:50
+#: templates/mfa/webauthn/authenticator_confirm_delete.html:16
+#: templates/mfa/webauthn/authenticator_list.html:60
+#: templates/socialaccount/connections.html:40
+msgid "Remove"
+msgstr "Удалять"
+
+#: templates/account/email.html:59
+msgid "Add Email Address"
+msgstr "Добавить адрес электронной почты"
+
+#: templates/account/email.html:70
+msgid "Add Email"
+msgstr "Добавить адрес электронной почты"
+
+#: templates/account/email.html:79
+msgid "Do you really want to remove the selected email address?"
+msgstr "Вы действительно хотите удалить выбранный адрес электронной почты?"
+
+#: templates/account/email/account_already_exists_message.txt:4
+#, python-format
+msgid ""
+"You are receiving this email because you or someone else tried to signup for an\n"
+"account using email address:\n"
+"\n"
+"%(email)s\n"
+"\n"
+"However, an account using that email address already exists.  In case you have\n"
+"forgotten about this, please use the password forgotten procedure to recover\n"
+"your account:\n"
+"\n"
+"%(password_reset_url)s"
+msgstr ""
+"Вы получили это письмо, потому что вы или кто-то другой пытался зарегистрироваться для\n"
+"аккаунта, используя адрес электронной почты:\n"
+"\n"
+"%(email)s\n"
+"\n"
+"Однако аккаунт, использующий этот адрес электронной почты, уже существует. Если вы\n"
+"забыли об этом, воспользуйтесь процедурой восстановления пароля,\n"
+"чтобы восстановить\n"
+"ваш аккаунт:\n"
+"\n"
+"%(password_reset_url)s"
+
+#: templates/account/email/account_already_exists_subject.txt:3
+msgid "Account Already Exists"
+msgstr "Учетная запись уже существует"
+
+#: templates/account/email/base_message.txt:1
+#, python-format
+msgid "Hello from %(site_name)s!"
+msgstr "Привет от %(site_name)s!"
+
+#: templates/account/email/base_message.txt:5
+#, python-format
+msgid ""
+"Thank you for using %(site_name)s!\n"
+"%(site_domain)s"
+msgstr ""
+"Спасибо за использование %(site_name)s!\n"
+"%(site_domain)s"
+
+#: templates/account/email/base_notification.txt:5
+msgid ""
+"You are receiving this mail because the following change was made to your "
+"account:"
+msgstr ""
+"Вы получили это письмо, потому что в ваш аккаунт были внесены следующие "
+"изменения:"
+
+#: templates/account/email/base_notification.txt:10
+#, python-format
+msgid ""
+"If you do not recognize this change then please take proper security precautions immediately. The change to your account originates from:\n"
+"\n"
+"- IP address: %(ip)s\n"
+"- Browser: %(user_agent)s\n"
+"- Date: %(timestamp)s"
+msgstr ""
+"Если вы не распознаете это изменение, немедленно примите надлежащие меры безопасности. Изменение в вашей учетной записи произошло из:\n"
+"\n"
+"- IP-адрес: %(ip)s\n"
+"- Браузер: %(user_agent)s\n"
+"- Дата: %(timestamp)s"
+
+#: templates/account/email/email_changed_message.txt:4
+#, python-format
+msgid "Your email has been changed from %(from_email)s to %(to_email)s."
+msgstr ""
+"Ваш адрес электронной почты был изменен с %(from_email)s на %(to_email)s."
+
+#: templates/account/email/email_changed_subject.txt:3
+msgid "Email Changed"
+msgstr "Электронная почта изменена"
+
+#: templates/account/email/email_confirm_message.txt:4
+msgid "Your email has been confirmed."
+msgstr "Ваш адрес электронной почты подтвержден."
+
+#: templates/account/email/email_confirm_subject.txt:3
+msgid "Email Confirmation"
+msgstr "Подтверждение по электронной почте"
+
+#: templates/account/email/email_confirmation_message.txt:5
+#, python-format
+msgid ""
+"You're receiving this email because user %(user_display)s has given your "
+"email address to register an account on %(site_domain)s."
+msgstr ""
+"Вы получили это письмо, потому что пользователь %(user_display)s предоставил"
+" ваш адрес электронной почты для регистрации учетной записи на "
+"%(site_domain)s."
+
+#: templates/account/email/email_confirmation_message.txt:7
+msgid ""
+"Your email verification code is listed below. Please enter it in your open "
+"browser window."
+msgstr ""
+"Ваш код подтверждения электронной почты указан ниже. Введите его в открытом "
+"окне браузера."
+
+#: templates/account/email/email_confirmation_message.txt:9
+#, python-format
+msgid "To confirm this is correct, go to %(activate_url)s"
+msgstr ""
+"Чтобы убедиться, что это правильно, перейдите на страницу %(activate_url)s"
+
+#: templates/account/email/email_confirmation_subject.txt:3
+msgid "Please Confirm Your Email Address"
+msgstr "Пожалуйста, подтвердите свой адрес электронной почты"
+
+#: templates/account/email/email_deleted_message.txt:4
+#, python-format
+msgid "Email address %(deleted_email)s has been removed from your account."
+msgstr ""
+"Адрес электронной почты %(deleted_email)s был удален из вашей учетной "
+"записи."
+
+#: templates/account/email/email_deleted_subject.txt:3
+msgid "Email Removed"
+msgstr "Электронная почта удалена"
+
+#: templates/account/email/login_code_message.txt:5
+msgid ""
+"Your sign-in code is listed below. Please enter it in your open browser "
+"window."
+msgstr "Ваш код входа указан ниже. Введите его в открытом окне браузера."
+
+#: templates/account/email/login_code_message.txt:9
+#: templates/account/email/unknown_account_message.txt:6
+msgid "This mail can be safely ignored if you did not initiate this action."
+msgstr ""
+"Это письмо можно смело игнорировать, если вы не инициировали это действие."
+
+#: templates/account/email/login_code_subject.txt:3
+msgid "Sign-In Code"
+msgstr "Код входа"
+
+#: templates/account/email/password_changed_message.txt:4
+msgid "Your password has been changed."
+msgstr "Ваш пароль был изменен."
+
+#: templates/account/email/password_changed_subject.txt:3
+msgid "Password Changed"
+msgstr "Пароль изменен"
+
+#: templates/account/email/password_reset_key_message.txt:4
+msgid ""
+"You're receiving this email because you or someone else has requested a password reset for your user account.\n"
+"It can be safely ignored if you did not request a password reset. Click the link below to reset your password."
+msgstr ""
+"Вы получили это письмо, потому что вы или кто-то другой запросил сброс "
+"пароля для вашей учетной записи пользователя. Его можно смело игнорировать, "
+"если вы не запрашивали сброс пароля. Нажмите ссылку ниже, чтобы сбросить "
+"пароль."
+
+#: templates/account/email/password_reset_key_message.txt:9
+#, python-format
+msgid "In case you forgot, your username is %(username)s."
+msgstr "Если вы забыли, ваше имя пользователя %(username)s."
+
+#: templates/account/email/password_reset_key_subject.txt:3
+msgid "Password Reset Email"
+msgstr "Электронная почта для сброса пароля"
+
+#: templates/account/email/password_reset_message.txt:4
+msgid "Your password has been reset."
+msgstr "Ваш пароль был сброшен."
+
+#: templates/account/email/password_reset_subject.txt:3
+#: templates/account/password_reset.html:4
+#: templates/account/password_reset.html:8
+#: templates/account/password_reset_done.html:6
+#: templates/account/password_reset_done.html:10
+msgid "Password Reset"
+msgstr "Сброс пароля"
+
+#: templates/account/email/password_set_message.txt:4
+msgid "Your password has been set."
+msgstr "Ваш пароль установлен."
+
+#: templates/account/email/password_set_subject.txt:3
+msgid "Password Set"
+msgstr "Установить пароль"
+
+#: templates/account/email/unknown_account_message.txt:4
+#, python-format
+msgid ""
+"You are receiving this email because you, or someone else, tried to access "
+"an account with email %(email)s. However, we do not have any record of such "
+"an account in our database."
+msgstr ""
+"Вы получили это письмо, потому что вы или кто-то другой пытался получить "
+"доступ к учетной записи с адресом электронной почты %(email)s. Однако в "
+"нашей базе данных нет никаких записей о такой учетной записи."
+
+#: templates/account/email/unknown_account_message.txt:8
+msgid "If it was you, you can sign up for an account using the link below."
+msgstr ""
+"Если это были вы, вы можете зарегистрировать учетную запись, перейдя по "
+"ссылке ниже."
+
+#: templates/account/email/unknown_account_subject.txt:3
+msgid "Unknown Account"
+msgstr "Неизвестный аккаунт"
+
+#: templates/account/email_change.html:5 templates/account/email_change.html:9
+msgid "Email Address"
+msgstr "Адрес электронной почты"
+
+#: templates/account/email_change.html:21
+#: templates/account/email_change.html:29
+msgid "Current email"
+msgstr "Текущий адрес электронной почты"
+
+#: templates/account/email_change.html:31
+msgid "Changing to"
+msgstr "Изменение на"
+
+#: templates/account/email_change.html:35
+msgid "Your email address is still pending verification."
+msgstr "Ваш адрес электронной почты все еще ожидает проверки."
+
+#: templates/account/email_change.html:41
+msgid "Cancel Change"
+msgstr "Отменить Изменить"
+
+#: templates/account/email_change.html:49
+msgid "Change to"
+msgstr "Изменить на"
+
+#: templates/account/email_change.html:55
+#: templates/allauth/layouts/base.html:31
+msgid "Change Email"
+msgstr "Изменить адрес электронной почты"
+
+#: templates/account/email_confirm.html:4
+#: templates/account/email_confirm.html:8
+msgid "Confirm Email Address"
+msgstr "Подтвердите адрес электронной почты"
+
+#: templates/account/email_confirm.html:14
+msgid "Please confirm that"
+msgstr "Пожалуйста, подтвердите это"
+
+#: templates/account/email_confirm.html:16
+msgid "is an email address for user"
+msgstr "это адрес электронной почты пользователя"
+
+#: templates/account/email_confirm.html:34
+#, python-format
+msgid ""
+"\n"
+"                    Unable to confirm %(email)s because it is already confirmed by a different account.\n"
+"                "
+msgstr ""
+"\n"
+"                   Невозможно подтвердить %(email)s, так как он уже подтвержден другой учетной записью.\n"
+"                "
+
+#: templates/account/email_confirm.html:42
+#, python-format
+msgid ""
+"\n"
+"                This email confirmation link expired or is invalid. Please <a href=\"%(email_url)s\">issue a new email confirmation request</a>.\n"
+"            "
+msgstr ""
+"\n"
+"                Эта ссылка подтверждения электронной почты устарела или недействительна. Пожалуйста, <a href=\"%(email_url)s\">отправьте новый запрос подтверждения электронной почты</a>./n            "
+
+#: templates/account/login.html:15
+msgid "If you have not created an account yet, then please"
+msgstr "Если вы еще не создали учетную запись, то, пожалуйста,"
+
+#: templates/account/login.html:16
+msgid "sign up"
+msgstr "зарегистрироваться"
+
+#: templates/account/login.html:17
+msgid "first"
+msgstr "первый"
+
+#: templates/account/login.html:41
+msgid "Sign in with a passkey"
+msgstr "Войти с помощью пароля"
+
+#: templates/account/login.html:44 templates/account/request_login_code.html:9
+msgid "Mail me a sign-in code"
+msgstr "Отправьте мне код входа по почте"
+
+#: templates/account/logout.html:4 templates/account/logout.html:8
+#: templates/account/logout.html:21 templates/allauth/layouts/base.html:61
+#: templates/usersessions/usersession_list.html:64
+msgid "Sign Out"
+msgstr "Выход"
+
+#: templates/account/logout.html:11
+msgid "Are you sure you want to sign out?"
+msgstr "Вы уверены, что хотите выйти?"
+
+#: templates/account/messages/cannot_delete_primary_email.txt:2
+#, python-format
+msgid "You cannot remove your primary email address (%(email)s)."
+msgstr ""
+"Вы не можете удалить свой основной адрес электронной почты (%(email)s)."
+
+#: templates/account/messages/email_confirmation_failed.txt:2
+#, python-format
+msgid ""
+"Unable to confirm %(email)s because it is already confirmed by a different "
+"account."
+msgstr ""
+"Невозможно подтвердить %(email)s, так как он уже подтвержден другой учетной "
+"записью."
+
+#: templates/account/messages/email_confirmation_sent.txt:2
+#, python-format
+msgid "Confirmation email sent to %(email)s."
+msgstr "Письмо с подтверждением отправлено на %(email)s."
+
+#: templates/account/messages/email_confirmed.txt:2
+#, python-format
+msgid "You have confirmed %(email)s."
+msgstr "Вы подтвердили %(email)s."
+
+#: templates/account/messages/email_deleted.txt:2
+#, python-format
+msgid "Removed email address %(email)s."
+msgstr "Удален адрес электронной почты %(email)s."
+
+#: templates/account/messages/logged_in.txt:4
+#, python-format
+msgid "Successfully signed in as %(name)s."
+msgstr "Успешно выполнен вход как %(name)s."
+
+#: templates/account/messages/logged_out.txt:2
+msgid "You have signed out."
+msgstr "Вы вышли из системы."
+
+#: templates/account/messages/login_code_sent.txt:2
+#, python-format
+msgid "A sign-in code has been mailed to %(email)s."
+msgstr "Код входа был отправлен на %(email)s."
+
+#: templates/account/messages/password_changed.txt:2
+msgid "Password successfully changed."
+msgstr "Пароль успешно изменен."
+
+#: templates/account/messages/password_set.txt:2
+msgid "Password successfully set."
+msgstr "Пароль успешно установлен."
+
+#: templates/account/messages/primary_email_set.txt:2
+msgid "Primary email address set."
+msgstr "Основной адрес электронной почты установлен."
+
+#: templates/account/messages/unverified_primary_email.txt:2
+msgid "Your primary email address must be verified."
+msgstr "Ваш основной адрес электронной почты должен быть подтвержден."
+
+#: templates/account/password_change.html:22
+msgid "Forgot Password?"
+msgstr "Забыли пароль?"
+
+#: templates/account/password_reset.html:14
+msgid ""
+"Forgotten your password? Enter your email address below, and we'll send you "
+"an email allowing you to reset it."
+msgstr ""
+"Забыли пароль? Введите свой адрес электронной почты ниже, и мы отправим вам "
+"письмо, позволяющее сбросить его."
+
+#: templates/account/password_reset.html:25
+msgid "Reset My Password"
+msgstr "Сбросить мой пароль"
+
+#: templates/account/password_reset.html:30
+msgid "Please contact us if you have any trouble resetting your password."
+msgstr ""
+"Пожалуйста, свяжитесь с нами, если у вас возникли проблемы со сбросом "
+"пароля."
+
+#: templates/account/password_reset_done.html:16
+msgid ""
+"We have sent you an email. If you have not received it please check your "
+"spam folder. Otherwise contact us if you do not receive it in a few minutes."
+msgstr ""
+"Мы отправили вам письмо. Если вы его не получили, проверьте папку со спамом."
+" В противном случае свяжитесь с нами, если вы не получите его в течение "
+"нескольких минут."
+
+#: templates/account/password_reset_from_key.html:10
+msgid "Bad Token"
+msgstr "Плохой токен"
+
+#: templates/account/password_reset_from_key.html:18
+#, python-format
+msgid ""
+"The password reset link was invalid, possibly because it has already been "
+"used.  Please request a <a href=\"%(passwd_reset_url)s\">new password "
+"reset</a>."
+msgstr ""
+"Ссылка для сброса пароля недействительна, возможно, потому что она уже была "
+"использована. Пожалуйста, запросите <a href=\"%(passwd_reset_url)s\">новый "
+"сброс пароля</a>."
+
+#: templates/account/password_reset_from_key_done.html:12
+msgid "Your password is now changed."
+msgstr "Ваш пароль изменен."
+
+#: templates/account/password_set.html:5 templates/account/password_set.html:9
+#: templates/account/password_set.html:21
+msgid "Set Password"
+msgstr "Установить пароль"
+
+#: templates/account/reauthenticate.html:6
+msgid "Enter your password:"
+msgstr "Введите ваш пароль:"
+
+#: templates/account/request_login_code.html:12
+msgid ""
+"You will receive an email containing a special code for a password-free "
+"sign-in."
+msgstr ""
+"Вы получите электронное письмо со специальным кодом для входа без пароля."
+
+#: templates/account/request_login_code.html:24
+msgid "Request Code"
+msgstr "Запросить код"
+
+#: templates/account/request_login_code.html:30
+msgid "Other sign-in options"
+msgstr "Другие варианты входа"
+
+#: templates/account/signup.html:4 templates/account/signup.html:9
+#: templates/account/signup.html:14
+#: templates/account/signup_by_passkey.html:29
+#: templates/allauth/layouts/base.html:74 templates/header.html:15
+#: templates/socialaccount/signup.html:9
+#: templates/socialaccount/signup.html:25
+msgid "Sign Up"
+msgstr "Зарегистрироваться"
+
+#: templates/account/signup.html:18
+msgid "Already have an account? Log In!"
+msgstr "У вас уже есть аккаунт? Войдите!"
+
+#: templates/account/signup_by_passkey.html:4
+#: templates/socialaccount/signup.html:5
+msgid "Signup"
+msgstr "Зарегистрироваться"
+
+#: templates/account/signup_by_passkey.html:8
+msgid "Passkey Sign Up"
+msgstr "Регистрация ключа доступа"
+
+#: templates/account/signup_by_passkey.html:17
+#, python-format
+msgid "Already have an account? Then please %(link)ssign in%(end_link)s."
+msgstr ""
+"У вас уже есть аккаунт? Тогда, пожалуйста, %(link)sвойдите%(end_link)s."
+
+#: templates/account/signup_by_passkey.html:36
+msgid "Other options"
+msgstr "Другие варианты"
+
+#: templates/account/signup_closed.html:5
+#: templates/account/signup_closed.html:9
+msgid "Sign Up Closed"
+msgstr "Регистрация закрыта"
+
+#: templates/account/signup_closed.html:12
+msgid "We are sorry, but the sign up is currently closed."
+msgstr "К сожалению, регистрация в настоящее время закрыта."
+
+#: templates/account/snippets/already_logged_in.html:7
+msgid "Note"
+msgstr "Примечание"
+
+#: templates/account/snippets/already_logged_in.html:7
+#, python-format
+msgid "You are already logged in as %(user_display)s."
+msgstr "Вы уже вошли в систему как %(user_display)s."
+
+#: templates/account/snippets/warn_no_email.html:3
+msgid "Warning:"
+msgstr "Предупреждение:"
+
+#: templates/account/snippets/warn_no_email.html:3
+msgid ""
+"You currently do not have any email address set up. You should really add an"
+" email address so you can receive notifications, reset your password, etc."
+msgstr ""
+"В настоящее время у вас нет настроенного адреса электронной почты. Вам "
+"действительно следует добавить адрес электронной почты, чтобы вы могли "
+"получать уведомления, сбрасывать пароль и т. д."
+
+#: templates/account/verification_sent.html:5
+#: templates/account/verification_sent.html:9
+#: templates/account/verified_email_required.html:5
+#: templates/account/verified_email_required.html:9
+msgid "Verify Your Email Address"
+msgstr "Подтвердите свой адрес электронной почты"
+
+#: templates/account/verification_sent.html:12
+msgid ""
+"We have sent an email to you for verification. Follow the link provided to "
+"finalize the signup process. If you do not see the verification email in "
+"your main inbox, check your spam folder. Please contact us if you do not "
+"receive the verification email within a few minutes."
+msgstr ""
+"Мы отправили вам письмо для проверки. Перейдите по предоставленной ссылке, "
+"чтобы завершить процесс регистрации. Если вы не видите письмо с проверкой в "
+"​​своем основном почтовом ящике, проверьте папку со спамом. Пожалуйста, "
+"свяжитесь с нами, если вы не получите письмо с проверкой в ​​течение "
+"нескольких минут."
+
+#: templates/account/verified_email_required.html:13
+msgid ""
+"This part of the site requires us to verify that\n"
+"you are who you claim to be. For this purpose, we require that you\n"
+"verify ownership of your email address. "
+msgstr ""
+"Эта часть сайта требует от нас подтверждения того, что\n"
+"вы являетесь тем, за кого себя выдаете. Для этой цели мы требуем, чтобы вы\n"
+"подтвердили право собственности на свой адрес электронной почты."
+
+#: templates/account/verified_email_required.html:18
+msgid ""
+"We have sent an email to you for\n"
+"verification. Please click on the link inside that email. If you do not see the verification email in your main inbox, check your spam folder. Otherwise\n"
+"contact us if you do not receive it within a few minutes."
+msgstr ""
+"Мы отправили вам письмо для проверки. Нажмите на ссылку внутри этого письма. Если вы не видите письмо с подтверждением в своем основном почтовом ящике, проверьте папку со спамом. В противном случае\n"
+"свяжитесь с нами, если вы не получите его в течение нескольких минут."
+
+#: templates/account/verified_email_required.html:23
+#, python-format
+msgid ""
+"<strong>Note:</strong> you can still <a href=\"%(email_url)s\">change your "
+"email address</a>."
+msgstr ""
+"<strong>Примечание:</strong> вы все равно можете <a "
+"href=\"%(email_url)s\">изменить свой адрес электронной почты</a>."
+
+#: templates/allauth/layouts/base.html:18
+msgid "Messages:"
+msgstr "Сообщения:"
+
+#: templates/allauth/layouts/base.html:25
+msgid "Menu:"
+msgstr "Меню:"
+
+#: templates/allauth/layouts/base.html:43
+#: templates/socialaccount/connections.html:5
+#: templates/socialaccount/connections.html:9
+msgid "Account Connections"
+msgstr "Подключения к аккаунту"
+
+#: templates/allauth/layouts/base.html:49 templates/mfa/authenticate.html:10
+#: templates/mfa/index.html:5 templates/mfa/index.html:9
+msgid "Two-Factor Authentication"
+msgstr "Двухфакторная аутентификация"
+
+#: templates/allauth/layouts/base.html:55
+#: templates/usersessions/usersession_list.html:6
+#: templates/usersessions/usersession_list.html:10
+msgid "Sessions"
+msgstr "Сессии"
+
+#: templates/header.html:11
+msgid "Profile"
+msgstr "Профиль"
+
+#: templates/header.html:12
+msgid "Logout"
+msgstr "Выйти"
+
+#: templates/header.html:14
+msgid "Login"
+msgstr "Авторизоваться"
+
+#: templates/mfa/authenticate.html:13
+msgid ""
+"Your account is protected by two-factor authentication. Please enter an "
+"authenticator code:"
+msgstr ""
+"Ваш аккаунт защищен двухфакторной аутентификацией. Введите код "
+"аутентификатора:"
+
+#: templates/mfa/authenticate.html:41
+#: templates/mfa/webauthn/reauthenticate.html:15
+msgid "Use a security key"
+msgstr "Используйте ключ безопасности"
+
+#: templates/mfa/email/recovery_codes_generated_message.txt:4
+msgid ""
+"A new set of Two-Factor Authentication recovery codes has been generated."
+msgstr ""
+"Сгенерирован новый набор кодов восстановления двухфакторной аутентификации."
+
+#: templates/mfa/email/recovery_codes_generated_subject.txt:3
+msgid "New Recovery Codes Generated"
+msgstr "Сгенерированы новые коды восстановления"
+
+#: templates/mfa/email/totp_activated_message.txt:4
+#: templates/mfa/messages/totp_activated.txt:2
+msgid "Authenticator app activated."
+msgstr "Приложение-аутентификатор активировано."
+
+#: templates/mfa/email/totp_activated_subject.txt:3
+msgid "Authenticator App Activated"
+msgstr "Приложение-аутентификатор активировано"
+
+#: templates/mfa/email/totp_deactivated_message.txt:4
+#: templates/mfa/messages/totp_deactivated.txt:2
+msgid "Authenticator app deactivated."
+msgstr "Приложение аутентификации деактивировано."
+
+#: templates/mfa/email/totp_deactivated_subject.txt:3
+msgid "Authenticator App Deactivated"
+msgstr "Приложение аутентификации деактивировано"
+
+#: templates/mfa/email/webauthn_added_message.txt:4
+msgid "A new security key has been added."
+msgstr "Добавлен новый ключ безопасности."
+
+#: templates/mfa/email/webauthn_added_subject.txt:3
+msgid "Security Key Added"
+msgstr "Добавлен ключ безопасности"
+
+#: templates/mfa/email/webauthn_removed_message.txt:4
+msgid "A security key has been removed."
+msgstr "Ключ безопасности был удален."
+
+#: templates/mfa/email/webauthn_removed_subject.txt:3
+msgid "Security Key Removed"
+msgstr "Ключ безопасности удален"
+
+#: templates/mfa/index.html:14 templates/mfa/totp/base.html:4
+msgid "Authenticator App"
+msgstr "Приложение-аутентификатор"
+
+#: templates/mfa/index.html:19
+msgid "Authentication using an authenticator app is active."
+msgstr ""
+"Активирована аутентификация с использованием приложения-аутентификатора."
+
+#: templates/mfa/index.html:23
+msgid "An authenticator app is not active."
+msgstr "Приложение-аутентификатор неактивно."
+
+#: templates/mfa/index.html:32 templates/mfa/totp/deactivate_form.html:24
+msgid "Deactivate"
+msgstr "Деактивировать"
+
+#: templates/mfa/index.html:36 templates/mfa/totp/activate_form.html:32
+msgid "Activate"
+msgstr "Активировать"
+
+#: templates/mfa/index.html:45
+#: templates/mfa/webauthn/authenticator_list.html:8
+#: templates/mfa/webauthn/base.html:4
+msgid "Security Keys"
+msgstr "Ключи безопасности"
+
+#: templates/mfa/index.html:50
+#, python-format
+msgid "You have added %(count)s security key."
+msgid_plural "You have added %(count)s security keys."
+msgstr[0] ""
+msgstr[1] ""
+
+#: templates/mfa/index.html:54
+#: templates/mfa/webauthn/authenticator_list.html:12
+msgid "No security keys have been added."
+msgstr "Ключи безопасности не добавлены."
+
+#: templates/mfa/index.html:62
+msgid "Manage"
+msgstr "Управлять"
+
+#: templates/mfa/index.html:67 templates/mfa/webauthn/add_form.html:18
+#: templates/mfa/webauthn/authenticator_list.html:70
+msgid "Add"
+msgstr "Добавлять"
+
+#: templates/mfa/index.html:77 templates/mfa/recovery_codes/base.html:4
+#: templates/mfa/recovery_codes/generate.html:6
+#: templates/mfa/recovery_codes/index.html:6
+msgid "Recovery Codes"
+msgstr "Коды восстановления"
+
+#: templates/mfa/index.html:82 templates/mfa/recovery_codes/index.html:9
+#, python-format
+msgid ""
+"There is %(unused_count)s out of %(total_count)s recovery codes available."
+msgid_plural ""
+"There are %(unused_count)s out of %(total_count)s recovery codes available."
+msgstr[0] ""
+msgstr[1] ""
+
+#: templates/mfa/index.html:86
+msgid "No recovery codes set up."
+msgstr "Коды восстановления не установлены."
+
+#: templates/mfa/index.html:96
+msgid "View"
+msgstr "Вид"
+
+#: templates/mfa/index.html:102
+msgid "Download"
+msgstr "Скачать"
+
+#: templates/mfa/index.html:110 templates/mfa/recovery_codes/generate.html:29
+msgid "Generate"
+msgstr "Генерировать"
+
+#: templates/mfa/messages/recovery_codes_generated.txt:2
+msgid "A new set of recovery codes has been generated."
+msgstr "Сгенерирован новый набор кодов восстановления."
+
+#: templates/mfa/messages/webauthn_added.txt:2
+msgid "Security key added."
+msgstr "Ключ безопасности добавлен."
+
+#: templates/mfa/messages/webauthn_removed.txt:2
+msgid "Security key removed."
+msgstr "Ключ безопасности удален."
+
+#: templates/mfa/reauthenticate.html:6
+msgid "Enter an authenticator code:"
+msgstr "Введите код аутентификатора:"
+
+#: templates/mfa/recovery_codes/generate.html:9
+msgid ""
+"You are about to generate a new set of recovery codes for your account."
+msgstr ""
+"Вы собираетесь сгенерировать новый набор кодов восстановления для своей "
+"учетной записи."
+
+#: templates/mfa/recovery_codes/generate.html:11
+msgid "This action will invalidate your existing codes."
+msgstr "Это действие сделает ваши существующие коды недействительными."
+
+#: templates/mfa/recovery_codes/generate.html:13
+msgid "Are you sure?"
+msgstr "Вы уверены?"
+
+#: templates/mfa/recovery_codes/index.html:13
+msgid "Unused codes"
+msgstr "Неиспользованные коды"
+
+#: templates/mfa/recovery_codes/index.html:25
+msgid "Download codes"
+msgstr "Скачать коды"
+
+#: templates/mfa/recovery_codes/index.html:30
+msgid "Generate new codes"
+msgstr "Сгенерировать новые коды"
+
+#: templates/mfa/totp/activate_form.html:4
+#: templates/mfa/totp/activate_form.html:8
+msgid "Activate Authenticator App"
+msgstr "Активировать приложение Authenticator"
+
+#: templates/mfa/totp/activate_form.html:11
+msgid ""
+"To protect your account with two-factor authentication, scan the QR code "
+"below with your authenticator app. Then, input the verification code "
+"generated by the app below."
+msgstr ""
+"Чтобы защитить свой аккаунт с помощью двухфакторной аутентификации, "
+"отсканируйте QR-код ниже с помощью вашего приложения-аутентификатора. Затем "
+"введите код подтверждения, сгенерированный приложением ниже."
+
+#: templates/mfa/totp/activate_form.html:21
+msgid "Authenticator secret"
+msgstr "Секрет аутентификатора"
+
+#: templates/mfa/totp/activate_form.html:24
+msgid ""
+"You can store this secret and use it to reinstall your authenticator app at "
+"a later time."
+msgstr ""
+"Вы можете сохранить этот секрет и использовать его для переустановки "
+"приложения-аутентификатора в будущем."
+
+#: templates/mfa/totp/deactivate_form.html:5
+#: templates/mfa/totp/deactivate_form.html:9
+msgid "Deactivate Authenticator App"
+msgstr "Деактивировать приложение Authenticator"
+
+#: templates/mfa/totp/deactivate_form.html:12
+msgid ""
+"You are about to deactivate authenticator app based authentication. Are you "
+"sure?"
+msgstr ""
+"Вы собираетесь деактивировать аутентификацию на основе приложения-"
+"аутентификатора. Вы уверены?"
+
+#: templates/mfa/webauthn/add_form.html:7
+msgid "Add Security Key"
+msgstr "Добавить ключ безопасности"
+
+#: templates/mfa/webauthn/authenticator_confirm_delete.html:6
+msgid "Remove Security Key"
+msgstr "Удалить ключ безопасности"
+
+#: templates/mfa/webauthn/authenticator_confirm_delete.html:9
+msgid "Are you sure you want to remove this security key?"
+msgstr "Вы уверены, что хотите удалить этот ключ безопасности?"
+
+#: templates/mfa/webauthn/authenticator_list.html:18
+msgid "Key"
+msgstr "Ключ"
+
+#: templates/mfa/webauthn/authenticator_list.html:21
+msgid "Usage"
+msgstr "Использование"
+
+#: templates/mfa/webauthn/authenticator_list.html:33
+msgid "Passkey"
+msgstr "Пароль"
+
+#: templates/mfa/webauthn/authenticator_list.html:37
+msgid "Security key"
+msgstr "Ключ безопасности"
+
+#: templates/mfa/webauthn/authenticator_list.html:40
+msgid "This key does not indicate whether it is a passkey."
+msgstr "Этот ключ не указывает, является ли он паролем."
+
+#: templates/mfa/webauthn/authenticator_list.html:41
+msgid "Unspecified"
+msgstr "Не указано"
+
+#: templates/mfa/webauthn/authenticator_list.html:46
+#, python-format
+msgid "Added on %(created_at)s"
+msgstr "Добавлено %(created_at)s"
+
+#: templates/mfa/webauthn/authenticator_list.html:48
+#, python-format
+msgid "Last used %(last_used)s"
+msgstr "Последнее использование %(last_used)s"
+
+#: templates/mfa/webauthn/edit_form.html:7
+msgid "Edit Security Key"
+msgstr "Изменить ключ безопасности"
+
+#: templates/mfa/webauthn/edit_form.html:18
+msgid "Save"
+msgstr "Сохранять"
+
+#: templates/mfa/webauthn/signup_form.html:7
+msgid "Create Passkey"
+msgstr "Создать пароль"
+
+#: templates/mfa/webauthn/signup_form.html:10
+msgid ""
+"You are about to create a passkey for your account. As you can add "
+"additional keys later on, you can use a descriptive name to tell the keys "
+"apart."
+msgstr ""
+"Вы собираетесь создать ключ доступа для своей учетной записи. Поскольку вы "
+"можете добавить дополнительные ключи позже, вы можете использовать "
+"описательное имя, чтобы различать ключи."
+
+#: templates/mfa/webauthn/signup_form.html:21
+msgid "Create"
+msgstr "Создавать"
+
+#: templates/mfa/webauthn/snippets/scripts.html:2
+msgid "This functionality requires JavaScript."
+msgstr "Для этой функции требуется JavaScript."
+
+#: templates/socialaccount/authentication_error.html:5
+#: templates/socialaccount/authentication_error.html:9
+msgid "Third-Party Login Failure"
+msgstr "Ошибка входа третьей стороны"
+
+#: templates/socialaccount/authentication_error.html:12
+msgid ""
+"An error occurred while attempting to login via your third-party account."
+msgstr "Произошла ошибка при попытке входа через стороннюю учетную запись."
+
+#: templates/socialaccount/connections.html:13
+msgid ""
+"You can sign in to your account using any of the following third-party "
+"accounts:"
+msgstr ""
+"Вы можете войти в свою учетную запись, используя любую из следующих "
+"сторонних учетных записей:"
+
+#: templates/socialaccount/connections.html:46
+msgid "You currently have no third-party accounts connected to this account."
+msgstr ""
+"В настоящее время к этой учетной записи не подключены сторонние учетные "
+"записи."
+
+#: templates/socialaccount/connections.html:50
+msgid "Add a Third-Party Account"
+msgstr "Добавить стороннюю учетную запись"
+
+#: templates/socialaccount/email/account_connected_message.txt:4
+#, python-format
+msgid ""
+"A third-party account from %(provider)s has been connected to your account."
+msgstr ""
+"К вашей учетной записи подключена сторонняя учетная запись от %(provider)s."
+
+#: templates/socialaccount/email/account_connected_subject.txt:3
+msgid "Third-Party Account Connected"
+msgstr "Подключен сторонний аккаунт"
+
+#: templates/socialaccount/email/account_disconnected_message.txt:4
+#, python-format
+msgid ""
+"A third-party account from %(provider)s has been disconnected from your "
+"account."
+msgstr "Сторонний аккаунт %(provider)s был отключен от вашего аккаунта."
+
+#: templates/socialaccount/email/account_disconnected_subject.txt:3
+msgid "Third-Party Account Disconnected"
+msgstr "Сторонний аккаунт отключен"
+
+#: templates/socialaccount/login.html:10
+#, python-format
+msgid "Connect %(provider)s"
+msgstr "Подключить %(provider)s"
+
+#: templates/socialaccount/login.html:13
+#, python-format
+msgid "You are about to connect a new third-party account from %(provider)s."
+msgstr ""
+"Вы собираетесь подключить новую стороннюю учетную запись от %(provider)s."
+
+#: templates/socialaccount/login.html:17
+#, python-format
+msgid "Sign In Via %(provider)s"
+msgstr "Войти через %(provider)s"
+
+#: templates/socialaccount/login.html:20
+#, python-format
+msgid ""
+"You are about to sign in using a third-party account from %(provider)s."
+msgstr ""
+"Вы собираетесь войти, используя стороннюю учетную запись от %(provider)s."
+
+#: templates/socialaccount/login.html:27
+#: templates/socialaccount/login_redirect.html:10
+msgid "Continue"
+msgstr "Продолжать"
+
+#: templates/socialaccount/login_cancelled.html:5
+#: templates/socialaccount/login_cancelled.html:9
+msgid "Login Cancelled"
+msgstr "Вход отменен"
+
+#: templates/socialaccount/login_cancelled.html:13
+#, python-format
+msgid ""
+"You decided to cancel logging in to our site using one of your existing "
+"accounts. If this was a mistake, please proceed to <a "
+"href=\"%(login_url)s\">sign in</a>."
+msgstr ""
+"Вы решили отменить вход на наш сайт с помощью одной из существующих учетных "
+"записей. Если это была ошибка, пожалуйста, перейдите к <a "
+"href=\"%(login_url)s\">входу</a>."
+
+#: templates/socialaccount/messages/account_connected.txt:2
+msgid "The third-party account has been connected."
+msgstr "Сторонний аккаунт подключен."
+
+#: templates/socialaccount/messages/account_connected_other.txt:2
+msgid "The third-party account is already connected to a different account."
+msgstr "Сторонний аккаунт уже подключен к другому аккаунту."
+
+#: templates/socialaccount/messages/account_disconnected.txt:2
+msgid "The third-party account has been disconnected."
+msgstr "Сторонний аккаунт был отключен."
+
+#: templates/socialaccount/signup.html:12
+#, python-format
+msgid ""
+"You are about to use your %(provider_name)s account to login to\n"
+"%(site_name)s. As a final step, please complete the following form:"
+msgstr ""
+"Вы собираетесь использовать свою учетную запись %(provider_name)s для входа в\n"
+"%(site_name)s. В качестве последнего шага, пожалуйста, заполните следующую форму:"
+
+#: templates/socialaccount/snippets/login.html:10
+msgid "Or use a third-party"
+msgstr "Или используйте сторонний"
+
+#: templates/usersessions/messages/sessions_logged_out.txt:2
+msgid "Signed out of all other sessions."
+msgstr "Вышел из всех других сеансов."
+
+#: templates/usersessions/usersession_list.html:23
+msgid "Started At"
+msgstr "Начало в"
+
+#: templates/usersessions/usersession_list.html:24
+msgid "IP Address"
+msgstr "IP-адрес"
+
+#: templates/usersessions/usersession_list.html:25
+msgid "Browser"
+msgstr "Браузер"
+
+#: templates/usersessions/usersession_list.html:27
+msgid "Last seen at"
+msgstr "Последний раз был замечен в"
+
+#: templates/usersessions/usersession_list.html:47
+msgid "Current"
+msgstr "Текущий"
+
+#: templates/usersessions/usersession_list.html:60
+msgid "Sign Out Other Sessions"
+msgstr "Выйти из других сессий"

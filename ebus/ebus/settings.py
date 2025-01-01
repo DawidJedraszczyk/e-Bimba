@@ -172,7 +172,6 @@ LANGUAGES = [
     ('fr', 'French'),
     ('de', 'German'),
     ('ja', 'Japanese'),
-    ('ar', 'Arabic'),
     ('pt', 'Portuguese'),
     ('it', 'Italian'),
     ('nl', 'Dutch'),
@@ -180,13 +179,6 @@ LANGUAGES = [
     ('hi', 'Hindi'),
     ('sv', 'Swedish'),
     ('el', 'Greek'),
-    ('he', 'Hebrew'),
-    ('th', 'Thai'),
-    ('vi', 'Vietnamese'),
-    ('id', 'Indonesian'),
-    ('no', 'Norwegian'),
-    ('da', 'Danish'),
-    ('fi', 'Finnish'),
 ]
 
 # Static files (CSS, JavaScript, Images)

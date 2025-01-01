@@ -1,0 +1,1700 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-01-01 18:50+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:6
+#: apps/tickets/models.py:77
+msgid "Tickets"
+msgstr "Biletler"
+
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:12
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:18
+#: apps/users/templates/users/user_detail.html:45
+msgid "Your Tickets"
+msgstr "Biletleriniz"
+
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:13
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:58
+msgid "Buy New Ticket"
+msgstr "Yeni Bilet Al"
+
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:23
+#: apps/tickets/models.py:41 apps/tickets/models.py:69
+#: apps/tickets/templates/tickets/payment_page.html:14
+#: apps/users/templates/users/user_detail.html:53
+msgid "Ticket Type"
+msgstr "Bilet Türü"
+
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:24
+#: apps/tickets/models.py:32
+msgid "Zone"
+msgstr "Alan"
+
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:25
+#: apps/users/templates/users/user_detail.html:55
+msgid "Purchase Date"
+msgstr "Satın Alma Tarihi"
+
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:26
+#: apps/users/templates/users/user_detail.html:56
+msgid "Ending Date"
+msgstr "Bitiş Tarihi"
+
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:27
+msgid "Action"
+msgstr "Aksiyon"
+
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:42
+msgid "View Ticket for Inspection"
+msgstr "İnceleme için Bileti Görüntüle"
+
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:46
+#: apps/tickets/templates/tickets/ticket_detail.html:60
+msgid "Use Ticket"
+msgstr "Bileti Kullan"
+
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:70
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:105
+#: apps/tickets/templates/tickets/ticket_detail.html:48
+msgid "Zone:"
+msgstr "Alan:"
+
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:72
+#: apps/tickets/templates/tickets/ticket_detail.html:49
+msgid "Price:"
+msgstr "Fiyat:"
+
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:75
+msgid "Buy Ticket"
+msgstr "Bilet Al"
+
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:98
+#: apps/tickets/templates/tickets/ticket_detail.html:4
+#: apps/tickets/templates/tickets/ticket_detail.html:10
+msgid "Ticket Details"
+msgstr "Bilet Detayları"
+
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:104
+#: apps/tickets/templates/tickets/ticket_detail.html:50
+msgid "Ticket Type:"
+msgstr "Bilet Türü:"
+
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:106
+#: apps/tickets/templates/tickets/ticket_detail.html:27
+msgid "Purchase Date:"
+msgstr "Satın Alma Tarihi:"
+
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:107
+#: apps/tickets/templates/tickets/ticket_detail.html:41
+msgid "Ending Date:"
+msgstr "Bitiş Tarihi:"
+
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:111
+msgid "Remaining Time:"
+msgstr "Kalan Süre:"
+
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:119
+#: apps/tickets/models.py:72
+#: apps/tickets/templates/tickets/ticket_detail.html:13
+#: apps/users/templates/users/user_detail.html:57
+#, fuzzy
+#| msgid "Request Code"
+msgid "QR Code"
+msgstr "QR Kodu"
+
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:124
+msgid "Close"
+msgstr "Kapalı"
+
+#: apps/route_search/templates/base_view/sections/choose_city.html:4
+#: apps/route_search/templates/choose_city_view/index.html:4
+#: apps/route_search/templates/choose_city_view/index.html:8
+msgid "Choose a city"
+msgstr "Bir şehir seçin"
+
+#: apps/route_search/templates/base_view/sections/choose_language.html:4
+#: templates/header.html:20
+msgid "Language"
+msgstr "Dil"
+
+#: apps/route_search/templates/base_view/sections/map.html:84
+#: apps/route_search/templates/base_view/sections/search_modal.html:13
+#: apps/route_search/templates/base_view/sections/search_modal.html:121
+#, fuzzy
+#| msgid "Started At"
+msgid "Start"
+msgstr "Başlangıç"
+
+#: apps/route_search/templates/base_view/sections/map.html:93
+msgid "First stop"
+msgstr "İlk durak"
+
+#: apps/route_search/templates/base_view/sections/map.html:104
+#, fuzzy
+#| msgid "Last seen at"
+msgid "Last stop"
+msgstr "Son durak"
+
+#: apps/route_search/templates/base_view/sections/map.html:114
+msgid "Destintion"
+msgstr "Hedef"
+
+#: apps/route_search/templates/base_view/sections/results_modal.html:111
+msgid "Vehicle ID"
+msgstr "Araç Kimliği"
+
+#: apps/route_search/templates/base_view/sections/results_modal.html:112
+msgid "Departure ID"
+msgstr "Kalkış Kimliği"
+
+#: apps/route_search/templates/base_view/sections/results_modal.html:113
+msgid "Date"
+msgstr "Tarih"
+
+#: apps/route_search/templates/base_view/sections/search_modal.html:4
+msgid "back"
+msgstr "geri"
+
+#: apps/route_search/templates/base_view/sections/search_modal.html:23
+#: apps/route_search/templates/base_view/sections/search_modal.html:121
+msgid "Destination"
+msgstr "Varış noktası"
+
+#: apps/route_search/templates/base_view/sections/search_modal.html:33
+msgid "Date and time of departure"
+msgstr "Kalkış tarihi ve saati"
+
+#: apps/route_search/templates/base_view/sections/search_modal.html:42
+msgid "Search"
+msgstr "Aramak"
+
+#: apps/route_search/templates/base_view/sections/search_modal.html:52
+msgid "Processing ..."
+msgstr "İşleniyor..."
+
+#: apps/route_search/templates/base_view/sections/search_modal.html:114
+msgid "Choose stop"
+msgstr "Durdurmayı seçin"
+
+#: apps/route_search/templates/base_view/sections/search_modal.html:144
+#, fuzzy
+#| msgid "Unknown Account"
+msgid "Unknown Location"
+msgstr "Bilinmeyen Konum"
+
+#: apps/route_search/templates/base_view/sections/search_modal.html:154
+msgid "Unable to fetch location data. Please try again."
+msgstr "Konum verileri alınamıyor. Lütfen tekrar deneyin."
+
+#: apps/route_search/templates/choose_city_view/index.html:16
+msgid "Realtime Available"
+msgstr "Gerçek zamanlı mevcut"
+
+#: apps/route_search/templates/choose_city_view/index.html:19
+msgid "Tickets Available"
+msgstr "Biletler Mevcut"
+
+#: apps/route_search/views.py:55
+#, python-brace-format
+msgid "City '{city_full_name}' is not valid."
+msgstr "Şehir '{city_full_name}' geçerli değil."
+
+#: apps/route_search/views.py:61
+#, python-brace-format
+msgid "No data found for city: {city_full_name}"
+msgstr "Şehir için veri bulunamadı: {city_full_name}"
+
+#: apps/route_search/views.py:97
+msgid "Invalid start or destination location data."
+msgstr "Geçersiz başlangıç ​​veya hedef konum verisi."
+
+#: apps/route_search/views.py:102
+msgid "Invalid date and time format."
+msgstr "Geçersiz tarih ve saat biçimi."
+
+#: apps/tickets/models.py:18
+#, fuzzy
+#| msgid "Activate"
+msgid "Active"
+msgstr "Aktif"
+
+#: apps/tickets/models.py:19
+msgid "Name"
+msgstr "İsim"
+
+#: apps/tickets/models.py:20
+msgid "City"
+msgstr "Şehir"
+
+#: apps/tickets/models.py:21
+msgid "Category"
+msgstr "Kategori"
+
+#: apps/tickets/models.py:22
+msgid "Duration"
+msgstr "Süre"
+
+#: apps/tickets/models.py:23
+msgid "Timestamp"
+msgstr "Zaman damgası"
+
+#: apps/tickets/models.py:27
+msgid "Minutes"
+msgstr "Dakikalar"
+
+#: apps/tickets/models.py:28
+msgid "Days"
+msgstr "Günler"
+
+#: apps/tickets/models.py:30
+msgid "Timestamp Type"
+msgstr "Zaman Damgası Türü"
+
+#: apps/tickets/models.py:33
+msgid "Price"
+msgstr "Fiyat"
+
+#: apps/tickets/models.py:34 apps/tickets/models.py:45
+#: apps/tickets/templates/tickets/ticket_detail.html:52
+msgid "Discounted"
+msgstr "İndirimli"
+
+#: apps/tickets/models.py:35
+#, fuzzy
+#| msgid "Current"
+msgid "Currency"
+msgstr "Para birimi"
+
+#: apps/tickets/models.py:42
+msgid "Ticket Types"
+msgstr "Bilet Türleri"
+
+#: apps/tickets/models.py:45
+#: apps/tickets/templates/tickets/ticket_detail.html:54
+msgid "Regular"
+msgstr "Düzenli"
+
+#: apps/tickets/models.py:57
+msgid "ID"
+msgstr "İD"
+
+#: apps/tickets/models.py:62
+#, fuzzy
+#| msgid "User Form"
+msgid "User"
+msgstr "Kullanıcı"
+
+#: apps/tickets/models.py:64
+#, fuzzy
+#| msgid "Create"
+msgid "Created At"
+msgstr "Oluşturuldu"
+
+#: apps/tickets/models.py:71
+msgid "Ending Datetime"
+msgstr "Bitiş Tarihi ve Saati"
+
+#: apps/tickets/models.py:76
+#: apps/tickets/templates/tickets/ticket_detail.html:24
+msgid "Ticket"
+msgstr "Bilet"
+
+#: apps/tickets/models.py:80
+#, python-brace-format
+msgid "Ticket {ticket_type} for {user}"
+msgstr "{user} için {ticket_type} bileti"
+
+#: apps/tickets/models.py:99
+#, fuzzy
+#| msgid "Unused codes"
+msgid "Unused"
+msgstr "Kullanılmamış"
+
+#: apps/tickets/models.py:100
+msgid "In Use"
+msgstr "Kullanımda"
+
+#: apps/tickets/models.py:101
+msgid "Ended"
+msgstr "Bitti"
+
+#: apps/tickets/models.py:106
+#, fuzzy
+#| msgid "Unknown Account"
+msgid "Unknown"
+msgstr "Bilinmeyen"
+
+#: apps/tickets/templates/tickets/payment_page.html:7
+msgid "Dummy Payment Gateway"
+msgstr "Sahte Ödeme Ağ Geçidi"
+
+#: apps/tickets/templates/tickets/payment_page.html:12
+msgid "Payment for Ticket"
+msgstr "Bilet Ödemesi"
+
+#: apps/tickets/templates/tickets/payment_page.html:13
+msgid "Amount"
+msgstr "Miktar"
+
+#: apps/tickets/templates/tickets/payment_page.html:17
+#, fuzzy
+#| msgid "Primary"
+msgid "Pay"
+msgstr "Ödemek"
+
+#: apps/tickets/templates/tickets/payment_success.html:3
+msgid "Purchase Success"
+msgstr "Satın Alma Başarısı"
+
+#: apps/tickets/templates/tickets/payment_success.html:8
+#, fuzzy
+#| msgid "Password successfully set."
+msgid "Purchase completed successfully!"
+msgstr "Satın alma işlemi başarıyla tamamlandı!"
+
+#: apps/tickets/templates/tickets/payment_success.html:9
+msgid "You have successfully purchased the ticket:"
+msgstr "Bileti başarıyla satın aldınız:"
+
+#: apps/tickets/templates/tickets/payment_success.html:11
+msgid "Go to My Tickets"
+msgstr "Biletlerime Git"
+
+#: apps/tickets/templates/tickets/ticket_detail.html:11
+msgid "Information about the selected ticket"
+msgstr "Seçilen bilet hakkında bilgi"
+
+#: apps/tickets/templates/tickets/ticket_detail.html:15
+#, fuzzy
+#| msgid "A new set of recovery codes has been generated."
+msgid "QR Code has not been generated."
+msgstr "QR Kodu oluşturulmadı."
+
+#: apps/tickets/templates/tickets/ticket_detail.html:28
+msgid "Status:"
+msgstr "Durum:"
+
+#: apps/tickets/urls.py:9
+msgid "zakup-bilet/<str:ticket_type_id>/"
+msgstr "zakup-bilet/<str:bilet_türü_kimliği>/"
+
+#: apps/tickets/urls.py:12
+msgid "pomyślna-płatność/<int:ticket_type_id>/"
+msgstr "pomyślna-płatność/<int:ticket_type_id>/"
+
+#: apps/tickets/urls.py:15
+msgid "użyj-biletu/<uuid:id>/"
+msgstr "kullanım-bileti/<uuid:id>/"
+
+#: apps/tickets/urls.py:18
+msgid "bilet/<uuid:pk>/"
+msgstr "bilet/<uuid:pk>/"
+
+#: apps/tickets/views.py:36
+#, python-brace-format
+msgid "Successfully purchased ticket: {ticket_type.name}"
+msgstr "Bilet başarıyla satın alındı: {ticket_type.name}"
+
+#: apps/tickets/views.py:52
+#, python-brace-format
+msgid ""
+"QR code successfully generated. The ticket will expire: "
+"{ticket.ending_datetime}"
+msgstr ""
+"QR kodu başarıyla oluşturuldu. Bilet sona erecek: {ticket.ending_datetime}"
+
+#: apps/users/models.py:11
+#| msgid "Walking Speed:"
+msgid "Walking speed [m/s]"
+msgstr "Yürüme hızı [m/s]"
+
+#: apps/users/models.py:12
+#| msgid "Maximum Walking Distance:"
+msgid "Maximal walking distance [m]"
+msgstr "Maksimum yürüme mesafesi [m]"
+
+#: apps/users/templates/users/user_detail.html:3
+#: apps/users/templates/users/user_detail.html:8
+#, fuzzy
+#| msgid "Profile"
+msgid "User Profile"
+msgstr "Kullanıcı Profili"
+
+#: apps/users/templates/users/user_detail.html:9
+msgid "Details about your account"
+msgstr "Hesabınızla ilgili ayrıntılar"
+
+#: apps/users/templates/users/user_detail.html:17
+msgid "User Settings"
+msgstr "Kullanıcı Ayarları"
+
+#: apps/users/templates/users/user_detail.html:20
+#, fuzzy
+#| msgid "Add Email"
+msgid "Email:"
+msgstr "E-posta:"
+
+#: apps/users/templates/users/user_detail.html:21
+msgid "Date Joined:"
+msgstr "Katılma Tarihi:"
+
+#: apps/users/templates/users/user_detail.html:22
+#: templates/account/password_change.html:4
+#: templates/account/password_change.html:8
+#: templates/account/password_change.html:20
+#: templates/account/password_reset_from_key.html:5
+#: templates/account/password_reset_from_key.html:12
+#: templates/account/password_reset_from_key.html:30
+#: templates/account/password_reset_from_key_done.html:5
+#: templates/account/password_reset_from_key_done.html:9
+#: templates/allauth/layouts/base.html:37
+msgid "Change Password"
+msgstr "Şifre değiştir"
+
+#: apps/users/templates/users/user_detail.html:30
+#, fuzzy
+#| msgid "Other options"
+msgid "Other Settings"
+msgstr "Diğer Ayarlar"
+
+#: apps/users/templates/users/user_detail.html:33
+msgid "Walking Speed:"
+msgstr "Yürüme Hızı:"
+
+#: apps/users/templates/users/user_detail.html:34
+msgid "Maximum Walking Distance:"
+msgstr "Maksimum Yürüme Mesafesi:"
+
+#: apps/users/templates/users/user_detail.html:35
+#: templates/mfa/webauthn/authenticator_list.html:56
+msgid "Edit"
+msgstr "Düzenlemek"
+
+#: apps/users/templates/users/user_detail.html:54
+msgid "Status"
+msgstr "Durum"
+
+#: apps/users/templates/users/user_detail.html:82
+msgid "Generating a QR code will use the ticket."
+msgstr "QR kodu üretilerek bilet kullanılacaktır."
+
+#: apps/users/templates/users/user_detail.html:85
+msgid "Show for Inspection"
+msgstr "Muayene için göster"
+
+#: apps/users/templates/users/user_detail.html:87
+msgid "Ticket Ended"
+msgstr "Bilet Sona Erdi"
+
+#: apps/users/templates/users/user_detail.html:89
+msgid "Generate QR Code and Use Ticket"
+msgstr "QR Kodu Oluşturun ve Bileti Kullanın"
+
+#: apps/users/templates/users/user_detail.html:100
+msgid "You don't have any tickets yet."
+msgstr "Henüz biletiniz yok."
+
+#: apps/users/templates/users/user_metrics_form.html:10
+msgid "User Form"
+msgstr "Kullanıcı Formu"
+
+#: apps/users/templates/users/user_metrics_form.html:29
+msgid "Submit"
+msgstr "Göndermek"
+
+#: apps/users/urls.py:12
+msgid "adjust-parameters/"
+msgstr "parametreleri-ayarla/"
+
+#: ebus/urls.py:36
+msgid "accounts/"
+msgstr "hesaplar/"
+
+#: ebus/urls.py:39
+msgid "user/"
+msgstr "kullanıcı/"
+
+#: ebus/urls.py:42
+msgid "tickets/"
+msgstr "biletler/"
+
+#: ebus/urls.py:45
+#, fuzzy
+#| msgid "sign up"
+msgid "signup/"
+msgstr "üye olmak/"
+
+#: ebus/urls.py:46
+#, fuzzy
+#| msgid "Login"
+msgid "login/"
+msgstr "giriş yapmak/"
+
+#: ebus/urls.py:47
+#, fuzzy
+#| msgid "Logout"
+msgid "logout/"
+msgstr "çıkış yap/"
+
+#: ebus/urls.py:48
+#, fuzzy
+#| msgid "Change Password"
+msgid "change-password/"
+msgstr "şifre değiştir/"
+
+#: ebus/urls.py:49
+#, fuzzy
+#| msgid "Reset My Password"
+msgid "reset-password/"
+msgstr "şifreyi-sıfırla/"
+
+#: templates/account/account_inactive.html:5
+#: templates/account/account_inactive.html:9
+msgid "Account Inactive"
+msgstr "Hesap Etkin Değil"
+
+#: templates/account/account_inactive.html:12
+msgid "This account is inactive."
+msgstr "Bu hesap aktif değil."
+
+#: templates/account/base_reauthenticate.html:5
+#: templates/account/base_reauthenticate.html:9
+msgid "Confirm Access"
+msgstr "Erişimi Onayla"
+
+#: templates/account/base_reauthenticate.html:12
+msgid "Please reauthenticate to safeguard your account."
+msgstr "Hesabınızı korumak için lütfen yeniden kimlik doğrulaması yapın."
+
+#: templates/account/base_reauthenticate.html:19
+#: templates/mfa/authenticate.html:37
+msgid "Alternative options"
+msgstr "Alternatif seçenekler"
+
+#: templates/account/confirm_email_verification_code.html:5
+msgid "Email Verification"
+msgstr "E-posta Doğrulaması"
+
+#: templates/account/confirm_email_verification_code.html:9
+msgid "Enter Email Verification Code"
+msgstr "E-posta Doğrulama Kodunu Girin"
+
+#: templates/account/confirm_email_verification_code.html:15
+#: templates/account/confirm_login_code.html:15
+#, python-format
+msgid ""
+"We’ve sent a code to %(email_link)s. The code expires shortly, so please "
+"enter it soon."
+msgstr ""
+"%(email_link)s adresine bir kod gönderdik. Kod yakında sona eriyor, bu "
+"yüzden lütfen hemen girin."
+
+#: templates/account/confirm_email_verification_code.html:27
+#: templates/account/email_confirm.html:29
+#: templates/account/reauthenticate.html:18
+#: templates/mfa/reauthenticate.html:18
+msgid "Confirm"
+msgstr "Onaylamak"
+
+#: templates/account/confirm_email_verification_code.html:31
+#: templates/account/confirm_email_verification_code.html:35
+#: templates/account/confirm_login_code.html:32
+#: templates/mfa/authenticate.html:28 templates/mfa/authenticate.html:44
+#: templates/mfa/webauthn/signup_form.html:26
+msgid "Cancel"
+msgstr "İptal etmek"
+
+#: templates/account/confirm_login_code.html:5
+#: templates/account/confirm_login_code.html:27 templates/account/login.html:4
+#: templates/account/login.html:10 templates/account/login.html:32
+#: templates/account/request_login_code.html:5
+#: templates/allauth/layouts/base.html:68 templates/mfa/authenticate.html:6
+#: templates/mfa/authenticate.html:24 templates/openid/login.html:5
+#: templates/openid/login.html:9 templates/openid/login.html:20
+#: templates/socialaccount/login.html:5
+#: templates/socialaccount/login_redirect.html:5
+msgid "Sign In"
+msgstr "Kayıt olmak"
+
+#: templates/account/confirm_login_code.html:9
+msgid "Enter Sign-In Code"
+msgstr "Giriş Kodunu Girin"
+
+#: templates/account/email.html:4 templates/account/email.html:8
+msgid "Email Addresses"
+msgstr "E-posta Adresleri"
+
+#: templates/account/email.html:12
+msgid "The following email addresses are associated with your account:"
+msgstr "Aşağıdaki e-posta adresleri hesabınızla ilişkilidir:"
+
+#: templates/account/email.html:25
+msgid "Verified"
+msgstr "Doğrulandı"
+
+#: templates/account/email.html:29
+msgid "Unverified"
+msgstr "Doğrulanmamış"
+
+#: templates/account/email.html:34
+msgid "Primary"
+msgstr "Öncelik"
+
+#: templates/account/email.html:44
+msgid "Make Primary"
+msgstr "Birincil Yap"
+
+#: templates/account/email.html:47 templates/account/email_change.html:37
+msgid "Re-send Verification"
+msgstr "Doğrulamayı yeniden gönder"
+
+#: templates/account/email.html:50
+#: templates/mfa/webauthn/authenticator_confirm_delete.html:16
+#: templates/mfa/webauthn/authenticator_list.html:60
+#: templates/socialaccount/connections.html:40
+msgid "Remove"
+msgstr "Kaldırmak"
+
+#: templates/account/email.html:59
+msgid "Add Email Address"
+msgstr "E-posta Adresi Ekle"
+
+#: templates/account/email.html:70
+msgid "Add Email"
+msgstr "E-posta Ekle"
+
+#: templates/account/email.html:79
+msgid "Do you really want to remove the selected email address?"
+msgstr "Seçili e-posta adresini gerçekten kaldırmak istiyor musunuz?"
+
+#: templates/account/email/account_already_exists_message.txt:4
+#, python-format
+msgid ""
+"You are receiving this email because you or someone else tried to signup for an\n"
+"account using email address:\n"
+"\n"
+"%(email)s\n"
+"\n"
+"However, an account using that email address already exists.  In case you have\n"
+"forgotten about this, please use the password forgotten procedure to recover\n"
+"your account:\n"
+"\n"
+"%(password_reset_url)s"
+msgstr ""
+"Bu e-postayı alıyorsunuz çünkü siz veya başka biri şu e-posta adresini kullanarak bir\n"
+"hesap için kaydolmaya çalıştı:\n"
+"\n"
+"%(email)s\n"
+"\n"
+"Ancak, bu e-posta adresini kullanan bir hesap zaten mevcut. Bunu\n"
+"unuttuysanız, lütfen hesabınızı kurtarmak için\n"
+"şifre unutuldu prosedürünü kullanın:\n"
+"\n"
+"%(password_reset_url)s"
+
+#: templates/account/email/account_already_exists_subject.txt:3
+msgid "Account Already Exists"
+msgstr "Hesap Zaten Mevcut"
+
+#: templates/account/email/base_message.txt:1
+#, python-format
+msgid "Hello from %(site_name)s!"
+msgstr "%(site_name)s'den merhaba!"
+
+#: templates/account/email/base_message.txt:5
+#, python-format
+msgid ""
+"Thank you for using %(site_name)s!\n"
+"%(site_domain)s"
+msgstr ""
+"%(site_name)s'yi kullandığınız için teşekkür ederiz!\n"
+"%(site_domain)s"
+
+#: templates/account/email/base_notification.txt:5
+msgid ""
+"You are receiving this mail because the following change was made to your "
+"account:"
+msgstr ""
+"Bu e-postayı almanızın nedeni hesabınızda yapılan aşağıdaki değişikliğin "
+"olmasıdır:"
+
+#: templates/account/email/base_notification.txt:10
+#, python-format
+msgid ""
+"If you do not recognize this change then please take proper security precautions immediately. The change to your account originates from:\n"
+"\n"
+"- IP address: %(ip)s\n"
+"- Browser: %(user_agent)s\n"
+"- Date: %(timestamp)s"
+msgstr ""
+"Bu değişikliği tanımıyorsanız lütfen derhal uygun güvenlik önlemlerini alın. Hesabınızdaki değişiklik şuradan kaynaklanmaktadır:\n"
+"\n"
+"- IP adresi: %(ip)s\n"
+"- Tarayıcı: %(user_agent)s\n"
+"- Tarih: %(timestamp)s"
+
+#: templates/account/email/email_changed_message.txt:4
+#, python-format
+msgid "Your email has been changed from %(from_email)s to %(to_email)s."
+msgstr ""
+"E-postanız %(from_email)s adresinden %(to_email)s adresine değiştirildi."
+
+#: templates/account/email/email_changed_subject.txt:3
+msgid "Email Changed"
+msgstr "E-posta Değişti"
+
+#: templates/account/email/email_confirm_message.txt:4
+msgid "Your email has been confirmed."
+msgstr "E-postanız doğrulandı."
+
+#: templates/account/email/email_confirm_subject.txt:3
+msgid "Email Confirmation"
+msgstr "E-posta Onayı"
+
+#: templates/account/email/email_confirmation_message.txt:5
+#, python-format
+msgid ""
+"You're receiving this email because user %(user_display)s has given your "
+"email address to register an account on %(site_domain)s."
+msgstr ""
+"Bu e-postayı almanızın nedeni, %(user_display)s adlı kullanıcının "
+"%(site_domain)s üzerinde bir hesap kaydettirmek için e-posta adresinizi "
+"vermiş olmasıdır."
+
+#: templates/account/email/email_confirmation_message.txt:7
+msgid ""
+"Your email verification code is listed below. Please enter it in your open "
+"browser window."
+msgstr ""
+"E-posta doğrulama kodunuz aşağıda listelenmiştir. Lütfen açık tarayıcı "
+"pencerenize girin."
+
+#: templates/account/email/email_confirmation_message.txt:9
+#, python-format
+msgid "To confirm this is correct, go to %(activate_url)s"
+msgstr "Bunun doğru olduğunu onaylamak için %(activate_url)s adresine gidin"
+
+#: templates/account/email/email_confirmation_subject.txt:3
+msgid "Please Confirm Your Email Address"
+msgstr "Lütfen E-posta Adresinizi Onaylayın"
+
+#: templates/account/email/email_deleted_message.txt:4
+#, python-format
+msgid "Email address %(deleted_email)s has been removed from your account."
+msgstr "E-posta adresiniz %(deleted_email)s hesabınızdan kaldırıldı."
+
+#: templates/account/email/email_deleted_subject.txt:3
+msgid "Email Removed"
+msgstr "E-posta Kaldırıldı"
+
+#: templates/account/email/login_code_message.txt:5
+msgid ""
+"Your sign-in code is listed below. Please enter it in your open browser "
+"window."
+msgstr ""
+"Giriş kodunuz aşağıda listelenmiştir. Lütfen açık tarayıcı pencerenize "
+"girin."
+
+#: templates/account/email/login_code_message.txt:9
+#: templates/account/email/unknown_account_message.txt:6
+msgid "This mail can be safely ignored if you did not initiate this action."
+msgstr ""
+"Bu eylemi siz başlatmadıysanız, bu e-postayı güvenle yok sayabilirsiniz."
+
+#: templates/account/email/login_code_subject.txt:3
+msgid "Sign-In Code"
+msgstr "Giriş Kodu"
+
+#: templates/account/email/password_changed_message.txt:4
+msgid "Your password has been changed."
+msgstr "Şifreniz değiştirildi."
+
+#: templates/account/email/password_changed_subject.txt:3
+msgid "Password Changed"
+msgstr "Şifre Değiştirildi"
+
+#: templates/account/email/password_reset_key_message.txt:4
+msgid ""
+"You're receiving this email because you or someone else has requested a password reset for your user account.\n"
+"It can be safely ignored if you did not request a password reset. Click the link below to reset your password."
+msgstr ""
+"Bu e-postayı, siz veya başka biri kullanıcı hesabınız için bir parola sıfırlama talebinde bulunduğu için alıyorsunuz.\n"
+"Parola sıfırlama talebinde bulunmadıysanız, bu e-postayı güvenle göz ardı edebilirsiniz. Parolanızı sıfırlamak için aşağıdaki bağlantıya tıklayın."
+
+#: templates/account/email/password_reset_key_message.txt:9
+#, python-format
+msgid "In case you forgot, your username is %(username)s."
+msgstr "Eğer unuttuysanız kullanıcı adınız %(username)s'dir."
+
+#: templates/account/email/password_reset_key_subject.txt:3
+msgid "Password Reset Email"
+msgstr "Şifre Sıfırlama E-postası"
+
+#: templates/account/email/password_reset_message.txt:4
+msgid "Your password has been reset."
+msgstr "Şifreniz sıfırlandı."
+
+#: templates/account/email/password_reset_subject.txt:3
+#: templates/account/password_reset.html:4
+#: templates/account/password_reset.html:8
+#: templates/account/password_reset_done.html:6
+#: templates/account/password_reset_done.html:10
+msgid "Password Reset"
+msgstr "Şifre Sıfırlama"
+
+#: templates/account/email/password_set_message.txt:4
+msgid "Your password has been set."
+msgstr "Şifreniz ayarlandı."
+
+#: templates/account/email/password_set_subject.txt:3
+msgid "Password Set"
+msgstr "Şifre Ayarı"
+
+#: templates/account/email/unknown_account_message.txt:4
+#, python-format
+msgid ""
+"You are receiving this email because you, or someone else, tried to access "
+"an account with email %(email)s. However, we do not have any record of such "
+"an account in our database."
+msgstr ""
+"Bu e-postayı alıyorsunuz çünkü siz veya başka biri %(email)s e-posta "
+"adresiyle bir hesaba erişmeye çalıştı. Ancak, veritabanımızda böyle bir "
+"hesaba dair herhangi bir kaydımız yok."
+
+#: templates/account/email/unknown_account_message.txt:8
+msgid "If it was you, you can sign up for an account using the link below."
+msgstr ""
+"Eğer siz de bu durumdaysanız, aşağıdaki bağlantıyı kullanarak bir hesap "
+"oluşturabilirsiniz."
+
+#: templates/account/email/unknown_account_subject.txt:3
+msgid "Unknown Account"
+msgstr "Bilinmeyen Hesap"
+
+#: templates/account/email_change.html:5 templates/account/email_change.html:9
+msgid "Email Address"
+msgstr "E-posta Adresi"
+
+#: templates/account/email_change.html:21
+#: templates/account/email_change.html:29
+msgid "Current email"
+msgstr "Mevcut e-posta"
+
+#: templates/account/email_change.html:31
+msgid "Changing to"
+msgstr "Değişiyor"
+
+#: templates/account/email_change.html:35
+msgid "Your email address is still pending verification."
+msgstr "E-posta adresiniz hala doğrulanmayı bekliyor."
+
+#: templates/account/email_change.html:41
+msgid "Cancel Change"
+msgstr "Değişikliği İptal Et"
+
+#: templates/account/email_change.html:49
+msgid "Change to"
+msgstr "Değiştir"
+
+#: templates/account/email_change.html:55
+#: templates/allauth/layouts/base.html:31
+msgid "Change Email"
+msgstr "E-postayı değiştir"
+
+#: templates/account/email_confirm.html:4
+#: templates/account/email_confirm.html:8
+msgid "Confirm Email Address"
+msgstr "e"
+
+#: templates/account/email_confirm.html:14
+msgid "Please confirm that"
+msgstr "Lütfen bunu onaylayın"
+
+#: templates/account/email_confirm.html:16
+msgid "is an email address for user"
+msgstr "kullanıcı için bir e-posta adresidir"
+
+#: templates/account/email_confirm.html:34
+#, python-format
+msgid ""
+"\n"
+"                    Unable to confirm %(email)s because it is already confirmed by a different account.\n"
+"                "
+msgstr ""
+"\n"
+"                    %(email)s adresi farklı bir hesap tarafından onaylandığı için onaylanamıyor.\n"
+"                "
+
+#: templates/account/email_confirm.html:42
+#, python-format
+msgid ""
+"\n"
+"                This email confirmation link expired or is invalid. Please <a href=\"%(email_url)s\">issue a new email confirmation request</a>.\n"
+"            "
+msgstr ""
+"\n"
+"                Bu e-posta onay bağlantısı süresi doldu veya geçersiz. Lütfen <a href=\"%(email_url)s\">yeni bir e-posta onay isteği gönderin</a>.\n"
+"            "
+
+#: templates/account/login.html:15
+msgid "If you have not created an account yet, then please"
+msgstr "Henüz bir hesap oluşturmadıysanız lütfen"
+
+#: templates/account/login.html:16
+msgid "sign up"
+msgstr "üye olmak"
+
+#: templates/account/login.html:17
+msgid "first"
+msgstr "Birinci"
+
+#: templates/account/login.html:41
+msgid "Sign in with a passkey"
+msgstr "Parola ile giriş yapın"
+
+#: templates/account/login.html:44 templates/account/request_login_code.html:9
+msgid "Mail me a sign-in code"
+msgstr "Bana bir oturum açma kodu gönder"
+
+#: templates/account/logout.html:4 templates/account/logout.html:8
+#: templates/account/logout.html:21 templates/allauth/layouts/base.html:61
+#: templates/usersessions/usersession_list.html:64
+msgid "Sign Out"
+msgstr "Oturumu Kapat"
+
+#: templates/account/logout.html:11
+msgid "Are you sure you want to sign out?"
+msgstr "Çıkış yapmak istediğinize emin misiniz?"
+
+#: templates/account/messages/cannot_delete_primary_email.txt:2
+#, python-format
+msgid "You cannot remove your primary email address (%(email)s)."
+msgstr "Birincil e-posta adresinizi (%(email)s) kaldıramazsınız."
+
+#: templates/account/messages/email_confirmation_failed.txt:2
+#, python-format
+msgid ""
+"Unable to confirm %(email)s because it is already confirmed by a different "
+"account."
+msgstr ""
+"%(email)s adresi farklı bir hesap tarafından onaylandığı için onaylanamıyor."
+
+#: templates/account/messages/email_confirmation_sent.txt:2
+#, python-format
+msgid "Confirmation email sent to %(email)s."
+msgstr "Onay e-postası %(email)s adresine gönderildi."
+
+#: templates/account/messages/email_confirmed.txt:2
+#, python-format
+msgid "You have confirmed %(email)s."
+msgstr "%(email)s adresini doğruladınız."
+
+#: templates/account/messages/email_deleted.txt:2
+#, python-format
+msgid "Removed email address %(email)s."
+msgstr "%(email)s e-posta adresi kaldırıldı."
+
+#: templates/account/messages/logged_in.txt:4
+#, python-format
+msgid "Successfully signed in as %(name)s."
+msgstr "%(name)s olarak başarıyla oturum açıldı."
+
+#: templates/account/messages/logged_out.txt:2
+msgid "You have signed out."
+msgstr "Çıkış yaptınız."
+
+#: templates/account/messages/login_code_sent.txt:2
+#, python-format
+msgid "A sign-in code has been mailed to %(email)s."
+msgstr "%(email)s adresine bir oturum açma kodu gönderildi."
+
+#: templates/account/messages/password_changed.txt:2
+msgid "Password successfully changed."
+msgstr "Şifre başarıyla değiştirildi."
+
+#: templates/account/messages/password_set.txt:2
+msgid "Password successfully set."
+msgstr "Şifre başarıyla ayarlandı."
+
+#: templates/account/messages/primary_email_set.txt:2
+msgid "Primary email address set."
+msgstr "Birincil e-posta adresi ayarlandı."
+
+#: templates/account/messages/unverified_primary_email.txt:2
+msgid "Your primary email address must be verified."
+msgstr "Birincil e-posta adresinizin doğrulanması gerekiyor."
+
+#: templates/account/password_change.html:22
+msgid "Forgot Password?"
+msgstr "Parolanızı mı unuttunuz?"
+
+#: templates/account/password_reset.html:14
+msgid ""
+"Forgotten your password? Enter your email address below, and we'll send you "
+"an email allowing you to reset it."
+msgstr ""
+"Şifrenizi mi unuttunuz? Aşağıya e-posta adresinizi girin, size sıfırlamanızı"
+" sağlayacak bir e-posta gönderelim."
+
+#: templates/account/password_reset.html:25
+msgid "Reset My Password"
+msgstr "Şifremi Sıfırla"
+
+#: templates/account/password_reset.html:30
+msgid "Please contact us if you have any trouble resetting your password."
+msgstr ""
+"Şifrenizi sıfırlamada herhangi bir sorun yaşarsanız lütfen bizimle iletişime"
+" geçin."
+
+#: templates/account/password_reset_done.html:16
+msgid ""
+"We have sent you an email. If you have not received it please check your "
+"spam folder. Otherwise contact us if you do not receive it in a few minutes."
+msgstr ""
+"Size bir e-posta gönderdik. Eğer almadıysanız lütfen spam klasörünüzü "
+"kontrol edin. Aksi takdirde birkaç dakika içinde almazsanız bizimle "
+"iletişime geçin."
+
+#: templates/account/password_reset_from_key.html:10
+msgid "Bad Token"
+msgstr "Kötü Jeton"
+
+#: templates/account/password_reset_from_key.html:18
+#, python-format
+msgid ""
+"The password reset link was invalid, possibly because it has already been "
+"used.  Please request a <a href=\"%(passwd_reset_url)s\">new password "
+"reset</a>."
+msgstr ""
+"Şifre sıfırlama bağlantısı geçersizdi, muhtemelen daha önce kullanılmış "
+"olduğu için. Lütfen <a href=\"%(passwd_reset_url)s\">yeni bir şifre "
+"sıfırlama</a> isteyin."
+
+#: templates/account/password_reset_from_key_done.html:12
+msgid "Your password is now changed."
+msgstr "Şifreniz artık değişti."
+
+#: templates/account/password_set.html:5 templates/account/password_set.html:9
+#: templates/account/password_set.html:21
+msgid "Set Password"
+msgstr "Şifre Ayarla"
+
+#: templates/account/reauthenticate.html:6
+msgid "Enter your password:"
+msgstr "Şifrenizi giriniz:"
+
+#: templates/account/request_login_code.html:12
+msgid ""
+"You will receive an email containing a special code for a password-free "
+"sign-in."
+msgstr "Şifresiz giriş için özel bir kod içeren bir e-posta alacaksınız."
+
+#: templates/account/request_login_code.html:24
+msgid "Request Code"
+msgstr "İstek Kodu"
+
+#: templates/account/request_login_code.html:30
+msgid "Other sign-in options"
+msgstr "Diğer oturum açma seçenekleri"
+
+#: templates/account/signup.html:4 templates/account/signup.html:9
+#: templates/account/signup.html:14
+#: templates/account/signup_by_passkey.html:29
+#: templates/allauth/layouts/base.html:74 templates/header.html:15
+#: templates/socialaccount/signup.html:9
+#: templates/socialaccount/signup.html:25
+msgid "Sign Up"
+msgstr "Üye olmak"
+
+#: templates/account/signup.html:18
+msgid "Already have an account? Log In!"
+msgstr "Zaten bir hesabınız var mı? Giriş yapın!"
+
+#: templates/account/signup_by_passkey.html:4
+#: templates/socialaccount/signup.html:5
+msgid "Signup"
+msgstr "Üye olmak"
+
+#: templates/account/signup_by_passkey.html:8
+msgid "Passkey Sign Up"
+msgstr "Passkey Kaydı"
+
+#: templates/account/signup_by_passkey.html:17
+#, python-format
+msgid "Already have an account? Then please %(link)ssign in%(end_link)s."
+msgstr ""
+"Zaten bir hesabınız var mı? O zaman lütfen %(link)soturum açın%(end_link)s."
+
+#: templates/account/signup_by_passkey.html:36
+msgid "Other options"
+msgstr "Diğer seçenekler"
+
+#: templates/account/signup_closed.html:5
+#: templates/account/signup_closed.html:9
+msgid "Sign Up Closed"
+msgstr "Kayıt Kapalı"
+
+#: templates/account/signup_closed.html:12
+msgid "We are sorry, but the sign up is currently closed."
+msgstr "Üzgünüz, kayıt şu anda kapalı."
+
+#: templates/account/snippets/already_logged_in.html:7
+msgid "Note"
+msgstr "Not"
+
+#: templates/account/snippets/already_logged_in.html:7
+#, python-format
+msgid "You are already logged in as %(user_display)s."
+msgstr "Zaten %(user_display)s olarak giriş yaptınız."
+
+#: templates/account/snippets/warn_no_email.html:3
+msgid "Warning:"
+msgstr "Uyarı:"
+
+#: templates/account/snippets/warn_no_email.html:3
+msgid ""
+"You currently do not have any email address set up. You should really add an"
+" email address so you can receive notifications, reset your password, etc."
+msgstr ""
+"Şu anda ayarlanmış bir e-posta adresiniz yok. Bildirimleri alabilmeniz, "
+"parolanızı sıfırlayabilmeniz vb. için bir e-posta adresi eklemelisiniz."
+
+#: templates/account/verification_sent.html:5
+#: templates/account/verification_sent.html:9
+#: templates/account/verified_email_required.html:5
+#: templates/account/verified_email_required.html:9
+msgid "Verify Your Email Address"
+msgstr "E-posta Adresinizi Doğrulayın"
+
+#: templates/account/verification_sent.html:12
+msgid ""
+"We have sent an email to you for verification. Follow the link provided to "
+"finalize the signup process. If you do not see the verification email in "
+"your main inbox, check your spam folder. Please contact us if you do not "
+"receive the verification email within a few minutes."
+msgstr ""
+"Doğrulama için size bir e-posta gönderdik. Kayıt işlemini tamamlamak için "
+"verilen bağlantıyı takip edin. Doğrulama e-postasını ana gelen kutunuzda "
+"görmüyorsanız, spam klasörünüzü kontrol edin. Doğrulama e-postasını birkaç "
+"dakika içinde almazsanız lütfen bizimle iletişime geçin."
+
+#: templates/account/verified_email_required.html:13
+msgid ""
+"This part of the site requires us to verify that\n"
+"you are who you claim to be. For this purpose, we require that you\n"
+"verify ownership of your email address. "
+msgstr ""
+"Sitenin bu kısmı, iddia ettiğiniz kişi olduğunuzu doğrulamamızı gerektirir. "
+"Bu amaçla, e-posta adresinizin mülkiyetini doğrulamanızı gerektirir."
+
+#: templates/account/verified_email_required.html:18
+msgid ""
+"We have sent an email to you for\n"
+"verification. Please click on the link inside that email. If you do not see the verification email in your main inbox, check your spam folder. Otherwise\n"
+"contact us if you do not receive it within a few minutes."
+msgstr ""
+"Doğrulama için size bir e-posta gönderdik. Lütfen bu e-postanın içindeki "
+"bağlantıya tıklayın. Doğrulama e-postasını ana gelen kutunuzda "
+"görmüyorsanız, spam klasörünüzü kontrol edin. Aksi takdirde, birkaç dakika "
+"içinde almazsanız bizimle iletişime geçin."
+
+#: templates/account/verified_email_required.html:23
+#, python-format
+msgid ""
+"<strong>Note:</strong> you can still <a href=\"%(email_url)s\">change your "
+"email address</a>."
+msgstr ""
+"<strong>Not:</strong> E-posta adresinizi yine de <a "
+"href=\"%(email_url)s\">değiştirebilirsiniz</a>."
+
+#: templates/allauth/layouts/base.html:18
+msgid "Messages:"
+msgstr "Mesajlar:"
+
+#: templates/allauth/layouts/base.html:25
+msgid "Menu:"
+msgstr "Menü:"
+
+#: templates/allauth/layouts/base.html:43
+#: templates/socialaccount/connections.html:5
+#: templates/socialaccount/connections.html:9
+msgid "Account Connections"
+msgstr "Hesap Bağlantıları"
+
+#: templates/allauth/layouts/base.html:49 templates/mfa/authenticate.html:10
+#: templates/mfa/index.html:5 templates/mfa/index.html:9
+msgid "Two-Factor Authentication"
+msgstr "İki Faktörlü Kimlik Doğrulama"
+
+#: templates/allauth/layouts/base.html:55
+#: templates/usersessions/usersession_list.html:6
+#: templates/usersessions/usersession_list.html:10
+msgid "Sessions"
+msgstr "Oturumlar"
+
+#: templates/header.html:11
+msgid "Profile"
+msgstr "Profil"
+
+#: templates/header.html:12
+msgid "Logout"
+msgstr "Çıkış Yap"
+
+#: templates/header.html:14
+msgid "Login"
+msgstr "Giriş yapmak"
+
+#: templates/mfa/authenticate.html:13
+msgid ""
+"Your account is protected by two-factor authentication. Please enter an "
+"authenticator code:"
+msgstr ""
+"Hesabınız iki faktörlü kimlik doğrulama ile korunmaktadır. Lütfen bir kimlik"
+" doğrulama kodu girin:"
+
+#: templates/mfa/authenticate.html:41
+#: templates/mfa/webauthn/reauthenticate.html:15
+msgid "Use a security key"
+msgstr "Bir güvenlik anahtarı kullanın"
+
+#: templates/mfa/email/recovery_codes_generated_message.txt:4
+msgid ""
+"A new set of Two-Factor Authentication recovery codes has been generated."
+msgstr ""
+"Yeni bir İki Faktörlü Kimlik Doğrulama kurtarma kodları kümesi oluşturuldu."
+
+#: templates/mfa/email/recovery_codes_generated_subject.txt:3
+msgid "New Recovery Codes Generated"
+msgstr "Yeni Kurtarma Kodları Oluşturuldu"
+
+#: templates/mfa/email/totp_activated_message.txt:4
+#: templates/mfa/messages/totp_activated.txt:2
+msgid "Authenticator app activated."
+msgstr "Kimlik doğrulama uygulaması etkinleştirildi."
+
+#: templates/mfa/email/totp_activated_subject.txt:3
+msgid "Authenticator App Activated"
+msgstr "Kimlik Doğrulayıcı Uygulaması Etkinleştirildi"
+
+#: templates/mfa/email/totp_deactivated_message.txt:4
+#: templates/mfa/messages/totp_deactivated.txt:2
+msgid "Authenticator app deactivated."
+msgstr "Kimlik doğrulama uygulaması devre dışı bırakıldı."
+
+#: templates/mfa/email/totp_deactivated_subject.txt:3
+msgid "Authenticator App Deactivated"
+msgstr "Kimlik Doğrulayıcı Uygulaması Devre Dışı Bırakıldı"
+
+#: templates/mfa/email/webauthn_added_message.txt:4
+msgid "A new security key has been added."
+msgstr "Yeni bir güvenlik anahtarı eklendi."
+
+#: templates/mfa/email/webauthn_added_subject.txt:3
+msgid "Security Key Added"
+msgstr "Güvenlik Anahtarı Eklendi"
+
+#: templates/mfa/email/webauthn_removed_message.txt:4
+msgid "A security key has been removed."
+msgstr "Bir güvenlik anahtarı kaldırıldı."
+
+#: templates/mfa/email/webauthn_removed_subject.txt:3
+msgid "Security Key Removed"
+msgstr "Güvenlik Anahtarı Kaldırıldı"
+
+#: templates/mfa/index.html:14 templates/mfa/totp/base.html:4
+msgid "Authenticator App"
+msgstr "Kimlik Doğrulayıcı Uygulama"
+
+#: templates/mfa/index.html:19
+msgid "Authentication using an authenticator app is active."
+msgstr "Kimlik doğrulama uygulaması kullanılarak kimlik doğrulama etkin."
+
+#: templates/mfa/index.html:23
+msgid "An authenticator app is not active."
+msgstr "Bir kimlik doğrulama uygulaması etkin değil."
+
+#: templates/mfa/index.html:32 templates/mfa/totp/deactivate_form.html:24
+msgid "Deactivate"
+msgstr "Devre dışı bırak"
+
+#: templates/mfa/index.html:36 templates/mfa/totp/activate_form.html:32
+msgid "Activate"
+msgstr "Etkinleştir"
+
+#: templates/mfa/index.html:45
+#: templates/mfa/webauthn/authenticator_list.html:8
+#: templates/mfa/webauthn/base.html:4
+msgid "Security Keys"
+msgstr "Güvenlik Anahtarları"
+
+#: templates/mfa/index.html:50
+#, python-format
+msgid "You have added %(count)s security key."
+msgid_plural "You have added %(count)s security keys."
+msgstr[0] ""
+msgstr[1] ""
+
+#: templates/mfa/index.html:54
+#: templates/mfa/webauthn/authenticator_list.html:12
+msgid "No security keys have been added."
+msgstr "Hiçbir güvenlik anahtarı eklenmedi."
+
+#: templates/mfa/index.html:62
+msgid "Manage"
+msgstr "Üstesinden gelmek"
+
+#: templates/mfa/index.html:67 templates/mfa/webauthn/add_form.html:18
+#: templates/mfa/webauthn/authenticator_list.html:70
+msgid "Add"
+msgstr "Eklemek"
+
+#: templates/mfa/index.html:77 templates/mfa/recovery_codes/base.html:4
+#: templates/mfa/recovery_codes/generate.html:6
+#: templates/mfa/recovery_codes/index.html:6
+msgid "Recovery Codes"
+msgstr "Kurtarma Kodları"
+
+#: templates/mfa/index.html:82 templates/mfa/recovery_codes/index.html:9
+#, python-format
+msgid ""
+"There is %(unused_count)s out of %(total_count)s recovery codes available."
+msgid_plural ""
+"There are %(unused_count)s out of %(total_count)s recovery codes available."
+msgstr[0] ""
+msgstr[1] ""
+
+#: templates/mfa/index.html:86
+msgid "No recovery codes set up."
+msgstr "Hiçbir kurtarma kodu ayarlanmadı."
+
+#: templates/mfa/index.html:96
+msgid "View"
+msgstr "Görüş"
+
+#: templates/mfa/index.html:102
+msgid "Download"
+msgstr "İndirmek"
+
+#: templates/mfa/index.html:110 templates/mfa/recovery_codes/generate.html:29
+msgid "Generate"
+msgstr "Oluştur"
+
+#: templates/mfa/messages/recovery_codes_generated.txt:2
+msgid "A new set of recovery codes has been generated."
+msgstr "Yeni bir kurtarma kodları kümesi oluşturuldu."
+
+#: templates/mfa/messages/webauthn_added.txt:2
+msgid "Security key added."
+msgstr "Güvenlik anahtarı eklendi."
+
+#: templates/mfa/messages/webauthn_removed.txt:2
+msgid "Security key removed."
+msgstr "Güvenlik anahtarı kaldırıldı."
+
+#: templates/mfa/reauthenticate.html:6
+msgid "Enter an authenticator code:"
+msgstr "Bir kimlik doğrulama kodu girin:"
+
+#: templates/mfa/recovery_codes/generate.html:9
+msgid ""
+"You are about to generate a new set of recovery codes for your account."
+msgstr "Hesabınız için yeni bir kurtarma kodu seti oluşturmak üzeresiniz."
+
+#: templates/mfa/recovery_codes/generate.html:11
+msgid "This action will invalidate your existing codes."
+msgstr "Bu işlem mevcut kodlarınızı geçersiz kılacaktır."
+
+#: templates/mfa/recovery_codes/generate.html:13
+msgid "Are you sure?"
+msgstr "Emin misin?"
+
+#: templates/mfa/recovery_codes/index.html:13
+msgid "Unused codes"
+msgstr "Kullanılmayan kodlar"
+
+#: templates/mfa/recovery_codes/index.html:25
+msgid "Download codes"
+msgstr "Kodları indirin"
+
+#: templates/mfa/recovery_codes/index.html:30
+msgid "Generate new codes"
+msgstr "Yeni kodlar üret"
+
+#: templates/mfa/totp/activate_form.html:4
+#: templates/mfa/totp/activate_form.html:8
+msgid "Activate Authenticator App"
+msgstr "Kimlik Doğrulayıcı Uygulamasını Etkinleştir"
+
+#: templates/mfa/totp/activate_form.html:11
+msgid ""
+"To protect your account with two-factor authentication, scan the QR code "
+"below with your authenticator app. Then, input the verification code "
+"generated by the app below."
+msgstr ""
+"Hesabınızı iki faktörlü kimlik doğrulamasıyla korumak için, aşağıdaki QR "
+"kodunu kimlik doğrulama uygulamanızla tarayın. Ardından, uygulama tarafından"
+" oluşturulan doğrulama kodunu aşağıya girin."
+
+#: templates/mfa/totp/activate_form.html:21
+msgid "Authenticator secret"
+msgstr "Kimlik doğrulayıcı sırrı"
+
+#: templates/mfa/totp/activate_form.html:24
+msgid ""
+"You can store this secret and use it to reinstall your authenticator app at "
+"a later time."
+msgstr ""
+"Bu sırrı saklayabilir ve daha sonra kimlik doğrulama uygulamanızı yeniden "
+"yüklemek için kullanabilirsiniz."
+
+#: templates/mfa/totp/deactivate_form.html:5
+#: templates/mfa/totp/deactivate_form.html:9
+msgid "Deactivate Authenticator App"
+msgstr "Kimlik Doğrulayıcı Uygulamasını Devre Dışı Bırak"
+
+#: templates/mfa/totp/deactivate_form.html:12
+msgid ""
+"You are about to deactivate authenticator app based authentication. Are you "
+"sure?"
+msgstr ""
+"Kimlik doğrulama uygulaması tabanlı kimlik doğrulamayı devre dışı bırakmak "
+"üzeresiniz. Emin misiniz?"
+
+#: templates/mfa/webauthn/add_form.html:7
+msgid "Add Security Key"
+msgstr "Güvenlik Anahtarı Ekle"
+
+#: templates/mfa/webauthn/authenticator_confirm_delete.html:6
+msgid "Remove Security Key"
+msgstr "Güvenlik Anahtarını Kaldır"
+
+#: templates/mfa/webauthn/authenticator_confirm_delete.html:9
+msgid "Are you sure you want to remove this security key?"
+msgstr "Bu güvenlik anahtarını kaldırmak istediğinizden emin misiniz?"
+
+#: templates/mfa/webauthn/authenticator_list.html:18
+msgid "Key"
+msgstr "Anahtar"
+
+#: templates/mfa/webauthn/authenticator_list.html:21
+msgid "Usage"
+msgstr "Kullanım"
+
+#: templates/mfa/webauthn/authenticator_list.html:33
+msgid "Passkey"
+msgstr "Geçiş anahtarı"
+
+#: templates/mfa/webauthn/authenticator_list.html:37
+msgid "Security key"
+msgstr "Güvenlik anahtarı"
+
+#: templates/mfa/webauthn/authenticator_list.html:40
+msgid "This key does not indicate whether it is a passkey."
+msgstr "Bu anahtar, bir geçiş anahtarı olup olmadığını göstermez."
+
+#: templates/mfa/webauthn/authenticator_list.html:41
+msgid "Unspecified"
+msgstr "Belirtilmemiş"
+
+#: templates/mfa/webauthn/authenticator_list.html:46
+#, python-format
+msgid "Added on %(created_at)s"
+msgstr "%(created_at)s tarihinde eklendi"
+
+#: templates/mfa/webauthn/authenticator_list.html:48
+#, python-format
+msgid "Last used %(last_used)s"
+msgstr "Son kullanılan %(last_used)s"
+
+#: templates/mfa/webauthn/edit_form.html:7
+msgid "Edit Security Key"
+msgstr "Güvenlik Anahtarını Düzenle"
+
+#: templates/mfa/webauthn/edit_form.html:18
+msgid "Save"
+msgstr "Kaydetmek"
+
+#: templates/mfa/webauthn/signup_form.html:7
+msgid "Create Passkey"
+msgstr "Şifre Oluştur"
+
+#: templates/mfa/webauthn/signup_form.html:10
+msgid ""
+"You are about to create a passkey for your account. As you can add "
+"additional keys later on, you can use a descriptive name to tell the keys "
+"apart."
+msgstr ""
+"Hesabınız için bir geçiş anahtarı oluşturmak üzeresiniz. Daha sonra ek "
+"anahtarlar ekleyebileceğiniz gibi, anahtarları birbirinden ayırmak için "
+"açıklayıcı bir ad kullanabilirsiniz."
+
+#: templates/mfa/webauthn/signup_form.html:21
+msgid "Create"
+msgstr "Yaratmak"
+
+#: templates/mfa/webauthn/snippets/scripts.html:2
+msgid "This functionality requires JavaScript."
+msgstr "Bu işlevsellik JavaScript gerektirir."
+
+#: templates/socialaccount/authentication_error.html:5
+#: templates/socialaccount/authentication_error.html:9
+msgid "Third-Party Login Failure"
+msgstr "Üçüncü Taraf Giriş Hatası"
+
+#: templates/socialaccount/authentication_error.html:12
+msgid ""
+"An error occurred while attempting to login via your third-party account."
+msgstr ""
+"Üçüncü taraf hesabınız üzerinden giriş yapmaya çalışırken bir hata oluştu."
+
+#: templates/socialaccount/connections.html:13
+msgid ""
+"You can sign in to your account using any of the following third-party "
+"accounts:"
+msgstr ""
+"Aşağıdaki üçüncü taraf hesaplarından herhangi birini kullanarak hesabınıza "
+"giriş yapabilirsiniz:"
+
+#: templates/socialaccount/connections.html:46
+msgid "You currently have no third-party accounts connected to this account."
+msgstr "Şu anda bu hesaba bağlı üçüncü taraf hesabınız yok."
+
+#: templates/socialaccount/connections.html:50
+msgid "Add a Third-Party Account"
+msgstr "Üçüncü Taraf Hesabı Ekle"
+
+#: templates/socialaccount/email/account_connected_message.txt:4
+#, python-format
+msgid ""
+"A third-party account from %(provider)s has been connected to your account."
+msgstr ""
+"Hesabınıza %(provider)s adlı sağlayıcıdan bir üçüncü taraf hesabı bağlandı."
+
+#: templates/socialaccount/email/account_connected_subject.txt:3
+msgid "Third-Party Account Connected"
+msgstr "Üçüncü Taraf Hesabı Bağlandı"
+
+#: templates/socialaccount/email/account_disconnected_message.txt:4
+#, python-format
+msgid ""
+"A third-party account from %(provider)s has been disconnected from your "
+"account."
+msgstr ""
+"%(provider)s sağlayıcısından gelen bir üçüncü taraf hesabı hesabınızdan "
+"çıkarıldı."
+
+#: templates/socialaccount/email/account_disconnected_subject.txt:3
+msgid "Third-Party Account Disconnected"
+msgstr "Üçüncü Taraf Hesabı Bağlantısı Kesildi"
+
+#: templates/socialaccount/login.html:10
+#, python-format
+msgid "Connect %(provider)s"
+msgstr "%(provider)s'ı bağlayın"
+
+#: templates/socialaccount/login.html:13
+#, python-format
+msgid "You are about to connect a new third-party account from %(provider)s."
+msgstr "%(provider)s'dan yeni bir üçüncü taraf hesabına bağlanmak üzeresiniz."
+
+#: templates/socialaccount/login.html:17
+#, python-format
+msgid "Sign In Via %(provider)s"
+msgstr "%(provider)s Üzerinden Giriş Yapın"
+
+#: templates/socialaccount/login.html:20
+#, python-format
+msgid ""
+"You are about to sign in using a third-party account from %(provider)s."
+msgstr ""
+"%(provider)s'dan üçüncü taraf bir hesap kullanarak oturum açmak üzeresiniz."
+
+#: templates/socialaccount/login.html:27
+#: templates/socialaccount/login_redirect.html:10
+msgid "Continue"
+msgstr "Devam etmek"
+
+#: templates/socialaccount/login_cancelled.html:5
+#: templates/socialaccount/login_cancelled.html:9
+msgid "Login Cancelled"
+msgstr "Giriş İptal Edildi"
+
+#: templates/socialaccount/login_cancelled.html:13
+#, python-format
+msgid ""
+"You decided to cancel logging in to our site using one of your existing "
+"accounts. If this was a mistake, please proceed to <a "
+"href=\"%(login_url)s\">sign in</a>."
+msgstr ""
+"Mevcut hesaplarınızdan birini kullanarak sitemize giriş yapmayı iptal etmeye"
+" karar verdiniz. Bu bir hataysa lütfen <a href=\"%(login_url)s\">giriş "
+"yapın</a>."
+
+#: templates/socialaccount/messages/account_connected.txt:2
+msgid "The third-party account has been connected."
+msgstr "Üçüncü taraf hesabı bağlandı."
+
+#: templates/socialaccount/messages/account_connected_other.txt:2
+msgid "The third-party account is already connected to a different account."
+msgstr "Üçüncü taraf hesabı zaten başka bir hesaba bağlı."
+
+#: templates/socialaccount/messages/account_disconnected.txt:2
+msgid "The third-party account has been disconnected."
+msgstr "Üçüncü taraf hesabı bağlantısı kesildi."
+
+#: templates/socialaccount/signup.html:12
+#, python-format
+msgid ""
+"You are about to use your %(provider_name)s account to login to\n"
+"%(site_name)s. As a final step, please complete the following form:"
+msgstr ""
+"%(provider_name)s hesabınızı kullanarak\n"
+"%(site_name)s'e giriş yapmak üzeresiniz. Son adım olarak lütfen aşağıdaki formu doldurun:"
+
+#: templates/socialaccount/snippets/login.html:10
+msgid "Or use a third-party"
+msgstr "Veya üçüncü bir taraf kullanın"
+
+#: templates/usersessions/messages/sessions_logged_out.txt:2
+msgid "Signed out of all other sessions."
+msgstr "Diğer tüm oturumlardan çıkış yapıldı."
+
+#: templates/usersessions/usersession_list.html:23
+msgid "Started At"
+msgstr "Başladı"
+
+#: templates/usersessions/usersession_list.html:24
+msgid "IP Address"
+msgstr "IP Adresi"
+
+#: templates/usersessions/usersession_list.html:25
+msgid "Browser"
+msgstr "Tarayıcı"
+
+#: templates/usersessions/usersession_list.html:27
+msgid "Last seen at"
+msgstr "Son görüldüğü yer"
+
+#: templates/usersessions/usersession_list.html:47
+msgid "Current"
+msgstr "Akım"
+
+#: templates/usersessions/usersession_list.html:60
+msgid "Sign Out Other Sessions"
+msgstr "Diğer Oturumlardan Çıkış Yap"

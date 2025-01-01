@@ -1,4 +1,4 @@
-{% load static %}
+{% load i18n static %}
 
 <style>
     #map {
@@ -81,8 +81,7 @@
                                 return L.marker(wp.latLng, {
                                     icon: L.divIcon({
                                         className: "custom-div-icon",
-                                        html: `<div class="marker-label">Start</div>`,
-                                        iconSize: [50, 20],
+                                        html: `<div class="marker-label">{% trans "Start" %}</div>`,
                                         iconAnchor: [25, 10]
                                     }),
                                     draggable: false
@@ -91,8 +90,7 @@
                                 return L.marker(wp.latLng, {
                                     icon: L.divIcon({
                                         className: "custom-div-icon",
-                                        html: `<div class="marker-label text-center">Przystanek początkowy</div>`,
-                                        iconSize: [70, 40],
+                                        html: `<div class="marker-label text-center">{% trans "First stop" %}</div>`,
                                         iconAnchor: [25, 10]
                                     }),
                                     draggable: false
@@ -103,8 +101,7 @@
                                 return L.marker(wp.latLng, {
                                     icon: L.divIcon({
                                         className: "custom-div-icon",
-                                        html: `<div class="marker-label text-center">Przystanek końcowy</div>`,
-                                        iconSize: [70, 40],
+                                        html: `<div class="marker-label text-center">{% trans "Last stop" %}</div>`,                                        iconSize: [70, 40],
                                         iconAnchor: [25, 10]
                                     }),
                                     draggable: false
@@ -114,8 +111,7 @@
                                 return L.marker(wp.latLng, {
                                     icon: L.divIcon({
                                         className: "custom-div-icon",
-                                        html: `<div class="marker-label">Cel</div>`,
-                                        iconSize: [50, 20],
+                                        html: `<div class="marker-label">{% trans "Destintion" %}</div>`,
                                         iconAnchor: [25, 10]
                                     }),
                                     draggable: false

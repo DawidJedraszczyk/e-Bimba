@@ -1,7 +1,8 @@
 from django.db import models
 from django.conf import settings
-from datetime import timedelta
+from django.utils.translation import gettext_lazy as _
 from django.utils.timezone import now
+from datetime import timedelta
 import uuid
 import qrcode
 from django.core.files.base import ContentFile
@@ -14,25 +15,34 @@ class ActiveManager(models.Manager):
 
 
 class TicketType(models.Model):
-    active = models.BooleanField(default=True)
-    name = models.CharField(max_length=100)
-    city = models.CharField(max_length=50)
-    category = models.CharField(max_length=100)
-    duration = models.CharField(max_length=50)
-    timestamp = models.IntegerField()
-    timestamp_type = models.CharField(max_length=20, choices=[('minutes', 'Minutes'), ('days', 'Days')])
-    zone = models.CharField(max_length=100)
-    price = models.DecimalField(max_digits=6, decimal_places=2)
-    discounted = models.BooleanField(default=False)
-    currency = models.CharField(max_length=10)
-
-
+    active = models.BooleanField(default=True, verbose_name=_("Active"))
+    name = models.CharField(max_length=100, verbose_name=_("Name"))
+    city = models.CharField(max_length=50, verbose_name=_("City"))
+    category = models.CharField(max_length=100, verbose_name=_("Category"))
+    duration = models.CharField(max_length=50, verbose_name=_("Duration"))
+    timestamp = models.IntegerField(verbose_name=_("Timestamp"))
+    timestamp_type = models.CharField(
+        max_length=20,
+        choices=[
+            ('minutes', _("Minutes")),
+            ('days', _("Days"))
+        ],
+        verbose_name=_("Timestamp Type")
+    )
+    zone = models.CharField(max_length=100, verbose_name=_("Zone"))
+    price = models.DecimalField(max_digits=6, decimal_places=2, verbose_name=_("Price"))
+    discounted = models.BooleanField(default=False, verbose_name=_("Discounted"))
+    currency = models.CharField(max_length=10, verbose_name=_("Currency"))
 
     objects = models.Manager()
     active_tickets = ActiveManager()
 
+    class Meta:
+        verbose_name = _("Ticket Type")
+        verbose_name_plural = _("Ticket Types")
+
     def __str__(self):
-        discount_type = "Ulgowy" if self.discounted else "Normalny"
+        discount_type = _("Discounted") if self.discounted else _("Regular")
         return f"{self.name} - {discount_type}"
 
     def calculate_expiration(self):
@@ -44,18 +54,30 @@ class TicketType(models.Model):
 
 
 class Ticket(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name='tickets')
-    created_at = models.DateTimeField(auto_now_add=True)
-    ticket_type = models.ForeignKey(TicketType, on_delete=models.PROTECT, related_name='tickets')
-    ending_datetime = models.DateTimeField(null=True, blank=True)
-    qr_code = models.ImageField(upload_to='qr_codes/', blank=True, null=True)
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, verbose_name=_("ID"))
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.PROTECT,
+        related_name='tickets',
+        verbose_name=_("User")
+    )
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Created At"))
+    ticket_type = models.ForeignKey(
+        TicketType,
+        on_delete=models.PROTECT,
+        related_name='tickets',
+        verbose_name=_("Ticket Type")
+    )
+    ending_datetime = models.DateTimeField(null=True, blank=True, verbose_name=_("Ending Datetime"))
+    qr_code = models.ImageField(upload_to='qr_codes/', blank=True, null=True, verbose_name=_("QR Code"))
 
     class Meta:
         ordering = ["-ending_datetime", "created_at"]
+        verbose_name = _("Ticket")
+        verbose_name_plural = _("Tickets")
 
     def __str__(self):
-        return f"Ticket {self.ticket_type.name} for {self.user.username}"
+        return _("Ticket {ticket_type} for {user}").format(ticket_type=self.ticket_type.name, user=self.user.username)
 
     def save(self, *args, **kwargs):
         if self.status == 'in_use' and not self.qr_code:
@@ -73,16 +95,15 @@ class Ticket(models.Model):
         else:
             return 'in_use'
 
-
     STATUS_CHOICES = (
-        ('unused', 'Nie użyty'),
-        ('in_use', 'Aktywny'),
-        ('ended', 'Zakończony')
+        ('unused', _("Unused")),
+        ('in_use', _("In Use")),
+        ('ended', _("Ended"))
     )
 
     @property
     def get_status_display(self):
-        return dict(self.STATUS_CHOICES).get(self.status, 'Unknown')
+        return dict(self.STATUS_CHOICES).get(self.status, _("Unknown"))
 
     def generate_qr_code_image(self):
         qr = qrcode.make(self.id)

@@ -174,22 +174,31 @@ body {
     background-color: var(--background);
 }
 
+#languageDropdown {
+    background-color: var(--background);
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    color: white;
+}
+
 .custom-div-icon {
     display: flex;
     justify-content: center;
     align-items: center;
-    border: 2px solid #11998e;
-    background-color: white;
-    border-radius: 5px;
-    font-weight: bold;
-    font-size: 12px;
-    padding: 2px 5px;
-    box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.3);
 }
 
 .custom-div-icon .marker-label {
     display: inline-block;
     color: #11998e;
+    border: 2px solid #11998e;
+    background-color: white;
+    border-radius: 5px;
+    padding: 5px 10px;
+    white-space: nowrap;
+    font-weight: bold;
+    font-size: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
 .route-btn {

@@ -1,15 +1,16 @@
-{% load static %}
+{% load i18n static %}
 <div id="back-btn">
     <img id="back-icon" src="{% static 'base_view/img/arrow_icon.svg' %}"/>
-    cofnij
+    {% trans 'back' %}
 </div>
 
 {% include './choose_city.html' %}
+{% include './choose_language.html' %}
 
 <form action="{% url 'route_search:FindRoute' city_id %}" method="post" id="routeForm" class="routeContainer">
     {% csrf_token %}
     <div class="form__group field">
-        <label for="firstStation" class="form__label">Przystanek początkowy</label>
+        <label for="firstStation" class="form__label">{% trans "Start" %}</label>
         <select
                 class="form__field select2 mt-2"
                 name="start_location"
@@ -19,7 +20,7 @@
         ></select>
     </div>
     <div class="form__group field">
-        <label for="goalStation" class="form__label">Przystanek docelowy</label>
+        <label for="goalStation" class="form__label">{% trans "Destination" %}</label>
         <select
                 class="form__field select2 mt-2"
                 name="goal_location"
@@ -29,7 +30,7 @@
         ></select>
     </div>
     <div class="form__group field">
-        <label for="datetime" class="form__label">Godzina i dzień wyjazdu</label>
+        <label for="datetime" class="form__label">{% trans "Date and time of departure" %}</label>
         <input
                 type="datetime-local"
                 class="form__field"
@@ -38,7 +39,7 @@
                 required
         />
     </div>
-    <button type="submit" id="search-btn" class="search-btn">Szukaj</button>
+    <button type="submit" id="search-btn" class="search-btn">{% trans "Search" %}</button>
 </form>
 <a href="{% url 'users:user_detail' %}" class="user-icon"><i class="bi bi-person-circle"></i></a>
 
@@ -48,7 +49,7 @@
 
 <div id="loading-overlay" style="display: none;" class="flex-column justify-center align-center">
     <div class="spinner"></div>
-    <span style="color: white; font-size: 30px;">Przetwarzanie...</span>
+    <span style="color: white; font-size: 30px;">{% trans "Processing ..." %}</span>
 </div>
 
 <script>
@@ -110,14 +111,14 @@
             },
             minimumInputLength: 2,
             language: "pl",
-            placeholder: "Wybierz przystanek",
+            placeholder: "{% trans 'Choose stop' %}",
             allowClear: true
         };
 
         function addDraggableMarker(marker, lat, lon, isStart) {
             const icon = L.divIcon({
                 className: "custom-div-icon",
-                html: `<div class="marker-label">${isStart ? "Start" : "Cel"}</div>`,
+                html: `<div class="marker-label">${isStart ? "{% trans 'Start' %}" : "{% trans 'Destination' %}"}</div>`,
                 iconSize: [50, 20],
                 iconAnchor: [25, 10],
             });
@@ -140,7 +141,7 @@
                         `https://nominatim.openstreetmap.org/reverse?lat=${newLat}&lon=${newLon}&format=json`
                     );
                     const data = await response.json();
-                    const newPlaceName = data.display_name || "Unknown Location";
+                    const newPlaceName = data.display_name || "{% trans 'Unknown Location' %}";
 
                     // Update corresponding input fields and Select2 dropdown
                     if (isStart) {
@@ -150,7 +151,7 @@
                     }
                 } catch (error) {
                     console.error("Error fetching reverse geocoding data:", error);
-                    alert("Unable to fetch location data. Please try again.");
+                    alert("{% trans 'Unable to fetch location data. Please try again.' %}");
                 } finally {
                     // Hide loading screen
                     toggleLoading(false);
@@ -261,4 +262,3 @@
 
     });
 </script>
-

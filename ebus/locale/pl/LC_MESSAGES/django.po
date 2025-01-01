@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-01-01 15:57+0100\n"
+"POT-Creation-Date: 2025-01-01 18:50+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Polish <LL@li.org>\n"
@@ -18,9 +18,510 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
 
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:6
+#: apps/tickets/models.py:77
+msgid "Tickets"
+msgstr "Bilety"
+
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:12
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:18
+#: apps/users/templates/users/user_detail.html:45
+msgid "Your Tickets"
+msgstr "Twoje bilety"
+
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:13
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:58
+msgid "Buy New Ticket"
+msgstr "Kup nowy bilet"
+
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:23
+#: apps/tickets/models.py:41 apps/tickets/models.py:69
+#: apps/tickets/templates/tickets/payment_page.html:14
+#: apps/users/templates/users/user_detail.html:53
+msgid "Ticket Type"
+msgstr "Typ biletu"
+
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:24
+#: apps/tickets/models.py:32
+msgid "Zone"
+msgstr "Strefa"
+
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:25
+#: apps/users/templates/users/user_detail.html:55
+msgid "Purchase Date"
+msgstr "Data zakupu"
+
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:26
+#: apps/users/templates/users/user_detail.html:56
+msgid "Ending Date"
+msgstr "Data końcowa"
+
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:27
+msgid "Action"
+msgstr "Działanie"
+
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:42
+msgid "View Ticket for Inspection"
+msgstr "Wyświetl bilet do kontroli"
+
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:46
+#: apps/tickets/templates/tickets/ticket_detail.html:60
+msgid "Use Ticket"
+msgstr "Użyj biletu"
+
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:70
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:105
+#: apps/tickets/templates/tickets/ticket_detail.html:48
+msgid "Zone:"
+msgstr "Strefa:"
+
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:72
+#: apps/tickets/templates/tickets/ticket_detail.html:49
+msgid "Price:"
+msgstr "Cena:"
+
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:75
+msgid "Buy Ticket"
+msgstr "Kup bilet"
+
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:98
+#: apps/tickets/templates/tickets/ticket_detail.html:4
+#: apps/tickets/templates/tickets/ticket_detail.html:10
+msgid "Ticket Details"
+msgstr "Szczegóły dotyczące biletu"
+
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:104
+#: apps/tickets/templates/tickets/ticket_detail.html:50
+msgid "Ticket Type:"
+msgstr "Typ biletu:"
+
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:106
+#: apps/tickets/templates/tickets/ticket_detail.html:27
+msgid "Purchase Date:"
+msgstr "Data zakupu:"
+
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:107
+#: apps/tickets/templates/tickets/ticket_detail.html:41
+msgid "Ending Date:"
+msgstr "Data zakończenia:"
+
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:111
+msgid "Remaining Time:"
+msgstr "Pozostały czas:"
+
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:119
+#: apps/tickets/models.py:72
+#: apps/tickets/templates/tickets/ticket_detail.html:13
+#: apps/users/templates/users/user_detail.html:57
+msgid "QR Code"
+msgstr "Kod QR"
+
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:124
+msgid "Close"
+msgstr "Zamknąć"
+
+#: apps/route_search/templates/base_view/sections/choose_city.html:4
+#: apps/route_search/templates/choose_city_view/index.html:4
+#: apps/route_search/templates/choose_city_view/index.html:8
+msgid "Choose a city"
+msgstr "Wybierz miasto"
+
+#: apps/route_search/templates/base_view/sections/choose_language.html:4
+#: templates/header.html:20
+msgid "Language"
+msgstr "Język"
+
+#: apps/route_search/templates/base_view/sections/map.html:84
+#: apps/route_search/templates/base_view/sections/search_modal.html:13
+#: apps/route_search/templates/base_view/sections/search_modal.html:121
+msgid "Start"
+msgstr "Start"
+
+#: apps/route_search/templates/base_view/sections/map.html:93
+msgid "First stop"
+msgstr "Pierwszy przystanek"
+
+#: apps/route_search/templates/base_view/sections/map.html:104
+msgid "Last stop"
+msgstr "Ostatni przystanek"
+
+#: apps/route_search/templates/base_view/sections/map.html:114
+msgid "Destintion"
+msgstr "Miejsce docelowe"
+
+#: apps/route_search/templates/base_view/sections/results_modal.html:111
+msgid "Vehicle ID"
+msgstr "Identyfikator pojazdu"
+
+#: apps/route_search/templates/base_view/sections/results_modal.html:112
+msgid "Departure ID"
+msgstr "Identyfikator wyjazdu"
+
+#: apps/route_search/templates/base_view/sections/results_modal.html:113
+msgid "Date"
+msgstr "Data"
+
+#: apps/route_search/templates/base_view/sections/search_modal.html:4
+msgid "back"
+msgstr "z powrotem"
+
+#: apps/route_search/templates/base_view/sections/search_modal.html:23
+#: apps/route_search/templates/base_view/sections/search_modal.html:121
+msgid "Destination"
+msgstr "Miejsce docelowe"
+
+#: apps/route_search/templates/base_view/sections/search_modal.html:33
+msgid "Date and time of departure"
+msgstr "Data i godzina wyjazdu"
+
+#: apps/route_search/templates/base_view/sections/search_modal.html:42
+msgid "Search"
+msgstr "Szukaj"
+
+#: apps/route_search/templates/base_view/sections/search_modal.html:52
+msgid "Processing ..."
+msgstr "Przetwarzanie ..."
+
+#: apps/route_search/templates/base_view/sections/search_modal.html:114
+msgid "Choose stop"
+msgstr "Wybierz stop"
+
+#: apps/route_search/templates/base_view/sections/search_modal.html:144
+msgid "Unknown Location"
+msgstr "Nieznana lokalizacja"
+
+#: apps/route_search/templates/base_view/sections/search_modal.html:154
+msgid "Unable to fetch location data. Please try again."
+msgstr "Nie można pobrać danych o lokalizacji. Spróbuj ponownie."
+
+#: apps/route_search/templates/choose_city_view/index.html:16
+msgid "Realtime Available"
+msgstr "Dostępne w czasie rzeczywistym"
+
+#: apps/route_search/templates/choose_city_view/index.html:19
+msgid "Tickets Available"
+msgstr "Dostępne bilety"
+
+#: apps/route_search/views.py:55
+#, python-brace-format
+msgid "City '{city_full_name}' is not valid."
+msgstr "Miasto '{city_full_name}' jest nieprawidłowe."
+
+#: apps/route_search/views.py:61
+#, python-brace-format
+msgid "No data found for city: {city_full_name}"
+msgstr "Nie znaleziono danych dla miasta: {city_full_name}"
+
+#: apps/route_search/views.py:97
+msgid "Invalid start or destination location data."
+msgstr "Nieprawidłowe dane dotyczące lokalizacji początkowej lub docelowej."
+
+#: apps/route_search/views.py:102
+msgid "Invalid date and time format."
+msgstr "Nieprawidłowy format daty i godziny."
+
+#: apps/tickets/models.py:18
+msgid "Active"
+msgstr "Aktywny"
+
+#: apps/tickets/models.py:19
+msgid "Name"
+msgstr "Nazwa"
+
+#: apps/tickets/models.py:20
+msgid "City"
+msgstr "Miasto"
+
+#: apps/tickets/models.py:21
+msgid "Category"
+msgstr "Kategoria"
+
+#: apps/tickets/models.py:22
+msgid "Duration"
+msgstr "Czas trwania"
+
+#: apps/tickets/models.py:23
+msgid "Timestamp"
+msgstr "Znak czasu"
+
+#: apps/tickets/models.py:27
+msgid "Minutes"
+msgstr "Protokół"
+
+#: apps/tickets/models.py:28
+msgid "Days"
+msgstr "Dni"
+
+#: apps/tickets/models.py:30
+msgid "Timestamp Type"
+msgstr "Typ znacznika czasu"
+
+#: apps/tickets/models.py:33
+msgid "Price"
+msgstr "Cena"
+
+#: apps/tickets/models.py:34 apps/tickets/models.py:45
+#: apps/tickets/templates/tickets/ticket_detail.html:52
+msgid "Discounted"
+msgstr "Przeceniony"
+
+#: apps/tickets/models.py:35
+msgid "Currency"
+msgstr "Waluta"
+
+#: apps/tickets/models.py:42
+msgid "Ticket Types"
+msgstr "Rodzaje biletów"
+
+#: apps/tickets/models.py:45
+#: apps/tickets/templates/tickets/ticket_detail.html:54
+msgid "Regular"
+msgstr "Regularny"
+
+#: apps/tickets/models.py:57
+msgid "ID"
+msgstr "ID"
+
+#: apps/tickets/models.py:62
+msgid "User"
+msgstr "Użytkownik"
+
+#: apps/tickets/models.py:64
+msgid "Created At"
+msgstr "Utworzono w"
+
+#: apps/tickets/models.py:71
+msgid "Ending Datetime"
+msgstr "Końcowa data i godzina"
+
+#: apps/tickets/models.py:76
+#: apps/tickets/templates/tickets/ticket_detail.html:24
+msgid "Ticket"
+msgstr "Bilet"
+
+#: apps/tickets/models.py:80
+#, python-brace-format
+msgid "Ticket {ticket_type} for {user}"
+msgstr "Bilet {ticket_type} dla {user}"
+
+#: apps/tickets/models.py:99
+msgid "Unused"
+msgstr "Nie używany"
+
+#: apps/tickets/models.py:100
+msgid "In Use"
+msgstr "W użyciu"
+
+#: apps/tickets/models.py:101
+msgid "Ended"
+msgstr "Zakończone"
+
+#: apps/tickets/models.py:106
+msgid "Unknown"
+msgstr "Nieznany"
+
+#: apps/tickets/templates/tickets/payment_page.html:7
+msgid "Dummy Payment Gateway"
+msgstr "Fikcyjna bramka płatności"
+
+#: apps/tickets/templates/tickets/payment_page.html:12
+msgid "Payment for Ticket"
+msgstr "Zapłata za bilet"
+
+#: apps/tickets/templates/tickets/payment_page.html:13
+msgid "Amount"
+msgstr "Kwota"
+
+#: apps/tickets/templates/tickets/payment_page.html:17
+msgid "Pay"
+msgstr "Płacić"
+
+#: apps/tickets/templates/tickets/payment_success.html:3
+msgid "Purchase Success"
+msgstr "Zakup Sukces"
+
+#: apps/tickets/templates/tickets/payment_success.html:8
+msgid "Purchase completed successfully!"
+msgstr "Zakup zakończony pomyślnie!"
+
+#: apps/tickets/templates/tickets/payment_success.html:9
+msgid "You have successfully purchased the ticket:"
+msgstr "Pomyślnie zakupiłeś bilet:"
+
+#: apps/tickets/templates/tickets/payment_success.html:11
+msgid "Go to My Tickets"
+msgstr "Przejdź do Moich Biletów"
+
+#: apps/tickets/templates/tickets/ticket_detail.html:11
+msgid "Information about the selected ticket"
+msgstr "Informacje o wybranym bilecie"
+
+#: apps/tickets/templates/tickets/ticket_detail.html:15
+msgid "QR Code has not been generated."
+msgstr "Kod QR nie został wygenerowany."
+
+#: apps/tickets/templates/tickets/ticket_detail.html:28
+msgid "Status:"
+msgstr "Status:"
+
+#: apps/tickets/urls.py:9
+msgid "zakup-bilet/<str:ticket_type_id>/"
+msgstr "bilet-zakupowy/<str:ticket_type_id>/"
+
+#: apps/tickets/urls.py:12
+msgid "pomyślna-płatność/<int:ticket_type_id>/"
+msgstr "pomyślna-płatność/<int:ticket_type_id>/"
+
+#: apps/tickets/urls.py:15
+msgid "użyj-biletu/<uuid:id>/"
+msgstr "użyj-biletu/<uuid:id>/"
+
+#: apps/tickets/urls.py:18
+msgid "bilet/<uuid:pk>/"
+msgstr "bilet/<uuid:pk>/"
+
+#: apps/tickets/views.py:36
+#, python-brace-format
+msgid "Successfully purchased ticket: {ticket_type.name}"
+msgstr "Pomyślnie zakupiony bilet: {ticket_type.name}"
+
+#: apps/tickets/views.py:52
+#, python-brace-format
+msgid ""
+"QR code successfully generated. The ticket will expire: "
+"{ticket.ending_datetime}"
+msgstr ""
+"Kod QR został pomyślnie wygenerowany. Bilet straci ważność: "
+"{ticket.ending_datetime}"
+
+#: apps/users/models.py:11
+#| msgid "Walking Speed:"
+msgid "Walking speed [m/s]"
+msgstr "Prędkość chodzenia [m/s]"
+
+#: apps/users/models.py:12
+#| msgid "Maximum Walking Distance:"
+msgid "Maximal walking distance [m]"
+msgstr "Maksymalna odległość do przejścia [m]"
+
+#: apps/users/templates/users/user_detail.html:3
+#: apps/users/templates/users/user_detail.html:8
+msgid "User Profile"
+msgstr "Profil użytkownika"
+
+#: apps/users/templates/users/user_detail.html:9
+msgid "Details about your account"
+msgstr "Szczegóły dotyczące Twojego konta"
+
+#: apps/users/templates/users/user_detail.html:17
+msgid "User Settings"
+msgstr "Ustawienia użytkownika"
+
+#: apps/users/templates/users/user_detail.html:20
+msgid "Email:"
+msgstr "E-mail:"
+
+#: apps/users/templates/users/user_detail.html:21
+msgid "Date Joined:"
+msgstr "Data dołączenia:"
+
+#: apps/users/templates/users/user_detail.html:22
+#: templates/account/password_change.html:4
+#: templates/account/password_change.html:8
+#: templates/account/password_change.html:20
+#: templates/account/password_reset_from_key.html:5
+#: templates/account/password_reset_from_key.html:12
+#: templates/account/password_reset_from_key.html:30
+#: templates/account/password_reset_from_key_done.html:5
+#: templates/account/password_reset_from_key_done.html:9
+#: templates/allauth/layouts/base.html:37
+msgid "Change Password"
+msgstr "Zmień hasło"
+
+#: apps/users/templates/users/user_detail.html:30
+msgid "Other Settings"
+msgstr "Inne ustawienia"
+
+#: apps/users/templates/users/user_detail.html:33
+msgid "Walking Speed:"
+msgstr "Prędkość chodzenia:"
+
+#: apps/users/templates/users/user_detail.html:34
+msgid "Maximum Walking Distance:"
+msgstr "Maksymalny dystans do pokonania pieszo:"
+
+#: apps/users/templates/users/user_detail.html:35
+#: templates/mfa/webauthn/authenticator_list.html:56
+msgid "Edit"
+msgstr "Redagować"
+
+#: apps/users/templates/users/user_detail.html:54
+msgid "Status"
+msgstr "Status"
+
+#: apps/users/templates/users/user_detail.html:82
+msgid "Generating a QR code will use the ticket."
+msgstr "Wygenerowanie kodu QR umożliwi korzystanie z biletu."
+
+#: apps/users/templates/users/user_detail.html:85
+msgid "Show for Inspection"
+msgstr "Pokaż do inspekcji"
+
+#: apps/users/templates/users/user_detail.html:87
+msgid "Ticket Ended"
+msgstr "Bilet zakończony"
+
+#: apps/users/templates/users/user_detail.html:89
+msgid "Generate QR Code and Use Ticket"
+msgstr "Wygeneruj kod QR i użyj biletu"
+
+#: apps/users/templates/users/user_detail.html:100
+msgid "You don't have any tickets yet."
+msgstr "Nie masz jeszcze żadnych biletów."
+
 #: apps/users/templates/users/user_metrics_form.html:10
 msgid "User Form"
 msgstr "Formularz użytkownika"
+
+#: apps/users/templates/users/user_metrics_form.html:29
+msgid "Submit"
+msgstr "Składać"
+
+#: apps/users/urls.py:12
+msgid "adjust-parameters/"
+msgstr "dostosuj-parametry/"
+
+#: ebus/urls.py:36
+msgid "accounts/"
+msgstr "konta/"
+
+#: ebus/urls.py:39
+msgid "user/"
+msgstr "użytkownik/"
+
+#: ebus/urls.py:42
+msgid "tickets/"
+msgstr "bilety/"
+
+#: ebus/urls.py:45
+msgid "signup/"
+msgstr "zapisać się/"
+
+#: ebus/urls.py:46
+msgid "login/"
+msgstr "login/"
+
+#: ebus/urls.py:47
+msgid "logout/"
+msgstr "wyloguj/"
+
+#: ebus/urls.py:48
+msgid "change-password/"
+msgstr "zmień-hasło/"
+
+#: ebus/urls.py:49
+msgid "reset-password/"
+msgstr "zresetuj-hasło/"
 
 #: templates/account/account_inactive.html:5
 #: templates/account/account_inactive.html:9
@@ -393,8 +894,9 @@ msgid ""
 "                    Unable to confirm %(email)s because it is already confirmed by a different account.\n"
 "                "
 msgstr ""
-"Nie można potwierdzić adresu %(email)s, ponieważ został on już potwierdzony "
-"z innego konta."
+"\n"
+"                    Nie można potwierdzić adresu %(email)s, ponieważ został on już potwierdzony z innego konta.\n"
+"                "
 
 #: templates/account/email_confirm.html:42
 #, python-format
@@ -403,8 +905,9 @@ msgid ""
 "                This email confirmation link expired or is invalid. Please <a href=\"%(email_url)s\">issue a new email confirmation request</a>.\n"
 "            "
 msgstr ""
-"Ten link potwierdzający e-mail wygasł lub jest nieprawidłowy. Proszę <a "
-"href=\"%(email_url)s\">wysłać nową prośbę o potwierdzenie e-mailem</a>."
+"\n"
+"                Ten link potwierdzający e-mail wygasł lub jest nieprawidłowy. Proszę <a href=\"%(email_url)s\">wysłać nową prośbę o potwierdzenie e-mailem</a>.\n"
+"            "
 
 #: templates/account/login.html:15
 msgid "If you have not created an account yet, then please"
@@ -494,18 +997,6 @@ msgstr "Ustawiono główny adres e-mail."
 #: templates/account/messages/unverified_primary_email.txt:2
 msgid "Your primary email address must be verified."
 msgstr "Twój główny adres e-mail musi zostać zweryfikowany."
-
-#: templates/account/password_change.html:4
-#: templates/account/password_change.html:8
-#: templates/account/password_change.html:20
-#: templates/account/password_reset_from_key.html:5
-#: templates/account/password_reset_from_key.html:12
-#: templates/account/password_reset_from_key.html:30
-#: templates/account/password_reset_from_key_done.html:5
-#: templates/account/password_reset_from_key_done.html:9
-#: templates/allauth/layouts/base.html:37
-msgid "Change Password"
-msgstr "Zmień hasło"
 
 #: templates/account/password_change.html:22
 msgid "Forgot Password?"
@@ -727,10 +1218,6 @@ msgstr "Wyloguj"
 #: templates/header.html:14
 msgid "Login"
 msgstr "Login"
-
-#: templates/header.html:20
-msgid "Language"
-msgstr "Język"
 
 #: templates/mfa/authenticate.html:13
 msgid ""
@@ -1003,10 +1490,6 @@ msgstr "Dodano w %(created_at)s"
 msgid "Last used %(last_used)s"
 msgstr "Ostatnio używane %(last_used)s"
 
-#: templates/mfa/webauthn/authenticator_list.html:56
-msgid "Edit"
-msgstr "Redagować"
-
 #: templates/mfa/webauthn/edit_form.html:7
 msgid "Edit Security Key"
 msgstr "Edytuj klucz bezpieczeństwa"
@@ -1087,7 +1570,7 @@ msgstr "Konto osoby trzeciej zostało odłączone"
 #: templates/socialaccount/login.html:10
 #, python-format
 msgid "Connect %(provider)s"
-msgstr "Połącz %(dostawcę)s"
+msgstr "Połącz %(provider)s"
 
 #: templates/socialaccount/login.html:13
 #, python-format

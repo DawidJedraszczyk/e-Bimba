@@ -1,11 +1,12 @@
 {% extends 'base.html' %}
-{% block title %}Profil użytkownika{% endblock %}
+{% load i18n %}
+{% block title %}{% trans "User Profile" %}{% endblock %}
 {% block content %}
     <div class="container py-5">
         <div class="row">
             <div class="col-md-12 text-center mb-4">
-                <h1 class="display-4">Profil użytkownika</h1>
-                <p class="text-secondary">Szczegóły dotyczące Twojego konta</p>
+                <h1 class="display-4">{% trans "User Profile" %}</h1>
+                <p class="text-secondary">{% trans "Details about your account" %}</p>
             </div>
         </div>
 
@@ -13,13 +14,12 @@
             <div class="col-md-6">
                 <div class="card shadow-sm">
                     <div class="card-header bg-primary text-white">
-                        <h5 class="mb-0">Ustawienia użytkownika</h5>
+                        <h5 class="mb-0">{% trans "User Settings" %}</h5>
                     </div>
                     <div class="card-body">
-                        <p><strong>Email:</strong> {{ user.email }}</p>
-                        <p><strong>Data dołączenia:</strong> {{ user.date_joined|date:"d-m-Y" }}</p>
-                        <a href="{% url 'account_change_password' %}" class="btn btn-outline-primary mt-3">Zmień
-                            hasło</a>
+                        <p><strong>{% trans "Email:" %}</strong> {{ user.email }}</p>
+                        <p><strong>{% trans "Date Joined:" %}</strong> {{ user.date_joined|date:"d-m-Y" }}</p>
+                        <a href="{% url 'account_change_password' %}" class="btn btn-outline-primary mt-3">{% trans "Change Password" %}</a>
                     </div>
                 </div>
             </div>
@@ -27,13 +27,12 @@
             <div class="col-md-6">
                 <div class="card shadow-sm">
                     <div class="card-header bg-info text-white">
-                        <h5 class="mb-0">Inne ustawienia</h5>
+                        <h5 class="mb-0">{% trans "Other Settings" %}</h5>
                     </div>
                     <div class="card-body">
-                        <p><i class="bi bi-speedometer2"></i> Prędkość chodzenia: <b>{{ object.pace }} m / s</b></p>
-                        <p><i class="bi bi-person-walking"></i> Maksymalna odległość pieszo:
-                            <b>{{ object.max_distance }} metrów</b></p>
-                        <a href="{% url 'users:user_metrics' %}" class="btn btn-outline-primary mt-3">Edytuj</a>
+                        <p><i class="bi bi-speedometer2"></i> {% trans "Walking Speed:" %} <b>{{ object.pace }} m / s</b></p>
+                        <p><i class="bi bi-person-walking"></i> {% trans "Maximum Walking Distance:" %} <b>{{ object.max_distance }} meters</b></p>
+                        <a href="{% url 'users:user_metrics' %}" class="btn btn-outline-primary mt-3">{% trans "Edit" %}</a>
                     </div>
                 </div>
             </div>
@@ -43,7 +42,7 @@
             <div class="col-md-12">
                 <div class="card shadow-sm">
                     <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0">Twoje bilety</h5>
+                        <h5 class="mb-0">{% trans "Your Tickets" %}</h5>
                     </div>
                     <div class="card-body">
                         {% if user.tickets %}
@@ -51,11 +50,11 @@
                                 <table class="table table-hover">
                                     <thead class="table-dark">
                                     <tr>
-                                        <th>Rodzaj biletu</th>
-                                        <th>Status</th>
-                                        <th>Data zakupu</th>
-                                        <th>Data zakończenia</th>
-                                        <th>Kod QR</th>
+                                        <th>{% trans "Ticket Type" %}</th>
+                                        <th>{% trans "Status" %}</th>
+                                        <th>{% trans "Purchase Date" %}</th>
+                                        <th>{% trans "Ending Date" %}</th>
+                                        <th>{% trans "QR Code" %}</th>
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -80,14 +79,14 @@
                                             <td>
                                                 <a href="{% url 'tickets:use_ticket' ticket.id %}"
                                                    class="btn btn-secondary" data-toggle="tooltip" data-placement="top"
-                                                   title="Wygenerowanie kodu QR oznacza użycie biletu">
+                                                   title="{% trans "Generating a QR code will use the ticket." %}">
                                                     <i class="bi bi-qr-code"></i>
                                                     {% if ticket.status == 'in_use' %}
-                                                        Pokaż do kontroli
+                                                        {% trans "Show for Inspection" %}
                                                     {% elif ticket.status == 'ended' %}
-                                                        Bilet zakończony
+                                                        {% trans "Ticket Ended" %}
                                                     {% elif ticket.status == 'unused' %}
-                                                        Wygeneruj kod i wykorzystaj bilet
+                                                        {% trans "Generate QR Code and Use Ticket" %}
                                                     {% endif %}
                                                 </a>
                                             </td>
@@ -98,7 +97,7 @@
                             </div>
                         {% else %}
                             <div class="alert alert-info text-center" role="alert">
-                                Nie masz jeszcze żadnych biletów.
+                                {% trans "You don't have any tickets yet." %}
                             </div>
                         {% endif %}
                     </div>
