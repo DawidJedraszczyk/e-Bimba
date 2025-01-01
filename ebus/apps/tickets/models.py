@@ -16,6 +16,7 @@ class ActiveManager(models.Manager):
 class TicketType(models.Model):
     active = models.BooleanField(default=True)
     name = models.CharField(max_length=100)
+    city = models.CharField(max_length=50)
     category = models.CharField(max_length=100)
     duration = models.CharField(max_length=50)
     timestamp = models.IntegerField()
@@ -50,7 +51,8 @@ class Ticket(models.Model):
     ending_datetime = models.DateTimeField(null=True, blank=True)
     qr_code = models.ImageField(upload_to='qr_codes/', blank=True, null=True)
 
-
+    class Meta:
+        ordering = ["-ending_datetime", "created_at"]
 
     def __str__(self):
         return f"Ticket {self.ticket_type.name} for {self.user.username}"

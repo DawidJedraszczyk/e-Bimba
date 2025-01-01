@@ -62,6 +62,7 @@
 
         keys.forEach(key => {
             const coords = array[key].map(coord => L.latLng(coord[0], coord[1]));
+            console.log(key, coords.length)
 
             if (coords.length === 2) {
                 const routingControl = L.Routing.control({
@@ -70,34 +71,58 @@
                         profile: 'mapbox/walking'
                     }),
                     lineOptions: {
-                        styles: [{color: getColor(key), opacity: 0.7, weight: 2}],
+                        styles: [{color: getColor(key), opacity: 0.7, weight: 2, dashArray: '2, 4'}],
                     },
                     fitSelectedRoutes: false,
                     show: false,
                     createMarker: (i, wp, nWps) => {
-                        if (i === 0) {
-                            // Start Marker
-                            return L.marker(wp.latLng, {
-                                icon: L.divIcon({
-                                    className: "custom-div-icon",
-                                    html: `<div class="marker-label">Przystanek początkowy</div>`,
-                                    iconSize: [50, 20],
-                                    iconAnchor: [25, 10]
-                                }),
-                                draggable: false
-                            });
-                        } else if (i === nWps - 1) {
-                            // Destination Marker
-                            return L.marker(wp.latLng, {
-                                icon: L.divIcon({
-                                    className: "custom-div-icon",
-                                    html: `<div class="marker-label">Przystanek docelowy</div>`,
-                                    iconSize: [50, 20],
-                                    iconAnchor: [25, 10]
-                                }),
-                                draggable: false
-                            });
+                        if (key == 0) {
+                            if (i === 0) {
+                                return L.marker(wp.latLng, {
+                                    icon: L.divIcon({
+                                        className: "custom-div-icon",
+                                        html: `<div class="marker-label">Start</div>`,
+                                        iconSize: [50, 20],
+                                        iconAnchor: [25, 10]
+                                    }),
+                                    draggable: false
+                                });
+                            } else {
+                                return L.marker(wp.latLng, {
+                                    icon: L.divIcon({
+                                        className: "custom-div-icon",
+                                        html: `<div class="marker-label text-center">Przystanek początkowy</div>`,
+                                        iconSize: [70, 40],
+                                        iconAnchor: [25, 10]
+                                    }),
+                                    draggable: false
+                                });
+                            }
+                        } else if (key == keys.length - 1) {
+                            if (i === 0) {
+                                return L.marker(wp.latLng, {
+                                    icon: L.divIcon({
+                                        className: "custom-div-icon",
+                                        html: `<div class="marker-label text-center">Przystanek końcowy</div>`,
+                                        iconSize: [70, 40],
+                                        iconAnchor: [25, 10]
+                                    }),
+                                    draggable: false
+                                });
+
+                            } else {
+                                return L.marker(wp.latLng, {
+                                    icon: L.divIcon({
+                                        className: "custom-div-icon",
+                                        html: `<div class="marker-label">Cel</div>`,
+                                        iconSize: [50, 20],
+                                        iconAnchor: [25, 10]
+                                    }),
+                                    draggable: false
+                                });
+                            }
                         }
+
                         return null;
                     },
                 }).addTo(map);

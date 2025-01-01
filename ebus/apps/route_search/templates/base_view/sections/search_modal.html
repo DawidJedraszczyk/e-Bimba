@@ -3,6 +3,9 @@
     <img id="back-icon" src="{% static 'base_view/img/arrow_icon.svg' %}"/>
     cofnij
 </div>
+
+{% include './choose_city.html' %}
+
 <form action="{% url 'route_search:FindRoute' city_id %}" method="post" id="routeForm" class="routeContainer">
     {% csrf_token %}
     <div class="form__group field">
@@ -39,7 +42,9 @@
 </form>
 <a href="{% url 'users:user_detail' %}" class="user-icon"><i class="bi bi-person-circle"></i></a>
 
-<i class="bi bi-ticket-detailed ticket" id="buy-ticket"></i>
+{% if tickets_available %}
+    <i class="bi bi-ticket-detailed ticket" id="buy-ticket"></i>
+{% endif %}
 
 <div id="loading-overlay" style="display: none;" class="flex-column justify-center align-center">
     <div class="spinner"></div>

@@ -17,10 +17,9 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from allauth.account.views import SignupView, LoginView, LogoutView, PasswordChangeView, PasswordResetView
-from django.views.i18n import set_language
 from django.conf import settings
 from django.conf.urls.static import static
-
+from django.conf.urls.i18n import set_language
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -35,4 +34,5 @@ urlpatterns = [
     path('zmień-hasło/', PasswordChangeView.as_view(), name='account_change_password'),
     path('resetuj-hasło/', PasswordResetView.as_view(), name='account_reset_password'),
     path('set_language/', set_language, name='set_language'),
+    path("i18n/", include("django.conf.urls.i18n")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

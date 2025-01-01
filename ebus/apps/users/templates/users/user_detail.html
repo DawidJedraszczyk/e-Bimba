@@ -64,12 +64,12 @@
                                             <td>{{ ticket.ticket_type }}</td>
                                             <td>
                                             <span class="badge
-                                                {% if ticket.status == 'otwarte' %}
+                                                {% if ticket.status == 'unused' %}
                                                     bg-warning
-                                                {% elif ticket.status == 'zamknięte' %}
-                                                    bg-secondary
-                                                {% else %}
+                                                {% elif ticket.status == 'in_use' %}
                                                     bg-success
+                                                {% elif ticket.status == 'ended' %}
+                                                    bg-danger
                                                 {% endif %}
                                             ">
                                                 {{ ticket.get_status_display }}

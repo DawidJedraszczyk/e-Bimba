@@ -29,6 +29,6 @@ class User(AbstractUser):
 
 
     @property
-    def avaible_tickets(self):
+    def available_tickets(self):
         date = now()
         return self.tickets.exclude(ending_datetime__lte=date)

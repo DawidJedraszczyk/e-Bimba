@@ -26,11 +26,11 @@ def load_cities_data():
 
 cities = load_cities_data()
 
-def get_city_id(request_path_city):
+def get_city(request_path_city):
     for city in cities:
         for key, value in city.items():
             if key =='name' and value.lower() == request_path_city:
-                return city['id']
+                return city
 
 def load_city_data(city_id):
     if city_id:
@@ -39,12 +39,6 @@ def load_city_data(city_id):
 
 
 class BaseView(TemplateView):
-    '''
-    Simple view which map and searching engine. In this view we can search for bus route and find the best bus
-    that we want to use.
-    Also in future #TODO there will be a schedule
-    '''
-
     template_name = 'base_view/index.html'
 
     def get(self, request, *args, **kwargs):
@@ -58,7 +52,8 @@ class BaseView(TemplateView):
         if city_full_name not in [city.value for city in settings.CITY_ENUM]:
             raise Http404(f"City '{city_full_name}' is not valid.")
 
-        city_id = get_city_id(city_full_name)
+        city = get_city(city_full_name)
+        city_id = city['id']
         data = load_city_data(city_id)
         if not data:
             raise Http404(f"No data found for city: {city_full_name}")
@@ -71,12 +66,22 @@ class BaseView(TemplateView):
                 ticket_types_by_category[ticket.category] = []
             ticket_types_by_category[ticket.category].append(ticket)
 
+        context['cities'] = cities
         context['city_id'] = city_id
         context['city_name'] = city_full_name
+        context['tickets_available'] = city['tickets']
         context['center_coordinates'] = [*data.md.center_coords]
         context['ticket_types_by_category'] = ticket_types_by_category
         return context
 
+class ChooseCityView(TemplateView):
+    template_name = 'choose_city_view/index.html'
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['cities'] = cities
+
+        return context
 
 class FindRouteView(View):
 

@@ -40,6 +40,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
+SITE_ID = 1
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -51,11 +53,13 @@ INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
+    'django.contrib.sites',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'crispy_forms',
     "crispy_bootstrap5",
+    "django_deep_translator",
     "users",
     'route_search',
     'gtfs_realtime',
@@ -65,6 +69,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -83,6 +88,7 @@ TEMPLATES = [
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
+                'django.template.context_processors.i18n',
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
@@ -144,17 +150,44 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
+LANGUAGE_CODE = 'en'
 
-SITE_ID = 1
-
-LANGUAGE_CODE = 'en-us'
-
-TIME_ZONE = 'Europe/Warsaw'
+TIME_ZONE = 'UTC'
 
 USE_I18N = True
-USE_ASCI=True
+USE_L10N = True
+
 USE_TZ = True
-USE_UNICODE_SLUGS = True
+
+LOCALE_PATHS = [
+    BASE_DIR / 'locale',
+]
+
+LANGUAGES = [
+    ('en', 'English'),
+    ('pl', 'Polish'),
+    ('es', 'Spanish'),
+    ('ru', 'Russian'),
+    ('ko', 'Korean'),
+    ('fr', 'French'),
+    ('de', 'German'),
+    ('ja', 'Japanese'),
+    ('ar', 'Arabic'),
+    ('pt', 'Portuguese'),
+    ('it', 'Italian'),
+    ('nl', 'Dutch'),
+    ('tr', 'Turkish'),
+    ('hi', 'Hindi'),
+    ('sv', 'Swedish'),
+    ('el', 'Greek'),
+    ('he', 'Hebrew'),
+    ('th', 'Thai'),
+    ('vi', 'Vietnamese'),
+    ('id', 'Indonesian'),
+    ('no', 'Norwegian'),
+    ('da', 'Danish'),
+    ('fi', 'Finnish'),
+]
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
@@ -201,3 +234,54 @@ def generate_city_enum():
     return {city["name"]: city["name"].lower() for city in cities_json}
 
 CITY_ENUM = Enum('CITY_ENUM', generate_city_enum())
+
+
+# settings.py
+
+import os
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,  # Keeps the default Django loggers
+    'formatters': {
+        'verbose': {
+            'format': '[{asctime}] {levelname} [{name}:{lineno}] {message}',
+            'style': '{',
+        },
+        'simple': {
+            'format': '{levelname}: {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple',  # You can switch to 'verbose' if needed
+        },
+        'file': {
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR, 'django_logs.log'),
+            'formatter': 'verbose',
+        },
+    },
+    'loggers': {
+        # Root logger
+        '': {
+            'handlers': ['console', 'file'],
+            'level': 'INFO',  # Set to 'DEBUG' for more verbosity
+            'propagate': True,
+        },
+        # Specific logger for your management command
+        'your_app.management.commands.your_command': {
+            'handlers': ['console', 'file'],
+            'level': 'DEBUG',  # Adjust as necessary
+            'propagate': False,
+        },
+        # Django's default logger
+        'django': {
+            'handlers': ['console', 'file'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+    },
+}

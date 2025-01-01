@@ -160,6 +160,20 @@ body {
     }
 }
 
+#buy-ticket:hover {
+    cursor: pointer;
+}
+
+#choose-city-dropdown {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+}
+
+#choose-city-dropdown-master {
+    background-color: var(--background);
+}
+
 .custom-div-icon {
     display: flex;
     justify-content: center;

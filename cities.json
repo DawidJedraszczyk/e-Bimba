@@ -9,7 +9,9 @@
     },
     "realtime": [
       "https://www.ztm.poznan.pl/pl/dla-deweloperow/getGtfsRtFile?file=trip_updates.pb"
-    ]
+    ],
+    "tickets": true,
+    "available_on_website": true
   },
   {
     "id": "poz-w",
@@ -18,7 +20,8 @@
     "projection": "EPSG:2180",
     "gtfs": {
       "ztm": "https://www.ztm.poznan.pl/pl/dla-deweloperow/getGTFSFile/?file=20240905_20240930.zip"
-    }
+    },
+    "available_on_website": false
   },
   {
     "id": "waw",
@@ -29,6 +32,8 @@
       "ztm": "https://mkuran.pl/gtfs/warsaw.zip",
       "metro": "https://mkuran.pl/gtfs/warsaw/metro.zip",
       "wkd": "https://mkuran.pl/gtfs/wkd.zip"
-    }
+    },
+    "tickets": false,
+    "available_on_website": true
   }
 ]
