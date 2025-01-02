@@ -124,7 +124,6 @@ class FindRouteView(View):
             i: prepare_coords_including_stops(plan, prospect.start_coords, prospect.destination_coords, data)
             for i, plan in enumerate(plans)
         }
-        print(coords)
 
         details = {
             i: prepare_departure_details(plan, start_name, destination_name, data)

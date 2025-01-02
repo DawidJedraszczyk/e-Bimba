@@ -9,8 +9,6 @@ https://docs.djangoproject.com/en/5.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
-from .custom_settings.algorithm_settings import *
-
 from pathlib import Path
 import os
 import sys
@@ -18,8 +16,11 @@ from enum import Enum
 from dotenv import load_dotenv
 import json
 
+from apps import feedback
 from .custom_settings.user_settings import *
 from .custom_settings.email_settings import *
+from .custom_settings.feedback_settings import *
+from .custom_settings.algorithm_settings import *
 
 load_dotenv()
 
@@ -68,6 +69,7 @@ INSTALLED_APPS = [
     'route_search',
     'gtfs_realtime',
     'tickets',
+    'feedback'
 ]
 
 MIDDLEWARE = [
@@ -97,6 +99,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'feedback.context_processors.feedback_on',
             ],
         },
     },
@@ -171,18 +174,13 @@ LANGUAGES = [
     ('en', 'English'),
     ('pl', 'Polish'),
     ('es', 'Spanish'),
-    ('ru', 'Russian'),
-    ('ko', 'Korean'),
     ('fr', 'French'),
     ('de', 'German'),
-    ('ja', 'Japanese'),
     ('pt', 'Portuguese'),
     ('it', 'Italian'),
     ('nl', 'Dutch'),
     ('tr', 'Turkish'),
-    ('hi', 'Hindi'),
     ('sv', 'Swedish'),
-    ('el', 'Greek'),
 ]
 
 # Static files (CSS, JavaScript, Images)

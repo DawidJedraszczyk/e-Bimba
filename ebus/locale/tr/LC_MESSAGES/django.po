@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-01-01 18:50+0100\n"
+"POT-Creation-Date: 2025-01-02 20:51+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,6 +17,35 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: apps/feedback/models.py:9
+msgid "Rating"
+msgstr "Derecelendirme"
+
+#: apps/feedback/templates/feedback.html:59
+msgid "Make a review"
+msgstr "Bir inceleme yapın"
+
+#: apps/feedback/templates/feedback.html:61
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:124
+msgid "Close"
+msgstr "Kapalı"
+
+#: apps/feedback/templates/feedback.html:103
+msgid "Review"
+msgstr "Gözden geçirmek"
+
+#: apps/feedback/templates/feedback.html:105
+msgid "Write Your review here."
+msgstr "Yorumunuzu buraya yazın."
+
+#: apps/feedback/templates/feedback.html:108
+msgid "Send"
+msgstr "Göndermek"
+
+#: apps/feedback/templates/feedback.html:111
+msgid "Thank You!"
+msgstr "Teşekkür ederim!"
 
 #: apps/route_search/templates/base_view/sections/buy_tickets.html:6
 #: apps/tickets/models.py:77
@@ -118,10 +147,6 @@ msgstr "Kalan Süre:"
 msgid "QR Code"
 msgstr "QR Kodu"
 
-#: apps/route_search/templates/base_view/sections/buy_tickets.html:124
-msgid "Close"
-msgstr "Kapalı"
-
 #: apps/route_search/templates/base_view/sections/choose_city.html:4
 #: apps/route_search/templates/choose_city_view/index.html:4
 #: apps/route_search/templates/choose_city_view/index.html:8
@@ -133,7 +158,7 @@ msgstr "Bir şehir seçin"
 msgid "Language"
 msgstr "Dil"
 
-#: apps/route_search/templates/base_view/sections/map.html:84
+#: apps/route_search/templates/base_view/sections/map.html:88
 #: apps/route_search/templates/base_view/sections/search_modal.html:13
 #: apps/route_search/templates/base_view/sections/search_modal.html:121
 #, fuzzy
@@ -141,19 +166,11 @@ msgstr "Dil"
 msgid "Start"
 msgstr "Başlangıç"
 
-#: apps/route_search/templates/base_view/sections/map.html:93
-msgid "First stop"
-msgstr "İlk durak"
-
-#: apps/route_search/templates/base_view/sections/map.html:104
-#, fuzzy
-#| msgid "Last seen at"
-msgid "Last stop"
-msgstr "Son durak"
-
-#: apps/route_search/templates/base_view/sections/map.html:114
-msgid "Destintion"
-msgstr "Hedef"
+#: apps/route_search/templates/base_view/sections/map.html:97
+#: apps/route_search/templates/base_view/sections/search_modal.html:23
+#: apps/route_search/templates/base_view/sections/search_modal.html:121
+msgid "Destination"
+msgstr "Varış noktası"
 
 #: apps/route_search/templates/base_view/sections/results_modal.html:111
 msgid "Vehicle ID"
@@ -170,11 +187,6 @@ msgstr "Tarih"
 #: apps/route_search/templates/base_view/sections/search_modal.html:4
 msgid "back"
 msgstr "geri"
-
-#: apps/route_search/templates/base_view/sections/search_modal.html:23
-#: apps/route_search/templates/base_view/sections/search_modal.html:121
-msgid "Destination"
-msgstr "Varış noktası"
 
 #: apps/route_search/templates/base_view/sections/search_modal.html:33
 msgid "Date and time of departure"
@@ -220,11 +232,11 @@ msgstr "Şehir '{city_full_name}' geçerli değil."
 msgid "No data found for city: {city_full_name}"
 msgstr "Şehir için veri bulunamadı: {city_full_name}"
 
-#: apps/route_search/views.py:97
+#: apps/route_search/views.py:98
 msgid "Invalid start or destination location data."
 msgstr "Geçersiz başlangıç ​​veya hedef konum verisi."
 
-#: apps/route_search/views.py:102
+#: apps/route_search/views.py:103
 msgid "Invalid date and time format."
 msgstr "Geçersiz tarih ve saat biçimi."
 
@@ -420,12 +432,10 @@ msgstr ""
 "QR kodu başarıyla oluşturuldu. Bilet sona erecek: {ticket.ending_datetime}"
 
 #: apps/users/models.py:11
-#| msgid "Walking Speed:"
 msgid "Walking speed [m/s]"
 msgstr "Yürüme hızı [m/s]"
 
 #: apps/users/models.py:12
-#| msgid "Maximum Walking Distance:"
 msgid "Maximal walking distance [m]"
 msgstr "Maksimum yürüme mesafesi [m]"
 
@@ -522,47 +532,47 @@ msgstr "Göndermek"
 msgid "adjust-parameters/"
 msgstr "parametreleri-ayarla/"
 
-#: ebus/urls.py:36
-msgid "accounts/"
-msgstr "hesaplar/"
-
-#: ebus/urls.py:39
-msgid "user/"
-msgstr "kullanıcı/"
-
-#: ebus/urls.py:42
-msgid "tickets/"
-msgstr "biletler/"
-
-#: ebus/urls.py:45
+#: ebus/urls.py:14
 #, fuzzy
 #| msgid "sign up"
 msgid "signup/"
 msgstr "üye olmak/"
 
-#: ebus/urls.py:46
+#: ebus/urls.py:15
 #, fuzzy
 #| msgid "Login"
 msgid "login/"
 msgstr "giriş yapmak/"
 
-#: ebus/urls.py:47
+#: ebus/urls.py:16
 #, fuzzy
 #| msgid "Logout"
 msgid "logout/"
 msgstr "çıkış yap/"
 
-#: ebus/urls.py:48
+#: ebus/urls.py:17
 #, fuzzy
 #| msgid "Change Password"
 msgid "change-password/"
 msgstr "şifre değiştir/"
 
-#: ebus/urls.py:49
+#: ebus/urls.py:18
 #, fuzzy
 #| msgid "Reset My Password"
 msgid "reset-password/"
 msgstr "şifreyi-sıfırla/"
+
+#: ebus/urls.py:21
+msgid "accounts/"
+msgstr "hesaplar/"
+
+#: ebus/urls.py:22
+msgid "user/"
+msgstr "kullanıcı/"
+
+#: ebus/urls.py:25
+msgid "tickets/"
+msgstr "biletler/"
 
 #: templates/account/account_inactive.html:5
 #: templates/account/account_inactive.html:9
@@ -1698,3 +1708,13 @@ msgstr "Akım"
 #: templates/usersessions/usersession_list.html:60
 msgid "Sign Out Other Sessions"
 msgstr "Diğer Oturumlardan Çıkış Yap"
+
+#~ msgid "First stop"
+#~ msgstr "İlk durak"
+
+#, fuzzy
+#~ msgid "Last stop"
+#~ msgstr "Son durak"
+
+#~ msgid "Destintion"
+#~ msgstr "Hedef"

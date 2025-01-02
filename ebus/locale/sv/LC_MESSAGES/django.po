@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-01-01 18:50+0100\n"
+"POT-Creation-Date: 2025-01-02 20:51+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,6 +17,35 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: apps/feedback/models.py:9
+msgid "Rating"
+msgstr "Gradering"
+
+#: apps/feedback/templates/feedback.html:59
+msgid "Make a review"
+msgstr "Gör en recension"
+
+#: apps/feedback/templates/feedback.html:61
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:124
+msgid "Close"
+msgstr "Nära"
+
+#: apps/feedback/templates/feedback.html:103
+msgid "Review"
+msgstr "Recension"
+
+#: apps/feedback/templates/feedback.html:105
+msgid "Write Your review here."
+msgstr "Skriv din recension här."
+
+#: apps/feedback/templates/feedback.html:108
+msgid "Send"
+msgstr "Skicka"
+
+#: apps/feedback/templates/feedback.html:111
+msgid "Thank You!"
+msgstr "Tack!"
 
 #: apps/route_search/templates/base_view/sections/buy_tickets.html:6
 #: apps/tickets/models.py:77
@@ -116,10 +145,6 @@ msgstr "Återstående tid:"
 msgid "QR Code"
 msgstr "QR-kod"
 
-#: apps/route_search/templates/base_view/sections/buy_tickets.html:124
-msgid "Close"
-msgstr "Nära"
-
 #: apps/route_search/templates/base_view/sections/choose_city.html:4
 #: apps/route_search/templates/choose_city_view/index.html:4
 #: apps/route_search/templates/choose_city_view/index.html:8
@@ -131,22 +156,16 @@ msgstr "Välj en stad"
 msgid "Language"
 msgstr "Språk"
 
-#: apps/route_search/templates/base_view/sections/map.html:84
+#: apps/route_search/templates/base_view/sections/map.html:88
 #: apps/route_search/templates/base_view/sections/search_modal.html:13
 #: apps/route_search/templates/base_view/sections/search_modal.html:121
 msgid "Start"
 msgstr "Start"
 
-#: apps/route_search/templates/base_view/sections/map.html:93
-msgid "First stop"
-msgstr "Första stoppet"
-
-#: apps/route_search/templates/base_view/sections/map.html:104
-msgid "Last stop"
-msgstr "Sista stoppet"
-
-#: apps/route_search/templates/base_view/sections/map.html:114
-msgid "Destintion"
+#: apps/route_search/templates/base_view/sections/map.html:97
+#: apps/route_search/templates/base_view/sections/search_modal.html:23
+#: apps/route_search/templates/base_view/sections/search_modal.html:121
+msgid "Destination"
 msgstr "Destination"
 
 #: apps/route_search/templates/base_view/sections/results_modal.html:111
@@ -164,11 +183,6 @@ msgstr "Datum"
 #: apps/route_search/templates/base_view/sections/search_modal.html:4
 msgid "back"
 msgstr "tillbaka"
-
-#: apps/route_search/templates/base_view/sections/search_modal.html:23
-#: apps/route_search/templates/base_view/sections/search_modal.html:121
-msgid "Destination"
-msgstr "Destination"
 
 #: apps/route_search/templates/base_view/sections/search_modal.html:33
 msgid "Date and time of departure"
@@ -212,11 +226,11 @@ msgstr "Staden '{city_full_name}' är inte giltig."
 msgid "No data found for city: {city_full_name}"
 msgstr "Ingen data hittades för stad: {city_full_name}"
 
-#: apps/route_search/views.py:97
+#: apps/route_search/views.py:98
 msgid "Invalid start or destination location data."
 msgstr "Ogiltig start- eller målplatsdata."
 
-#: apps/route_search/views.py:102
+#: apps/route_search/views.py:103
 msgid "Invalid date and time format."
 msgstr "Ogiltigt datum- och tidsformat."
 
@@ -394,12 +408,10 @@ msgstr ""
 "QR-koden har skapats. Biljetten upphör att gälla: {ticket.ending_datetime}"
 
 #: apps/users/models.py:11
-#| msgid "Walking Speed:"
 msgid "Walking speed [m/s]"
 msgstr "Gånghastighet [m/s]"
 
 #: apps/users/models.py:12
-#| msgid "Maximum Walking Distance:"
 msgid "Maximal walking distance [m]"
 msgstr "Maximalt gångavstånd [m]"
 
@@ -490,37 +502,37 @@ msgstr "Överlämna"
 msgid "adjust-parameters/"
 msgstr "justera-parametrar/"
 
-#: ebus/urls.py:36
-msgid "accounts/"
-msgstr "konton/"
-
-#: ebus/urls.py:39
-msgid "user/"
-msgstr "användare/"
-
-#: ebus/urls.py:42
-msgid "tickets/"
-msgstr "biljetter/"
-
-#: ebus/urls.py:45
+#: ebus/urls.py:14
 msgid "signup/"
 msgstr "anmäla/"
 
-#: ebus/urls.py:46
+#: ebus/urls.py:15
 msgid "login/"
 msgstr "inloggning/"
 
-#: ebus/urls.py:47
+#: ebus/urls.py:16
 msgid "logout/"
 msgstr "utloggning/"
 
-#: ebus/urls.py:48
+#: ebus/urls.py:17
 msgid "change-password/"
 msgstr "byt lösenord/"
 
-#: ebus/urls.py:49
+#: ebus/urls.py:18
 msgid "reset-password/"
 msgstr "återställ-lösenord/"
+
+#: ebus/urls.py:21
+msgid "accounts/"
+msgstr "konton/"
+
+#: ebus/urls.py:22
+msgid "user/"
+msgstr "användare/"
+
+#: ebus/urls.py:25
+msgid "tickets/"
+msgstr "biljetter/"
 
 #: templates/account/account_inactive.html:5
 #: templates/account/account_inactive.html:9
@@ -903,8 +915,7 @@ msgid ""
 "            "
 msgstr ""
 "\n"
-"                Denna e-postbekräftelselänk har upphört att gälla eller är ogiltig. Vänligen <a href=\"%(email_url)s\">utfärda en ny e-postbekräftelsebegäran</a>.n"
-"            "
+"                Denna e-postbekräftelselänk har upphört att gälla eller är ogiltig. Vänligen <a href=\"%(email_url)s\">utfärda en ny e-postbekräftelsebegäran</a>.n            "
 
 #: templates/account/login.html:15
 msgid "If you have not created an account yet, then please"
@@ -1649,3 +1660,12 @@ msgstr "Nuvarande"
 #: templates/usersessions/usersession_list.html:60
 msgid "Sign Out Other Sessions"
 msgstr "Logga ut andra sessioner"
+
+#~ msgid "First stop"
+#~ msgstr "Första stoppet"
+
+#~ msgid "Last stop"
+#~ msgstr "Sista stoppet"
+
+#~ msgid "Destintion"
+#~ msgstr "Destination"

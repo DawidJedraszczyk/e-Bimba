@@ -7,14 +7,18 @@ def time_to_seconds(time_str: str) -> int:
     return hms[0] * 3600 + hms[1] * 60 + hms[2]
 
 
-def seconds_to_time(time_seconds) -> str:
+def seconds_to_time(time_seconds, return_with_seconds=True) -> str:
     """Maps time from total no. of seconds to HH:MM:SS format"""
     time_seconds = int(time_seconds)
     hours = time_seconds // 3600
     time_seconds %= 3600
     minutes = time_seconds // 60
     time_seconds %= 60
-    return f"{hours:02}:{minutes:02}:{time_seconds:02}"
+    if return_with_seconds:
+        return f"{hours:02}:{minutes:02}:{time_seconds:02}"
+    else:
+        return f"{hours:02}:{minutes:02}"
+
 
 
 def custom_print(message, level='DEFAULT'):

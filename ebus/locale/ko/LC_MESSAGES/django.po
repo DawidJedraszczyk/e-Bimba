@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-01-01 18:50+0100\n"
+"POT-Creation-Date: 2025-01-02 20:51+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,6 +17,35 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
+
+#: apps/feedback/models.py:9
+msgid "Rating"
+msgstr "평가"
+
+#: apps/feedback/templates/feedback.html:59
+msgid "Make a review"
+msgstr "리뷰를 작성하세요"
+
+#: apps/feedback/templates/feedback.html:61
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:124
+msgid "Close"
+msgstr "닫다"
+
+#: apps/feedback/templates/feedback.html:103
+msgid "Review"
+msgstr "검토"
+
+#: apps/feedback/templates/feedback.html:105
+msgid "Write Your review here."
+msgstr "여기에 리뷰를 작성하세요."
+
+#: apps/feedback/templates/feedback.html:108
+msgid "Send"
+msgstr "보내다"
+
+#: apps/feedback/templates/feedback.html:111
+msgid "Thank You!"
+msgstr "감사합니다!"
 
 #: apps/route_search/templates/base_view/sections/buy_tickets.html:6
 #: apps/tickets/models.py:77
@@ -116,10 +145,6 @@ msgstr "남은 시간:"
 msgid "QR Code"
 msgstr "QR 코드"
 
-#: apps/route_search/templates/base_view/sections/buy_tickets.html:124
-msgid "Close"
-msgstr "닫다"
-
 #: apps/route_search/templates/base_view/sections/choose_city.html:4
 #: apps/route_search/templates/choose_city_view/index.html:4
 #: apps/route_search/templates/choose_city_view/index.html:8
@@ -131,22 +156,16 @@ msgstr "도시를 선택하세요"
 msgid "Language"
 msgstr "언어"
 
-#: apps/route_search/templates/base_view/sections/map.html:84
+#: apps/route_search/templates/base_view/sections/map.html:88
 #: apps/route_search/templates/base_view/sections/search_modal.html:13
 #: apps/route_search/templates/base_view/sections/search_modal.html:121
 msgid "Start"
 msgstr "시작"
 
-#: apps/route_search/templates/base_view/sections/map.html:93
-msgid "First stop"
-msgstr "첫 번째 정거장"
-
-#: apps/route_search/templates/base_view/sections/map.html:104
-msgid "Last stop"
-msgstr "마지막 정거장"
-
-#: apps/route_search/templates/base_view/sections/map.html:114
-msgid "Destintion"
+#: apps/route_search/templates/base_view/sections/map.html:97
+#: apps/route_search/templates/base_view/sections/search_modal.html:23
+#: apps/route_search/templates/base_view/sections/search_modal.html:121
+msgid "Destination"
 msgstr "목적지"
 
 #: apps/route_search/templates/base_view/sections/results_modal.html:111
@@ -164,11 +183,6 @@ msgstr "날짜"
 #: apps/route_search/templates/base_view/sections/search_modal.html:4
 msgid "back"
 msgstr "뒤쪽에"
-
-#: apps/route_search/templates/base_view/sections/search_modal.html:23
-#: apps/route_search/templates/base_view/sections/search_modal.html:121
-msgid "Destination"
-msgstr "목적지"
 
 #: apps/route_search/templates/base_view/sections/search_modal.html:33
 msgid "Date and time of departure"
@@ -212,11 +226,11 @@ msgstr "도시 '{city_full_name}'이 올바르지 않습니다."
 msgid "No data found for city: {city_full_name}"
 msgstr "도시 {city_full_name}에 대한 데이터를 찾을 수 없습니다."
 
-#: apps/route_search/views.py:97
+#: apps/route_search/views.py:98
 msgid "Invalid start or destination location data."
 msgstr "시작 또는 목적지 위치 데이터가 잘못되었습니다."
 
-#: apps/route_search/views.py:102
+#: apps/route_search/views.py:103
 msgid "Invalid date and time format."
 msgstr "날짜 및 시간 형식이 잘못되었습니다."
 
@@ -407,12 +421,10 @@ msgid ""
 msgstr "QR 코드가 성공적으로 생성되었습니다. 티켓이 만료됩니다: {ticket.ending_datetime}"
 
 #: apps/users/models.py:11
-#| msgid "Walking Speed:"
 msgid "Walking speed [m/s]"
 msgstr "보행속도 [m/s]"
 
 #: apps/users/models.py:12
-#| msgid "Maximum Walking Distance:"
 msgid "Maximal walking distance [m]"
 msgstr "최대 도보 거리 [m]"
 
@@ -509,47 +521,47 @@ msgstr "제출하다"
 msgid "adjust-parameters/"
 msgstr "조정-매개변수/"
 
-#: ebus/urls.py:36
-msgid "accounts/"
-msgstr "계정/"
-
-#: ebus/urls.py:39
-msgid "user/"
-msgstr "사용자/"
-
-#: ebus/urls.py:42
-msgid "tickets/"
-msgstr "티켓/"
-
-#: ebus/urls.py:45
+#: ebus/urls.py:14
 #, fuzzy
 #| msgid "sign up"
 msgid "signup/"
 msgstr "가입/"
 
-#: ebus/urls.py:46
+#: ebus/urls.py:15
 #, fuzzy
 #| msgid "Login"
 msgid "login/"
 msgstr "로그인/"
 
-#: ebus/urls.py:47
+#: ebus/urls.py:16
 #, fuzzy
 #| msgid "Logout"
 msgid "logout/"
 msgstr "로그아웃/"
 
-#: ebus/urls.py:48
+#: ebus/urls.py:17
 #, fuzzy
 #| msgid "Change Password"
 msgid "change-password/"
 msgstr "비밀번호 변경/"
 
-#: ebus/urls.py:49
+#: ebus/urls.py:18
 #, fuzzy
 #| msgid "Reset My Password"
 msgid "reset-password/"
 msgstr "비밀번호 재설정/"
+
+#: ebus/urls.py:21
+msgid "accounts/"
+msgstr "계정/"
+
+#: ebus/urls.py:22
+msgid "user/"
+msgstr "사용자/"
+
+#: ebus/urls.py:25
+msgid "tickets/"
+msgstr "티켓/"
 
 #: templates/account/account_inactive.html:5
 #: templates/account/account_inactive.html:9
@@ -1634,3 +1646,12 @@ msgstr "현재의"
 #: templates/usersessions/usersession_list.html:60
 msgid "Sign Out Other Sessions"
 msgstr "다른 세션에서 로그아웃"
+
+#~ msgid "First stop"
+#~ msgstr "첫 번째 정거장"
+
+#~ msgid "Last stop"
+#~ msgstr "마지막 정거장"
+
+#~ msgid "Destintion"
+#~ msgstr "목적지"

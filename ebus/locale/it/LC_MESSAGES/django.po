@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-01-01 18:50+0100\n"
+"POT-Creation-Date: 2025-01-02 20:51+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,6 +17,35 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: apps/feedback/models.py:9
+msgid "Rating"
+msgstr "Valutazione"
+
+#: apps/feedback/templates/feedback.html:59
+msgid "Make a review"
+msgstr "Fai una recensione"
+
+#: apps/feedback/templates/feedback.html:61
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:124
+msgid "Close"
+msgstr "Vicino"
+
+#: apps/feedback/templates/feedback.html:103
+msgid "Review"
+msgstr "Revisione"
+
+#: apps/feedback/templates/feedback.html:105
+msgid "Write Your review here."
+msgstr "Scrivi la tua recensione qui."
+
+#: apps/feedback/templates/feedback.html:108
+msgid "Send"
+msgstr "Inviare"
+
+#: apps/feedback/templates/feedback.html:111
+msgid "Thank You!"
+msgstr "Grazie!"
 
 #: apps/route_search/templates/base_view/sections/buy_tickets.html:6
 #: apps/tickets/models.py:77
@@ -116,10 +145,6 @@ msgstr "Tempo rimanente:"
 msgid "QR Code"
 msgstr "Codice QR"
 
-#: apps/route_search/templates/base_view/sections/buy_tickets.html:124
-msgid "Close"
-msgstr "Vicino"
-
 #: apps/route_search/templates/base_view/sections/choose_city.html:4
 #: apps/route_search/templates/choose_city_view/index.html:4
 #: apps/route_search/templates/choose_city_view/index.html:8
@@ -131,22 +156,16 @@ msgstr "Scegli una città"
 msgid "Language"
 msgstr "Lingua"
 
-#: apps/route_search/templates/base_view/sections/map.html:84
+#: apps/route_search/templates/base_view/sections/map.html:88
 #: apps/route_search/templates/base_view/sections/search_modal.html:13
 #: apps/route_search/templates/base_view/sections/search_modal.html:121
 msgid "Start"
 msgstr "Inizio"
 
-#: apps/route_search/templates/base_view/sections/map.html:93
-msgid "First stop"
-msgstr "Prima tappa"
-
-#: apps/route_search/templates/base_view/sections/map.html:104
-msgid "Last stop"
-msgstr "Ultima fermata"
-
-#: apps/route_search/templates/base_view/sections/map.html:114
-msgid "Destintion"
+#: apps/route_search/templates/base_view/sections/map.html:97
+#: apps/route_search/templates/base_view/sections/search_modal.html:23
+#: apps/route_search/templates/base_view/sections/search_modal.html:121
+msgid "Destination"
 msgstr "Destinazione"
 
 #: apps/route_search/templates/base_view/sections/results_modal.html:111
@@ -164,11 +183,6 @@ msgstr "Data"
 #: apps/route_search/templates/base_view/sections/search_modal.html:4
 msgid "back"
 msgstr "Indietro"
-
-#: apps/route_search/templates/base_view/sections/search_modal.html:23
-#: apps/route_search/templates/base_view/sections/search_modal.html:121
-msgid "Destination"
-msgstr "Destinazione"
 
 #: apps/route_search/templates/base_view/sections/search_modal.html:33
 msgid "Date and time of departure"
@@ -212,11 +226,11 @@ msgstr "La città '{city_full_name}' non è valida."
 msgid "No data found for city: {city_full_name}"
 msgstr "Nessun dato trovato per la città: {city_full_name}"
 
-#: apps/route_search/views.py:97
+#: apps/route_search/views.py:98
 msgid "Invalid start or destination location data."
 msgstr "Dati di partenza o di destinazione non validi."
 
-#: apps/route_search/views.py:102
+#: apps/route_search/views.py:103
 msgid "Invalid date and time format."
 msgstr "Formato data e ora non valido."
 
@@ -395,12 +409,10 @@ msgstr ""
 "{ticket.ending_datetime}"
 
 #: apps/users/models.py:11
-#| msgid "Walking Speed:"
 msgid "Walking speed [m/s]"
 msgstr "Velocità di camminata [m/s]"
 
 #: apps/users/models.py:12
-#| msgid "Maximum Walking Distance:"
 msgid "Maximal walking distance [m]"
 msgstr "Distanza massima percorribile a piedi [m]"
 
@@ -491,37 +503,37 @@ msgstr "Invia"
 msgid "adjust-parameters/"
 msgstr "regola-parametri/"
 
-#: ebus/urls.py:36
-msgid "accounts/"
-msgstr "conti/"
-
-#: ebus/urls.py:39
-msgid "user/"
-msgstr "utente/"
-
-#: ebus/urls.py:42
-msgid "tickets/"
-msgstr "biglietti/"
-
-#: ebus/urls.py:45
+#: ebus/urls.py:14
 msgid "signup/"
 msgstr "iscrizione/"
 
-#: ebus/urls.py:46
+#: ebus/urls.py:15
 msgid "login/"
 msgstr "login/"
 
-#: ebus/urls.py:47
+#: ebus/urls.py:16
 msgid "logout/"
 msgstr "esci/"
 
-#: ebus/urls.py:48
+#: ebus/urls.py:17
 msgid "change-password/"
 msgstr "cambiare la password/"
 
-#: ebus/urls.py:49
+#: ebus/urls.py:18
 msgid "reset-password/"
 msgstr "reimposta-password/"
+
+#: ebus/urls.py:21
+msgid "accounts/"
+msgstr "conti/"
+
+#: ebus/urls.py:22
+msgid "user/"
+msgstr "utente/"
+
+#: ebus/urls.py:25
+msgid "tickets/"
+msgstr "biglietti/"
 
 #: templates/account/account_inactive.html:5
 #: templates/account/account_inactive.html:9
@@ -1661,3 +1673,12 @@ msgstr "Attuale"
 #: templates/usersessions/usersession_list.html:60
 msgid "Sign Out Other Sessions"
 msgstr "Esci da altre sessioni"
+
+#~ msgid "First stop"
+#~ msgstr "Prima tappa"
+
+#~ msgid "Last stop"
+#~ msgstr "Ultima fermata"
+
+#~ msgid "Destintion"
+#~ msgstr "Destinazione"

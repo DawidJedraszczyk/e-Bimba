@@ -39,7 +39,9 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css">
     <script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>
 
-
+    {% if FEEDBACK_ON %}
+        <link rel="stylesheet" href="{% static 'assets/css/feedbackplus.css' %}" />
+    {% endif %}
 </head>
 <body>
 {% include './sections/base_modal.html' %}
@@ -48,6 +50,14 @@
 {% if tickets_available %}
     {% include './sections/buy_tickets.html' %}
 {% endif %}
+
+{% if FEEDBACK_ON %}
+    {% include "feedback.html" %}
+    <script src="{% static 'assets/js/feedbackplus.min.js' %}" defer></script>
+    <script src="{% static 'assets/js/html2canvas.min.js' %}" defer></script>
+    <script type="text/javascript" src="{% static 'assets/js/feedback.js' %}"></script>
+{% endif %}
+
 <script src="{% static 'base_view/js/index.js' %}"></script>
 <script src="{% static 'base_view/js/workers.js' %}"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
