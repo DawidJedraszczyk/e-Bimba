@@ -74,6 +74,7 @@ class BaseView(TemplateView):
         context['tickets_available'] = city['tickets']
         context['center_coordinates'] = [*data.md.center_coords]
         context['ticket_types_by_category'] = ticket_types_by_category
+        context['mapbox_access_token'] = settings.MAPBOX_ACCESS_TOKEN
         return context
 
 class ChooseCityView(TemplateView):
@@ -116,11 +117,15 @@ class FindRouteView(View):
 
         prospect = planner.prospect
         plans = planner.found_plans
+
         html = plans_to_html(planner.found_plans, data, _datetime)
+
         coords = {
-            i: prepare_coords(plan, prospect.start_coords, prospect.destination_coords, data)
+            i: prepare_coords_including_stops(plan, prospect.start_coords, prospect.destination_coords, data)
             for i, plan in enumerate(plans)
         }
+        print(coords)
+
         details = {
             i: prepare_departure_details(plan, start_name, destination_name, data)
             for i, plan in enumerate(plans)

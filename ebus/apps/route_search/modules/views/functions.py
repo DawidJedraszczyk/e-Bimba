@@ -38,30 +38,148 @@ def plans_to_html(plans: list, data: Data, datetime: datetime.datetime):
     return response
 
 
-def prepare_coords(plan, start_coords, destination_coords, data: Data):
+def prepare_coords_including_stops(plan, start_coords, destination_coords, data):
     response = {}
+
     for index, plan_trip in enumerate(plan.plan_trips):
-        start_stop = data.stops[plan_trip.from_stop]
-        goal_stop = data.stops[plan_trip.to_stop]
+        from_stop = data.stops[plan_trip.from_stop]
+        to_stop   = data.stops[plan_trip.to_stop]
 
         if index == 0:
-            response[0] = [(*start_coords,), (*start_stop.coords,)]
-
-        if index == len(plan.plan_trips) - 1:
-            response[len(plan.plan_trips) + 1] = [(*goal_stop.coords,), (*destination_coords,)]
+            # Start
+            response[0] = [
+                {"kind": "start", "lat": start_coords[0], "lon": start_coords[1]},
+                {"kind": "stop",  "stop_id": plan_trip.from_stop,
+                 "lat": from_stop.coords.lat, "lon": from_stop.coords.lon},
+            ]
 
         if plan_trip.trip_id != -1:
-            trip = data.trips[plan_trip.trip_id]
-            shape_id = trip.shape_id
-            points = data.shapes.get_points_between(shape_id, start_stop.coords, goal_stop.coords)
-            response[index + 1] = [(p.lat, p.lon) for p in points]
+            # Bus trip => call get_full_path_including_stops
+            coords_list = get_full_path_including_stops(data, plan_trip)
+            # coords_list is a list of {"kind": "stop"/"shape", "lat": ..., "lon": ..., "stop_id"?: ...}
+            response[index + 1] = coords_list
         else:
-            response[index + 1] = [(*start_stop.coords,), (*goal_stop.coords,)]
+            # Walking => direct line from from_stop to to_stop
+            response[index + 1] = [
+                {
+                    "kind":    "stop",
+                    "stop_id": plan_trip.from_stop,
+                    "lat":     from_stop.coords.lat,
+                    "lon":     from_stop.coords.lon,
+                },
+                {
+                    "kind":    "stop",
+                    "stop_id": plan_trip.to_stop,
+                    "lat":     to_stop.coords.lat,
+                    "lon":     to_stop.coords.lon,
+                },
+            ]
 
+        if index == len(plan.plan_trips) - 1:
+            # End
+            response[len(plan.plan_trips) + 1] = [
+                {
+                    "kind": "stop",
+                    "stop_id": plan_trip.to_stop,
+                    "lat": to_stop.coords.lat,
+                    "lon": to_stop.coords.lon,
+                },
+                {
+                    "kind": "end",
+                    "lat": destination_coords[0],
+                    "lon": destination_coords[1],
+                }
+            ]
+
+    # Edge case: If there are no plan_trips at all (pure walking)
     if len(plan.plan_trips) == 0:
-        response[0] = [(*start_coords,), (*destination_coords,)]
+        response[0] = [
+            {"kind": "start", "lat": start_coords[0], "lon": start_coords[1]},
+            {"kind": "end",   "lat": destination_coords[0], "lon": destination_coords[1]},
+        ]
 
     return response
+
+
+
+def get_full_path_including_stops(data, plan_trip):
+    """
+    Returns a list of dictionaries, each describing a point:
+      - "kind": "stop" or "shape"
+      - "stop_id": (only if kind == "stop")
+      - "lat": latitude
+      - "lon": longitude
+
+    This list includes every stop along the trip segment (from plan_trip.from_stop
+    to plan_trip.to_stop) PLUS all shape points between those stops in order.
+    """
+    trip_id = plan_trip.trip_id
+    from_stop_id = plan_trip.from_stop
+    to_stop_id   = plan_trip.to_stop
+
+    # 1) Gather the ordered stops for this trip
+    #    `get_trip_stops` usually returns a list of (stop_id, arrival_time, departure_time)
+    trip_stops = data.trips.get_trip_stops(trip_id)
+    stop_ids   = [s[0] for s in trip_stops]  # just the stop IDs in sequence
+
+    # 2) Locate which part of the trip is actually being used
+    try:
+        start_idx = stop_ids.index(from_stop_id)
+        end_idx   = stop_ids.index(to_stop_id)
+    except ValueError:
+        # If either from_stop or to_stop isn’t found in the trip’s sequence
+        # (shouldn’t happen in a correct plan), return empty
+        return []
+
+    if start_idx > end_idx:
+        start_idx, end_idx = end_idx, start_idx
+
+    # 3) "Stitch" shape segments from `from_stop_id` to `to_stop_id`
+    shape_id  = data.trips[trip_id].shape_id
+    full_path = []
+    prev_stop_id = None
+
+    for i in range(start_idx, end_idx + 1):
+        current_stop_id = stop_ids[i]
+        current_stop    = data.stops[current_stop_id]
+
+        if prev_stop_id is None:
+            # This is the very first stop in our traveled segment
+            full_path.append({
+                "kind":    "stop",
+                "stop_id": current_stop_id,
+                "lat":     current_stop.coords.lat,
+                "lon":     current_stop.coords.lon
+            })
+            prev_stop_id = current_stop_id
+            continue
+
+        # Get shape points from the previous stop to the current stop
+        previous_stop = data.stops[prev_stop_id]
+        segment_points = data.shapes.get_points_between(
+            shape_id, previous_stop.coords, current_stop.coords
+        )
+        # Typically, `segment_points` includes both the previous stop coords and the current stop coords.
+        # We already have the previous stop in `full_path`, so skip the first point to avoid duplication.
+        for p in segment_points[1:]:
+            full_path.append({
+                "kind": "shape",
+                "lat":  p.lat,
+                "lon":  p.lon
+            })
+
+        # Finally, add the current stop itself
+        full_path.append({
+            "kind":    "stop",
+            "stop_id": current_stop_id,
+            "lat":     current_stop.coords.lat,
+            "lon":     current_stop.coords.lon
+        })
+
+        prev_stop_id = current_stop_id
+
+    return full_path
+
 
 
 def prepare_departure_details(plan, start_location: str, goal_location: str, data: Data):

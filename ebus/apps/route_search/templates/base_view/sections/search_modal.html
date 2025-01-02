@@ -117,7 +117,7 @@
 
         function addDraggableMarker(marker, lat, lon, isStart) {
             const icon = L.divIcon({
-                className: "custom-div-icon",
+                className: "destination-div-icon",
                 html: `<div class="marker-label">${isStart ? "{% trans 'Start' %}" : "{% trans 'Destination' %}"}</div>`,
                 iconSize: [50, 20],
                 iconAnchor: [25, 10],
@@ -248,6 +248,10 @@
                 draw_route(departureCoordinates[current_solution]);
                 show_departure_details(departuresDetailsData[current_solution]);
 
+
+                document.getElementById("back-btn").style.display = "block";
+                let backBtn = document.getElementById("back-btn");
+                backBtn.addEventListener("click", backFunctionRoutes);
             } catch (error) {
                 console.error('Error:', error);
             }

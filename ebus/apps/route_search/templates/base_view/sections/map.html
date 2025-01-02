@@ -13,14 +13,13 @@
 
 <div id="map"></div>
 
-
 <script>
     let icon;
     let locationIcon;
     let options = {
         maxZoom: 18,
         showZoom: false, // Hide the default zoom buttons
-        showCompass: false // Hide the default compass con
+        showCompass: false // Hide the default compass
     };
 
     icon = L.icon({
@@ -39,7 +38,7 @@
 
     const removeRoutingControl = () => {
         routingControls.forEach((control) => {
-            map.removeControl(control);
+            if (control.remove) control.remove(); // Handles both layers and controls
         });
         routingControls = [];
 
@@ -51,18 +50,22 @@
 
     const removeVehiclesRoutingControl = () => {
         vehiclesControls.forEach((control) => {
-            map.removeControl(control);
+            if (control.remove) control.remove();
         });
         vehiclesControls = [];
-    }
+    };
 
     const draw_route = (array) => {
         removeRoutingControl();
         const keys = Object.keys(array || {});
 
-        keys.forEach(key => {
-            const coords = array[key].map(coord => L.latLng(coord[0], coord[1]));
-            console.log(key, coords.length)
+        keys.forEach((key, idx) => {
+            const coordsWithMeta = array[key].map(item => ({
+                latLng: L.latLng(item.lat, item.lon),
+                item: item,
+            }));
+
+            const coords = coordsWithMeta.map(x => x.latLng);
 
             if (coords.length === 2) {
                 const routingControl = L.Routing.control({
@@ -71,54 +74,32 @@
                         profile: 'mapbox/walking'
                     }),
                     lineOptions: {
-                        styles: [{color: getColor(key), opacity: 0.7, weight: 2, dashArray: '2, 4'}],
+                        styles: [
+                            {color: getColor(key), opacity: 0.7, weight: 2, dashArray: '2, 4'}
+                        ],
                     },
                     fitSelectedRoutes: false,
                     show: false,
                     createMarker: (i, wp, nWps) => {
-                        if (key == 0) {
-                            if (i === 0) {
-                                return L.marker(wp.latLng, {
-                                    icon: L.divIcon({
-                                        className: "custom-div-icon",
-                                        html: `<div class="marker-label">{% trans "Start" %}</div>`,
-                                        iconAnchor: [25, 10]
-                                    }),
-                                    draggable: false
-                                });
-                            } else {
-                                return L.marker(wp.latLng, {
-                                    icon: L.divIcon({
-                                        className: "custom-div-icon",
-                                        html: `<div class="marker-label text-center">{% trans "First stop" %}</div>`,
-                                        iconAnchor: [25, 10]
-                                    }),
-                                    draggable: false
-                                });
-                            }
-                        } else if (key == keys.length - 1) {
-                            if (i === 0) {
-                                return L.marker(wp.latLng, {
-                                    icon: L.divIcon({
-                                        className: "custom-div-icon",
-                                        html: `<div class="marker-label text-center">{% trans "Last stop" %}</div>`,                                        iconSize: [70, 40],
-                                        iconAnchor: [25, 10]
-                                    }),
-                                    draggable: false
-                                });
-
-                            } else {
-                                return L.marker(wp.latLng, {
-                                    icon: L.divIcon({
-                                        className: "custom-div-icon",
-                                        html: `<div class="marker-label">{% trans "Destintion" %}</div>`,
-                                        iconAnchor: [25, 10]
-                                    }),
-                                    draggable: false
-                                });
-                            }
+                        if (key == 0 && i === 0) {
+                            return L.marker(wp.latLng, {
+                                icon: L.divIcon({
+                                    className: "destination-div-icon",
+                                    html: `<div class="marker-label">{% trans "Start" %}</div>`,
+                                }),
+                                draggable: false,
+                                zIndexOffset: 1000
+                            });
+                        } else if (key == keys.length - 1 && i !== 0) {
+                            return L.marker(wp.latLng, {
+                                icon: L.divIcon({
+                                    className: "destination-div-icon",
+                                    html: `<div class="marker-label">{% trans "Destination" %}</div>`,
+                                }),
+                                draggable: false,
+                                zIndexOffset: 1000
+                            });
                         }
-
                         return null;
                     },
                 }).addTo(map);
@@ -128,7 +109,10 @@
                 });
 
                 routingControls.push(routingControl);
+
             } else if (coords.length > 2) {
+                let stopCounter = 1;
+
                 const polyline = L.polyline(coords, {
                     color: getColor(key),
                     weight: 2,
@@ -136,23 +120,35 @@
                 }).addTo(map);
 
                 polylines.push(polyline);
+
+                coordsWithMeta.forEach((cm) => {
+                    if (cm.item.kind === 'stop') {
+                        let marker = L.marker(cm.latLng, {
+                            icon: L.divIcon({
+                                className: "stop-div-icon",
+                                html: `<div class="marker-label" style="border:2px solid ${getColor(key)}; color: ${getColor(key)}">
+                                           ${stopCounter}
+                                       </div>`
+                            })
+                        }).addTo(map);
+                        routingControls.push(marker);
+                        stopCounter++;
+                    }
+                });
             }
         });
     };
 
-
     function getColor(key) {
-        const colors = ["purple", "green", "blue", "orange", "red", "yellow"];
+        const colors = ["purple", "green", "blue", "orange", "red", "fuchsia", "indigo"];
         return colors[key % colors.length];
     }
 
-    const MAPBOX_ACCESS_TOKEN = "pk.eyJ1IjoiZHVkdXMxMDExIiwiYSI6ImNtNHdrdXZzdjBkM2wyanNmanJlbGF2ZWIifQ.ES2qQSvKzaZXLsQGPAVCPQ"
-
+    const MAPBOX_ACCESS_TOKEN = "{{ mapbox_access_token }}";
 
     const map = L.map("map", {
         maxZoom: 18,
     }).setView({{ center_coordinates }}, 16);
-
 
     L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}@2x?access_token={accessToken}', {
         id: 'mapbox/streets-v11',
@@ -163,7 +159,6 @@
             '<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
             'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>'
     }).addTo(map);
-
 
     removeRoutingControl();
 </script>
