@@ -8,29 +8,38 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto">
                 {% if user.is_authenticated %}
-                    <li class="nav-item"><a class="nav-link" href="{% url 'users:user_detail' %}">{% trans "Profil" %}</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'account_logout' %}">{% trans "Wyloguj" %}</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'users:user_detail' %}">{% trans "Profile" %}</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'account_logout' %}">{% trans "Logout" %}</a></li>
                 {% else %}
-                    <li class="nav-item"><a class="nav-link" href="{% url 'account_login' %}">{% trans "Zaloguj" %}</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'account_signup' %}">{% trans "Zarejestruj" %}</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'account_login' %}">{% trans "Login" %}</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'account_signup' %}">{% trans "Sign Up" %}</a></li>
                 {% endif %}
-{#                <li class="nav-item dropdown">#}
-{#                    <a class="nav-link dropdown-toggle" href="#" id="languageDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">#}
-{#                        {% trans "Language" %}#}
-{#                    </a>#}
-{#                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="languageDropdown">#}
-{#                        <li>#}
-{#                            <a class="dropdown-item" href="{% url 'set_language' %}?language=en">#}
-{#                                English#}
-{#                            </a>#}
-{#                        </li>#}
-{#                        <li>#}
-{#                            <a class="dropdown-item" href="{% url 'set_language' %}?language=pl">#}
-{#                                Polski#}
-{#                            </a>#}
-{#                        </li>#}
-{#                    </ul>#}
-{#                </li>#}
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="languageDropdown" role="button"
+                       data-bs-toggle="dropdown" aria-expanded="false">
+                        {% trans "Language" %}
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="languageDropdown">
+                        {% get_current_language as CURRENT_LANGUAGE %}
+                        {% get_available_languages as LANGUAGES %}
+                        {% for lang_code, lang_name in LANGUAGES %}
+                            <li>
+                                <form action="{% url 'set_language' %}" method="post" style="display: inline;">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="language" value="{{ lang_code }}">
+                                    <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                                    <button type="submit" class="dropdown-item">
+                                        {% if lang_code == CURRENT_LANGUAGE %}
+                                            <strong>{{ lang_name }}</strong>
+                                        {% else %}
+                                            {{ lang_name }}
+                                        {% endif %}
+                                    </button>
+                                </form>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </li>
             </ul>
         </div>
     </div>

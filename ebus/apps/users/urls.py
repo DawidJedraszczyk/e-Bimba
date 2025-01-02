@@ -5,6 +5,9 @@ from django.utils.translation import gettext_lazy as _
 app_name = 'users'
 
 urlpatterns = [
+    # User detail view
     path('', views.UserDetail.as_view(), name='user_detail'),
-    path('dostosuj-parametry/', views.UserMetricsUpdateView.as_view(), name='user_metrics'),
+
+    # User metrics update view
+    path(_('adjust-parameters/'), views.UserMetricsUpdateView.as_view(), name='user_metrics'),
 ]

@@ -3,6 +3,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse
+from django.utils.translation import gettext as _
 from .models import TicketType, Ticket
 
 
@@ -31,7 +32,8 @@ class PaymentSuccessView(LoginRequiredMixin, View):
             ticket_type=ticket_type,
         )
 
-        messages.success(request, f"Pomyślnie zakupiono bilet: {ticket_type.name}")
+        # Localized success message
+        messages.success(request, _(f"Successfully purchased ticket: {ticket_type.name}"))
 
         return redirect('users:user_detail')
 
@@ -44,11 +46,14 @@ class UseTicket(LoginRequiredMixin, View):
             ticket.ending_datetime = ticket.ticket_type.calculate_expiration()
             ticket.save()
 
-            messages.success(request, f"Pomyślnie wygenerowano kod QR. Bilet zakończy się: {ticket.ending_datetime}")
+            # Localized success message
+            messages.success(
+                request,
+                _(f"QR code successfully generated. The ticket will expire: {ticket.ending_datetime}")
+            )
 
         return redirect('tickets:ticket_detail', pk=ticket.id)
 
 
 class TicketDetail(LoginRequiredMixin, DetailView):
     model = Ticket
-

@@ -31,6 +31,7 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ./data:/data:ro
+      - ./cities.json:/ebus/cities.json:ro
     ports:
       - "8000:8000"
     depends_on:

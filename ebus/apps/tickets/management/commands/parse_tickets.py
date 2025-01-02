@@ -23,6 +23,7 @@ class Command(BaseCommand):
                         TicketType.objects.update_or_create(
                             name=name,
                             category=category,
+                            city=city,
                             discounted=True,
                             defaults={
                                 'active': True,
@@ -39,6 +40,7 @@ class Command(BaseCommand):
                         TicketType.objects.update_or_create(
                             name=name,
                             category=category,
+                            city=city,
                             discounted=False,
                             defaults={
                                 'active': True,
