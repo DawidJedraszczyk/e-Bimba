@@ -27,7 +27,7 @@ load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 sys.path.insert(0, os.path.join(BASE_DIR, 'apps'))
-CITIES_JSON_PATH = os.path.join(BASE_DIR, '..', 'cities.json')
+CITIES_JSON_PATH = os.path.join(BASE_DIR, "cities.json")
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
@@ -123,7 +123,7 @@ DATABASES = {
         'NAME': os.getenv('POSTGRES_DB', 'example_name'),
         'USER': os.getenv('POSTGRES_USER', 'user'),
         'PASSWORD': os.getenv('POSTGRES_PASSWORD', 'password'),
-        'HOST': os.getenv('POSTGRES_HOST', 'localhost'),
+        'HOST': os.getenv('POSTGRES_HOST', 'postgres'),
         'PORT': os.getenv('POSTGRES_PORT', 5432),
     }
 }
