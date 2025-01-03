@@ -33,7 +33,7 @@ insert into route select
   id,
   coalesce((select id from gtfs_agency a where a.agency_id = r.agency_id), 0),
   coalesce(route_short_name, route_long_name),
-  route_type,
+  least(route_type, 13),
   coalesce('0x' || route_color, '0xFFFFFF') :: int4,
   coalesce('0x' || route_text_color, '0x000000') :: int4,
 from gtfs_routes r
