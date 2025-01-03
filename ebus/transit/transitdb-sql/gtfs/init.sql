@@ -126,6 +126,6 @@ create temp table gtfs_trips (
 
 
 create or replace temp macro time_to_sec(time) as
-  60*60*cast(time[1:2] as int4)
-  + 60*cast(time[4:5] as int4)
-  + cast(time[7:8] as int4);
+  60*60*cast(time[-8:-7] as int4)
+  + 60*cast(time[-5:-4] as int4)
+  + cast(time[-2:-1] as int4);
