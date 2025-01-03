@@ -49,8 +49,8 @@ insert into trip_instance by name select
   (
     select id from processed_trip pt
     where pt.route = agg.route
-      and pt.shape = agg.shape
-      and pt.headsign = agg.headsign
+      and pt.shape is not distinct from agg.shape
+      and pt.headsign is not distinct from agg.headsign
       and pt.stops = agg.stops
   ) as trip,
   service,
