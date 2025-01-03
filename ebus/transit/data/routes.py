@@ -15,7 +15,7 @@ class Route(NamedTuple):
 @jitclass([
   ("agency_ids", nb.int32[:]),
   ("names", nbt.List(nbt.string)),
-  ("types", nb.int8[:]),
+  ("types", nb.int32[:]),
   ("colors", nb.int32[:]),
   ("text_colors", nb.int32[:]),
 ])

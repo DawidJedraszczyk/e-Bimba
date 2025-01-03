@@ -84,7 +84,7 @@ create table route (
   id int4 not null,
   agency int4 not null,
   name text not null,
-  type int1 not null,
+  type int4 not null,
   color int4,
   text_color int4,
 );

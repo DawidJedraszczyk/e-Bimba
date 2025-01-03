@@ -54,7 +54,7 @@ create temp table gtfs_routes (
   route_short_name text,
   route_long_name text,
   route_desc text,
-  route_type int1 not null,
+  route_type int4 not null,
   route_url text,
   route_color text,
   route_text_color text,

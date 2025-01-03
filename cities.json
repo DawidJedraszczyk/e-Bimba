@@ -30,7 +30,7 @@
     "id": "mdr",
     "name": "Madrid",
     "region": "es_madrid",
-    "projection": "EPSG:2180",
+    "projection": "EPSG:3857",
     "gtfs": {
       "mpk": "https://servicios.emtmadrid.es:8443/gtfs/transitemt.zip"
     },
@@ -41,10 +41,10 @@
     "id": "mnt",
     "name": "Montreal",
     "region": "na_canada_quebec",
-    "projection": "EPSG:2180",
+    "projection": "EPSG:3857",
     "gtfs": {
       "stm": "https://www.stm.info/sites/default/files/gtfs/gtfs_stm.zip"
-      },
+    },
     "tickets": false,
     "available_on_website": true
   },
@@ -52,10 +52,10 @@
     "id": "tor",
     "name": "Toronto",
     "region": "na_canada_ontario",
-    "projection": "EPSG:2180",
+    "projection": "EPSG:3857",
     "gtfs": {
       "ttc": "https://ckan0.cf.opendata.inter.prod-toronto.ca/dataset/bd4809dd-e289-4de8-bbde-c5c00dafbf4f/resource/28514055-d011-4ed7-8bb0-97961dfe2b66/download/SurfaceGTFS.zip"
-      },
+    },
     "tickets": false,
     "available_on_website": true
   },
@@ -63,7 +63,7 @@
     "id": "domrep",
     "name": "Dominican Republic",
     "region": "ca_dominica",
-    "projection": "EPSG:2180",
+    "projection": "EPSG:3857",
     "gtfs": {
       "mpk": "https://gitlab.com/digitaltransport/data/latin-america/santiago-de-los-caballeros/-/raw/master/RD_Santiago_GTFS.zip?inline=false"
     },
@@ -74,7 +74,7 @@
     "id": "nyc",
     "name": "New York City",
     "region": "na_new_york",
-    "projection": "EPSG:2180",
+    "projection": "EPSG:3857",
     "gtfs": {
       "mpk": "http://web.mta.info/developers/files/google_transit_supplemented.zip"
     },
@@ -113,7 +113,7 @@
       "tram": "https://gtfs.ztp.krakow.pl/GTFS_KRK_T.zip"
     },
     "tickets": false,
-    "available_on_website": false
+    "available_on_website": true
   },
   {
     "id": "wro",
@@ -130,7 +130,7 @@
     "id": "bar",
     "name": "Barcelona",
     "region": "es_cataluna",
-    "projection": "EPSG:2180",
+    "projection": "EPSG:3857",
     "gtfs": {
       "mpk": "http://www.ambmobilitat.cat/OpenData/google_transit.zip"
     },
@@ -141,7 +141,7 @@
     "id": "rom",
     "name": "Roma",
     "region": "it_centro",
-    "projection": "EPSG:2180",
+    "projection": "EPSG:3857",
     "gtfs": {
       "mpk": "https://romamobilita.it/sites/default/files/rome_static_gtfs.zip"
     },
@@ -152,7 +152,7 @@
     "id": "mel",
     "name": "Melbourne",
     "region": "ao_australia",
-    "projection": "EPSG:2180",
+    "projection": "EPSG:3857",
     "gtfs": {
       "ptv": "http://data.ptv.vic.gov.au/downloads/gtfs.zip"
     },
@@ -163,7 +163,7 @@
     "id": "saop",
     "name": "São Paulo",
     "region": "sa_brazil",
-    "projection": "EPSG:2180",
+    "projection": "EPSG:3857",
     "gtfs": {
       "mpk": "https://www.sptrans.com.br/umbraco/Surface/PerfilDesenvolvedor/BaixarGTFS?memberName=sptrans"
     },
@@ -174,7 +174,7 @@
     "id": "benair",
     "name": "Buenos Aires",
     "region": "sa_argentina",
-    "projection": "EPSG:2180",
+    "projection": "EPSG:3857",
     "gtfs": {
       "mpk": "https://cdn.buenosaires.gob.ar/datosabiertos/datasets/trenes-gtfs/trenes-gtfs.zip"
     },
