@@ -31,7 +31,7 @@ order by id;
 
 insert into route select
   id,
-  (select id from gtfs_agency a where a.agency_id = r.agency_id),
+  coalesce((select id from gtfs_agency a where a.agency_id = r.agency_id), 0),
   coalesce(route_short_name, route_long_name),
   route_type,
   ('0x' || route_color) :: int4,
