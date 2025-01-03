@@ -12,10 +12,10 @@ insert into stop by name select
   ) as position,
   (
     select
-      list(
+      coalesce(list(
         struct_pack(to_stop, distance)
         order by distance
-      ),
+      ), []),
     from stop_walk
     where from_stop = i.id
   ) as walks,

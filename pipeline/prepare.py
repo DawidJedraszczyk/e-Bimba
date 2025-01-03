@@ -98,7 +98,7 @@ async def calculate_stop_walks(tdb, osrm: OsrmClient):
     from_ids = np.repeat(from_id, len(to_ids))
 
     tdb.sql(
-      "insert into stop_walk from result",
+      "insert into stop_walk from result where distance <= 30000",
       views = {
         "result": pyarrow.table(
           [from_ids, to_ids, distances],

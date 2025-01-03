@@ -91,7 +91,7 @@
       "skm": "https://transitfeeds.com/p/pkp-szybka-kolej-miejska-w-trojmie-cie/1116/latest/download"
     },
     "tickets": false,
-    "available_on_website": false
+    "available_on_website": true
   },
   {
     "id": "poz-w",
