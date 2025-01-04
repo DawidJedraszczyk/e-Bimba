@@ -8,23 +8,47 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     restart: always
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   redis:
     image: redis:alpine
     restart: always
+    command: ["redis-server", "--save", "", "--appendonly", "no"]
+    sysctls:
+      net.core.somaxconn: 511
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   osrm_pl_mazowieckie:
     image: ghcr.io/project-osrm/osrm-backend
     command: osrm-routed --algorithm mld /data/map.osrm
     volumes:
       - ./data/regions/pl_mazowieckie:/data:ro
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    mem_limit: 512m
 
   osrm_pl_wielkopolskie:
     image: ghcr.io/project-osrm/osrm-backend
     command: osrm-routed --algorithm mld /data/map.osrm
     volumes:
       - ./data/regions/pl_wielkopolskie:/data:ro
-
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    mem_limit: 512m
 
   django:
     build:
@@ -36,14 +60,20 @@ services:
     ports:
       - "8000:8000"
     depends_on:
-      - postgres
-      - redis
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      osrm_pl_mazowieckie:
+        condition: service_healthy
+      osrm_pl_wielkopolskie:
+        condition: service_healthy
     env_file:
       - .env
     environment:
       OSRM_URL_pl_mazowieckie: "http://osrm_pl_mazowieckie:5000"
       OSRM_URL_pl_wielkopolskie: "http://osrm_pl_wielkopolskie:5000"
-
+    restart: always
 
 volumes:
   postgres_data:
