@@ -93,6 +93,9 @@ class TransitDb(Db):
     trips_ids, trips_seqs, trips_departures = trips.values.flatten()
     assert np.array_equal(ids, np.arange(len(a)))
 
+    filled_array = trips_departures.fill_null(0)
+    trips_departures_numpy_array = filled_array.to_numpy(zero_copy_only=True)
+
     return Stops(
       codes.tolist(),
       names.tolist(),
@@ -108,7 +111,7 @@ class TransitDb(Db):
       trips_off.to_numpy(),
       trips_ids.to_numpy(),
       trips_seqs.to_numpy(),
-      trips_departures.to_numpy(),
+      trips_departures_numpy_array,
     )
 
 
@@ -125,9 +128,18 @@ class TransitDb(Db):
     stops_ids, stops_arrivals, stops_departures, _, _ = stops.values.flatten()
     assert np.array_equal(ids, np.arange(len(a)))
 
+    filled_array = stops_arrivals.fill_null(0)
+    stops_arrivals_numpy_array = filled_array.to_numpy(zero_copy_only=True)
+
+    filled_array = stops_departures.fill_null(0)
+    stops_departures_numpy_array = filled_array.to_numpy(zero_copy_only=True)
+
+    filled_array = shapes.fill_null(0)
+    shapes_numpy_array = filled_array.to_numpy(zero_copy_only=True)
+
     return Trips(
       routes.to_numpy(),
-      shapes.to_numpy(),
+      shapes_numpy_array,
       headsigns.tolist(),
       first_departures.to_numpy(),
       last_departures.to_numpy(),
@@ -138,8 +150,8 @@ class TransitDb(Db):
       starts_times.to_numpy(),
       stops_off.to_numpy(),
       stops_ids.to_numpy(),
-      stops_arrivals.to_numpy(),
-      stops_departures.to_numpy(),
+      stops_arrivals_numpy_array,
+      stops_departures_numpy_array,
     )
 
 
