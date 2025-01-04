@@ -170,13 +170,14 @@ create type services as struct (
 
 create macro get_services(p_date) as table
   select id
-  from regular_service
+  from regular_service r
   where p_date >= start_date
     and p_date <= end_date
     and weekday[(dayofweek(p_date::date) + 6) % 7 + 1]
     and not exists (
-      select * from exceptional_service e
-      where e.date = p_date
+      from exceptional_service e
+      where e.id = r.id
+        and e.date = p_date
         and not available
     )
   union
