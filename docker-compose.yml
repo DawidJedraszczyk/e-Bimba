@@ -93,18 +93,6 @@ services:
       - redis
     env_file:
       - .env
-    environment:
-      OSRM_URL_pl_mazowieckie: "http://osrm_pl_mazowieckie:5000"
-      OSRM_URL_pl_pomorskie: "http://osrm_pl_pomorskie:5000"
-      OSRM_URL_pl_wielkopolskie: "http://osrm_pl_wielkopolskie:5000"
-      OSRM_URL_pl_dolnoslaskie: "http://osrm_pl_dolnoslaskie:5000"
-      OSRM_URL_es_madrid: "http://osrm_es_madrid:5000"
-      OSRM_URL_es_cataluna: "http://osrm_es_cataluna:5000"
-      OSRM_URL_na_canada_ontario: "http://osrm_na_canada_ontario:5000"
-      OSRM_URL_na_new_york: "http://osrm_na_new_york:5000"
-      OSRM_URL_na_canada_quebec: "http://osrm_na_canada_quebec:5000"
-      OSRM_URL_it_centro: "http://osrm_it_centro:5000"
-      OSRM_URL_sa_argentina: "http://osrm_sa_argentina:5000"
 
 volumes:
   postgres_data:

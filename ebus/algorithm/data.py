@@ -60,7 +60,7 @@ class Data:
         osrm_url = os.environ.get(var, None)
 
         if osrm_url is None:
-            raise Exception(f"Missing env var {var}")
+            osrm_url = f"http://osrm_{self.md.region}:5000"
 
         self.prospector = Prospector(
             self.tdb,

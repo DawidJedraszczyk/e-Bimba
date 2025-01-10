@@ -102,7 +102,7 @@
       "tram": "https://gtfs.ztp.krakow.pl/GTFS_KRK_T.zip"
     },
     "tickets": false,
-    "available_on_website": false
+    "available_on_website": true
   },
   {
     "id": "wro",
@@ -157,7 +157,7 @@
       "mpk": "https://www.sptrans.com.br/umbraco/Surface/PerfilDesenvolvedor/BaixarGTFS?memberName=sptrans"
     },
     "tickets": false,
-    "available_on_website": false
+    "available_on_website": true
   },
   {
     "id": "benair",

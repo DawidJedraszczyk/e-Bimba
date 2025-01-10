@@ -4,11 +4,11 @@ from itertools import combinations
 import numba as nb
 import numba.types as nbt
 import time
-from django.conf import settings
 from .data import Data
 from .discovered_stop import DiscoveredStop
 from .estimator import Estimate, Estimator, Instant
 from .plan import Plan, PlanTrip
+from .preferences import *
 from .utils import *
 from ebus.custom_settings.algorithm_settings import *
 from transit.data.misc import Coords, INF_TIME, Services
@@ -43,16 +43,16 @@ class AStarPlanner():
         date: datetime.date,
         start_time,
         estimator=None,
-        user: settings.AUTH_USER_MODEL = None,
+        preferences=Preferences(),
     ):
         start_init_time = time.time()
         self.prospect = data.prospector.prospect(
             start,
             destination,
-            start_radius=user.max_distance if user and user.is_authenticated else settings.PROSPECTING_SETTINGS["START_RADIUS"],
-            start_min_count=settings.PROSPECTING_SETTINGS["START_MIN_COUNT"],
-            destination_radius=user.max_distance if user and user.is_authenticated else settings.PROSPECTING_SETTINGS["DESTINATION_RADIUS"],
-            destination_min_count=settings.PROSPECTING_SETTINGS["DESTINATION_MIN_COUNT"],
+            start_radius=preferences.start_radius,
+            start_min_count=preferences.start_min_count,
+            destination_radius=preferences.destination_radius,
+            destination_min_count=preferences.destination_min_count,
         )
         prospecting_time = time.time() - start_init_time
 
@@ -71,7 +71,8 @@ class AStarPlanner():
         self.discovered_stops = {}
         self.walk_times = {}
         self.estimates = {}
-        self.pace = user.pace if user and user.is_authenticated else settings.WALKING_SETTINGS["PACE"]
+        self.pace = preferences.pace
+
         self.metrics = {
             'iterations': 0, #i
             'unique_stops_visited': 0, #i
@@ -122,7 +123,7 @@ class AStarPlanner():
 
         if wt is None:
             distance = self.data.stops[stop_id].position.distance(self.prospect.destination)
-            wt = int(distance * settings.WALKING_SETTINGS["DISTANCE_MULTIPLIER"] / self.pace)
+            wt = int(distance * WALKING_SETTINGS["DISTANCE_MULTIPLIER"] / self.pace)
             self.walk_times[stop_id] = wt
 
         return wt
@@ -202,7 +203,7 @@ class AStarPlanner():
             # from stop we're currently at after following fastest known plan yet
             start_time_get_trips = time.time()
 
-            transfer_time = settings.HEURISTIC_SETTINGS["TRANSFER_TIME"]
+            transfer_time = HEURISTIC_SETTINGS["TRANSFER_TIME"]
 
             if not fastest_known_plan.plan_trips:
                 # Don't add transfer time before first trip
@@ -250,7 +251,7 @@ class AStarPlanner():
             compute_heurstic_time_delta = self.metrics['plan_compute_heurstic_time_total'] - compute_heurstic_time_before
             self.metrics['extended_plans_initialization_time'] += (end_extensions_init_time-start_extensions_init_time) - compute_heurstic_time_delta
             self.metrics['plans_queue_operations_time'] += (end_time_heappush-start_time_heappush)
-            if settings.METRICS_SETTINGS['EXPANSIONS']:
+            if METRICS_SETTINGS['EXPANSIONS']:
                 self.metrics['trasnit_expansions_total'] += len(fastest_ways) - walking_trips_found
                 self.metrics['walking_expansions_total'] += walking_trips_found
                 self.metrics['expansions_total'] += len(fastest_ways)
@@ -271,9 +272,9 @@ class AStarPlanner():
             self.shortest_time = cur_time
 
         acceptable_time = (
-            cur_time <= self.shortest_time * (1 + settings.ALTERNATIVE_PLAN_SETTINGS["ALLOWED_RELATIVE_DIFFERENCE"])
+            cur_time <= self.shortest_time * (1 + ALTERNATIVE_PLAN_SETTINGS["ALLOWED_RELATIVE_DIFFERENCE"])
             or
-            cur_time <= self.shortest_time + settings.ALTERNATIVE_PLAN_SETTINGS["ALLOWED_ABSOLUTE_DIFFERENCE"]
+            cur_time <= self.shortest_time + ALTERNATIVE_PLAN_SETTINGS["ALLOWED_ABSOLUTE_DIFFERENCE"]
         )
 
         if prev_plan.start_time >= plan.start_time and not acceptable_time:

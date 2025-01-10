@@ -12,6 +12,7 @@ import redis
 import sys
 from .modules.views.functions import *
 from algorithm.astar_planner import AStarPlanner
+from algorithm.preferences import Preferences
 from algorithm.utils import time_to_seconds
 from tickets.models import TicketType, Ticket
 from transit.data.misc import Coords
@@ -102,6 +103,14 @@ class FindRouteView(View):
         except ValueError:
             return JsonResponse({'error': _('Invalid date and time format.')}, status=400)
 
+        if request.user and request.user.is_authenticated:
+            preferences = Preferences(
+                pace=request.user.pace,
+                max_distance=request.user.max_distance,
+            )
+        else:
+            preferences = Preferences()
+
         planner = AStarPlanner(
             data,
             Coords(start_latitude, start_longitude),
@@ -109,7 +118,7 @@ class FindRouteView(View):
             _datetime.date(),
             time_to_seconds(_datetime.strftime("%H:%M:%S")),
             data.default_estimator,
-            user=request.user
+            preferences,
         )
 
         for _ in range(5):
