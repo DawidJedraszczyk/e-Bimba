@@ -32,6 +32,7 @@ class Data:
     default_estimator: Estimator
     cluster_estimator: Optional[Estimator]
     nn_estimator: Optional[Estimator]
+    knn_estimator: Optional[Estimator]
 
     _instances = dict()
 
@@ -75,7 +76,7 @@ class Data:
         nn_path = aux_file(".tflite")
         clustertimes_path = aux_file("-clustertimes.npy")
         nn_ref_path = aux_file("-ref.tflite")
-        knndb_path = aux_file("-knn.db")
+        knn_path = aux_file("-knn.pkl")
 
         if clustertimes_path.exists():
             self.cluster_estimator = cluster_estimator(clustertimes_path)
@@ -96,8 +97,8 @@ class Data:
         else:
             self.nn_ref_estimator = None
 
-        if knndb_path.exists():
-            self.knn_estimator = knn_estimator(knndb_path, self.stops)
+        if knn_path.exists():
+            self.knn_estimator = knn_estimator(knn_path, self.stops)
         else:
             self.knn_estimator = None
 

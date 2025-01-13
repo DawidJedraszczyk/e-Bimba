@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 
+import numpy as np
 from pathlib import Path
+import pyarrow.parquet as pq
+from sklearn.neighbors import KNeighborsRegressor
+import pickle
 import sys
 
 sys.path.append(str(Path(__file__).parents[1] / "ebus"))
@@ -19,9 +23,30 @@ else:
     print(f"Unknown city '{city_name}'")
     sys.exit()
 
-from transit.knndb import *
+
+N = 5
+
+dataset_path = TMP_CITIES / city["id"] / "dataset.parquet"
+dataset = pq.read_table(dataset_path)
+
+X = np.stack(
+  [
+    dataset["from_x"],
+    dataset["from_y"],
+    dataset["to_x"],
+    dataset["to_y"],
+    dataset["day_type"],
+    dataset["start"],
+  ],
+  axis=-1,
+  dtype="float32",
+)
+
+Y = dataset["time"].to_numpy()
+
+knnr = KNeighborsRegressor(N)
+knnr.fit(X, Y)
 
 
-knndb = KnnDb(DATA_CITIES / f"{city['id']}-knn.db", write=True)
-knndb.set_variable("SRC", str(TMP_CITIES / city['id'] / "dataset.parquet"))
-knndb.script("init")
+with (DATA_CITIES / f"{city['id']}-knn.pkl").open("wb") as file:
+  pickle.dump(knnr, file)

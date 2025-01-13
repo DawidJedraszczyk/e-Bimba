@@ -1,17 +1,19 @@
 import numba as nb
 import numpy as np
 from pathlib import Path
+from sklearn.neighbors import KNeighborsRegressor
+import pickle
 
 from algorithm.estimator import *
 from transit.data.stops import Stops
-from transit.knndb import KnnDb
 
-N = 5
 
-def knn_estimator(knndb: KnnDb|Path, stops: Stops) -> Estimator:
-  if isinstance(knndb, Path):
-    knndb = KnnDb(knndb)
+def knn_estimator(knn: KNeighborsRegressor|Path, stops: Stops) -> Estimator:
+  if isinstance(knn, Path):
+    with knn.open("rb") as file:
+      knn = pickle.load(file)
 
+  assert isinstance(knn, KNeighborsRegressor)
   x_scale = 1 / np.std(stops.xs)
   y_scale = 1 / np.std(stops.ys)
   time_scale = 1 / (24*60*60)
@@ -22,17 +24,18 @@ def knn_estimator(knndb: KnnDb|Path, stops: Stops) -> Estimator:
     day_type, start_time = at_time
 
     inputs = np.array(
-      [
+      [[
         from_x * x_scale,
         from_y * y_scale,
         to_x * x_scale,
         to_y * y_scale,
         day_type,
         start_time * time_scale,
-      ],
+      ]],
       dtype=np.float32,
     )
 
-    return min(knndb.search(inputs, N))
+    indices = knn.kneighbors(inputs, return_distance=False)[0]
+    return knn._y[indices].min()
 
   return Estimator(estimate, 0)
