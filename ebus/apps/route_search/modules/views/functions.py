@@ -219,9 +219,8 @@ def prepare_departure_details(plan, start_location: str, goal_location: str, dat
             route = data.routes[trip.route_id].name
             direction = trip.headsign
 
-
-            response[index+1] = f'''
-                <ul class="timeline-with-icons">
+            response[index + 1] = f'''
+                <ul class="timeline-with-icons departure-details">
                     <li class="timeline-item mb-5">
                       <span class="timeline-icon">
                         {departure_time}
@@ -244,7 +243,7 @@ def prepare_departure_details(plan, start_location: str, goal_location: str, dat
                 if in_our_trip_flag:
                     time = relevant_time - time_offset + plan_trip.departure_time
                     stop = data.stops[stop_id]
-                    response[index+1] += f'''
+                    response[index + 1] += f'''
                             <li class="timeline-item mb-2 departure-time" data-sequence-number={stop_sequence}>
                                 <span class="timeline-icon" style="font-size: 13px;">
                                     {seconds_to_time(time, return_with_seconds=False)}

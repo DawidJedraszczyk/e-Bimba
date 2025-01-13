@@ -71,7 +71,7 @@ class BaseView(TemplateView):
 
         context['cities'] = cities
         context['city_id'] = city_id
-        context['city_name'] = city_full_name
+        context['city_name'] = city_full_name.capitalize()
         context['tickets_available'] = city['tickets']
         context['center_coordinates'] = [*data.md.center_coords]
         context['ticket_types_by_category'] = ticket_types_by_category
@@ -148,6 +148,6 @@ class FindRouteView(View):
             'html': html,
             'coords': coords,
             'details': details,
-            'gtfs': gtfs
+            'gtfs': gtfs,
         }
         return JsonResponse(response_data)

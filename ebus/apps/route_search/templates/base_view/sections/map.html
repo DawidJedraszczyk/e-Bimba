@@ -46,6 +46,8 @@
             map.removeLayer(polyline);
         });
         polylines = [];
+
+        removeVehiclesRoutingControl()
     };
 
     const removeVehiclesRoutingControl = () => {
@@ -55,88 +57,94 @@
         vehiclesControls = [];
     };
 
-    const draw_route = (array) => {
-        removeRoutingControl();
-        const keys = Object.keys(array || {});
+    const draw_route = () => {
+        if (current_solution !== null) {
+            const departureCoordinatesSessionStorage = sessionStorage.getItem('departureCoordinates');
+            const departureCoordinates = JSON.parse(departureCoordinatesSessionStorage);
+            let array = departureCoordinates[current_solution];
 
-        keys.forEach((key, idx) => {
-            const coordsWithMeta = array[key].map(item => ({
-                latLng: L.latLng(item.lat, item.lon),
-                item: item,
-            }));
+            removeRoutingControl();
+            const keys = Object.keys(array || {});
 
-            const coords = coordsWithMeta.map(x => x.latLng);
+            keys.forEach((key, idx) => {
+                const coordsWithMeta = array[key].map(item => ({
+                    latLng: L.latLng(item.lat, item.lon),
+                    item: item,
+                }));
 
-            if (coords.length === 2) {
-                const routingControl = L.Routing.control({
-                    waypoints: coords,
-                    router: L.Routing.mapbox(MAPBOX_ACCESS_TOKEN, {
-                        profile: 'mapbox/walking'
-                    }),
-                    lineOptions: {
-                        styles: [
-                            {color: getColor(key), opacity: 0.7, weight: 2, dashArray: '2, 4'}
-                        ],
-                    },
-                    fitSelectedRoutes: false,
-                    show: false,
-                    createMarker: (i, wp, nWps) => {
-                        if (key == 0 && i === 0) {
-                            return L.marker(wp.latLng, {
+                const coords = coordsWithMeta.map(x => x.latLng);
+
+                if (coords.length === 2) {
+                    const routingControl = L.Routing.control({
+                        waypoints: coords,
+                        router: L.Routing.mapbox(MAPBOX_ACCESS_TOKEN, {
+                            profile: 'mapbox/walking'
+                        }),
+                        lineOptions: {
+                            styles: [
+                                {color: getColor(key), opacity: 0.7, weight: 2, dashArray: '2, 4'}
+                            ],
+                        },
+                        fitSelectedRoutes: false,
+                        show: false,
+                        createMarker: (i, wp, nWps) => {
+                            if (key == 0 && i === 0) {
+                                return L.marker(wp.latLng, {
+                                    icon: L.divIcon({
+                                        className: "destination-div-icon",
+                                        html: `<div class="marker-label">{% trans "Start" %}</div>`,
+                                    }),
+                                    draggable: false,
+                                    zIndexOffset: 1000
+                                });
+                            } else if (key == keys.length - 1 && i !== 0) {
+                                return L.marker(wp.latLng, {
+                                    icon: L.divIcon({
+                                        className: "destination-div-icon",
+                                        html: `<div class="marker-label">{% trans "Destination" %}</div>`,
+                                    }),
+                                    draggable: false,
+                                    zIndexOffset: 1000
+                                });
+                            }
+                            return null;
+                        },
+                    }).addTo(map);
+
+                    routingControl.on('routingerror', function (e) {
+                        console.error('Routing error:', e);
+                    });
+
+                    routingControls.push(routingControl);
+
+                } else if (coords.length > 2) {
+                    let stopCounter = 1;
+
+                    const polyline = L.polyline(coords, {
+                        color: getColor(key),
+                        weight: 2,
+                        opacity: 0.7,
+                    }).addTo(map);
+
+                    polylines.push(polyline);
+
+                    coordsWithMeta.forEach((cm) => {
+                        if (cm.item.kind === 'stop') {
+                            let marker = L.marker(cm.latLng, {
                                 icon: L.divIcon({
-                                    className: "destination-div-icon",
-                                    html: `<div class="marker-label">{% trans "Start" %}</div>`,
-                                }),
-                                draggable: false,
-                                zIndexOffset: 1000
-                            });
-                        } else if (key == keys.length - 1 && i !== 0) {
-                            return L.marker(wp.latLng, {
-                                icon: L.divIcon({
-                                    className: "destination-div-icon",
-                                    html: `<div class="marker-label">{% trans "Destination" %}</div>`,
-                                }),
-                                draggable: false,
-                                zIndexOffset: 1000
-                            });
+                                    className: "stop-div-icon",
+                                    html: `<div class="marker-label" style="border:2px solid ${getColor(key)}; color: ${getColor(key)}">
+                                               ${stopCounter}
+                                           </div>`
+                                })
+                            }).addTo(map);
+                            routingControls.push(marker);
+                            stopCounter++;
                         }
-                        return null;
-                    },
-                }).addTo(map);
-
-                routingControl.on('routingerror', function (e) {
-                    console.error('Routing error:', e);
-                });
-
-                routingControls.push(routingControl);
-
-            } else if (coords.length > 2) {
-                let stopCounter = 1;
-
-                const polyline = L.polyline(coords, {
-                    color: getColor(key),
-                    weight: 2,
-                    opacity: 0.7,
-                }).addTo(map);
-
-                polylines.push(polyline);
-
-                coordsWithMeta.forEach((cm) => {
-                    if (cm.item.kind === 'stop') {
-                        let marker = L.marker(cm.latLng, {
-                            icon: L.divIcon({
-                                className: "stop-div-icon",
-                                html: `<div class="marker-label" style="border:2px solid ${getColor(key)}; color: ${getColor(key)}">
-                                           ${stopCounter}
-                                       </div>`
-                            })
-                        }).addTo(map);
-                        routingControls.push(marker);
-                        stopCounter++;
-                    }
-                });
-            }
-        });
+                    });
+                }
+            });
+        }
     };
 
     function getColor(key) {

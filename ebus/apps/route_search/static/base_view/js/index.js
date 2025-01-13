@@ -15,6 +15,7 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 function backFunctionRoutes() {
+    current_solution = null;
     document.getElementById("routeForm").style.display = "block";
     const container = document.getElementById("foundRoutes");
     container.innerHTML = '<span id="loader"</span>';

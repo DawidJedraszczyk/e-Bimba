@@ -238,6 +238,7 @@
                 const departuresGtfsData = response.gtfs;
                 sessionStorage.setItem('departuresGTFS', JSON.stringify(departuresGtfsData));
 
+
                 document.getElementById('foundRoutes').innerHTML = '';
                 Object.keys(routeData).forEach(key => {
                     const solution = routeData[key];
@@ -245,8 +246,8 @@
                 });
 
                 current_solution = 0;
-                draw_route(departureCoordinates[current_solution]);
-                show_departure_details(departuresDetailsData[current_solution]);
+                draw_route();
+                show_departure_details();
 
 
                 document.getElementById("back-btn").style.display = "block";

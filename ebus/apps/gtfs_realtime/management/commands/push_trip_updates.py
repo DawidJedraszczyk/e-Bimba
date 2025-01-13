@@ -9,7 +9,10 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         counter = 1
         while True:
-            asyncio.run(push_trip_updates_to_clients())
-            print(f"wysłałem {counter} turę trip_updates")
+            try:
+                asyncio.run(push_trip_updates_to_clients())
+                print(f"wysłałem {counter} turę trip updates")
+            except Exception as e:
+                print(e)
             counter += 1
             time.sleep(5)

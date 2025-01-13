@@ -931,7 +931,7 @@ msgstr "Zarejestruj się"
 
 #: templates/account/login.html:17
 msgid "first"
-msgstr "Pierwszy"
+msgstr "najpierw"
 
 #: templates/account/login.html:41
 msgid "Sign in with a passkey"
