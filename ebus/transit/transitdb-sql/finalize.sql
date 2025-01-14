@@ -57,7 +57,7 @@ insert into metadata values (
     x := getvariable('X0'),
     y := getvariable('Y0')
   ),
-  (select coalesce(list(column0), []) from city_realtime),
+  [],
 );
 
 

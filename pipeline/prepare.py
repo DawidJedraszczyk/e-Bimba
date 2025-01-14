@@ -183,8 +183,7 @@ def prepare_city(city):
 
       t0 = time.time()
       print("Finalizing")
-      realtime = np.array(city.get("realtime", []), dtype=str)
-      tdb.script("finalize", views={"city_realtime": realtime, "clustering": clustering})
+      tdb.script("finalize", views={"clustering": clustering})
 
       t1 = time.time()
       print(f"Time: {_t(t1, t0)}")
@@ -220,7 +219,6 @@ def main():
 
   for city in CITIES:
     print(f"  {city['name']} | {city['id']}")
-
 
 
 def _t(t_to, t_from):

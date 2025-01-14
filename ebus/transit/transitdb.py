@@ -151,3 +151,19 @@ class TransitDb(Db):
     """, [trip, service, start_time]).one()
 
     return TripInstance(wa, id)
+
+
+  def process_delays(self, trip_updates: str) -> Delays:
+    res = self.script("process-delays", [trip_updates])
+
+    if res.count() == 0:
+      return Delays.empty()
+
+    trip_ids, services, start_times, delays = res.arrow().flatten()
+
+    return Delays(
+      trip_ids.to_numpy(),
+      services.to_numpy(),
+      start_times.to_numpy(),
+      delays.to_numpy(),
+    )

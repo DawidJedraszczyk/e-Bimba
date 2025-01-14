@@ -21,6 +21,9 @@ class Result:
   def np(self):
     return self.rel.fetchnumpy()
 
+  def count(self):
+    return len(self.rel)
+
 
 class Db:
   db: duckdb.DuckDBPyConnection

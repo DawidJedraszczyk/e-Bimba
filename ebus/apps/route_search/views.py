@@ -15,7 +15,7 @@ from algorithm.astar_planner import AStarPlanner
 from algorithm.preferences import Preferences
 from algorithm.utils import time_to_seconds
 from tickets.models import TicketType, Ticket
-from transit.data.misc import Coords
+from transit.data.misc import Coords, Delays
 
 
 r = redis.Redis(host=settings.REDIS_HOST, port=settings.REDIS_PORT, db=0)
@@ -111,6 +111,13 @@ class FindRouteView(View):
         else:
             preferences = Preferences()
 
+        trip_updates = r.get("trip_updates")
+
+        if trip_updates:
+            delays = data.tdb.process_delays(trip_updates.decode("utf-8"))
+        else:
+            delays = Delays.empty()
+
         planner = AStarPlanner(
             data,
             Coords(start_latitude, start_longitude),
@@ -119,6 +126,7 @@ class FindRouteView(View):
             time_to_seconds(_datetime.strftime("%H:%M:%S")),
             data.default_estimator,
             preferences,
+            delays,
         )
 
         for _ in range(5):
