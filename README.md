@@ -6,11 +6,13 @@ Running instructions below the images.
 
 ### Example usage images
 
+![city_list.png](usage_examples/city_list.png)
 ![poznan_realtime.png](usage_examples/poznan_realtime.png)
 ![roma_realtime.png](usage_examples/roma_realtime.png)
-![signup_sm.png](usage_examples/signup_sm.png)
+![tickets.png](usage_examples/tickets.png)
 ![ticket_detail_es_sm.png](usage_examples/ticket_detail_es_sm.png)
-
+![signup_sm.png](usage_examples/signup_sm.png)
+![profile_detail.png](usage_examples/profile_detail.png)
 
 ### First steps
 
