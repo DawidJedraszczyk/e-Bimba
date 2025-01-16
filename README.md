@@ -2,6 +2,16 @@
 
 This is a project that aims to reproduce the [jakdojade](https://jakdojade.pl) website with AI support. Ultimately, we want to serve large cities, e.g. Madrid
 
+Running instructions below the images.
+
+### Example usage images
+
+![poznan_realtime.png](usage_examples/poznan_realtime.png)
+![roma_realtime.png](usage_examples/roma_realtime.png)
+![signup_sm.png](usage_examples/signup_sm.png)
+![ticket_detail_es_sm.png](usage_examples/ticket_detail_es_sm.png)
+
+
 ### First steps
 
 As first step You have to install [docker compose](https://docs.docker.com/compose/install/).
