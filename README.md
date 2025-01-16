@@ -15,17 +15,21 @@ POSTGRES_HOST=postgres
 POSTGRES_PORT=5432
 REDIS_HOST=localhost
 REDIS_PORT=6379
+EMAIL_HOST_USER=            GMAIL HOST ACCOUNT
+EMAIL_HOST_PASSWORD=        YOUR PASSWORD
+MAPBOX_ACCESS_TOKEN=        GENERATE TOKEN
 ```
 
 ## Preparing GTFS for cities
 
-Step 1 -> create venv
+Step 1 -> create venv 
+
 Step 2 -> move into pipeline directory
+
 Step 3 -> install requirements from pipeline directory
 
-# Option 1 - prepare for specific city
 
-Final step -> 
+# Option 1 - prepare for specific city
 ```
 python prepare.py CityName
 ```
@@ -34,7 +38,6 @@ Where CityName is a name of city from cities.json, ex. Poznań, Roma, Madrid
 This command is recommended.
 
 # Option 2 - prepare all cities
-Final step ->
 ```
 sudo ./preapre_all_cities.sh
 ```
