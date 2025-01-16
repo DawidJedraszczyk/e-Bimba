@@ -125,7 +125,6 @@
         const filteredDelays = GTFS_DATA.trip_updates_data["{{ city_name }}"].filter(
             trip => uniqueGTFSIds.has(trip.trip_id)
         );
-        console.log(filteredDelays)
 
 
         const uniqueTripIdsFromDelays = [...new Set(filteredDelays.map(delay => delay.trip_id))];
