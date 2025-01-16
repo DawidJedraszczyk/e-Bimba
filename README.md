@@ -1,20 +1,8 @@
 # JakDojadeClone
 
-This is a project that aims to reproduce the [jakdojade](https://jakdojade.pl) website with AI support. Ultimately, we want to serve large cities, e.g. Tokyo
+This is a project that aims to reproduce the [jakdojade](https://jakdojade.pl) website with AI support. Ultimately, we want to serve large cities, e.g. Madrid
 
-## Installation
-
-### Preparing data
-
-To prepare data for route planning go into the `pipeline` directory and run
-
-```bash
-./prepare.py Poznań
-```
-
-where `Poznań` can be replaced with any city defined in `pipeline/cities.json`.
-
-### Running the app
+### First steps
 
 As first step You have to install [docker compose](https://docs.docker.com/compose/install/).
 
@@ -29,14 +17,41 @@ REDIS_HOST=localhost
 REDIS_PORT=6379
 ```
 
+## Preparing GTFS for cities
 
-After that run this command:
+Step 1 -> create venv
+Step 2 -> move into pipeline directory
+Step 3 -> install requirements from pipeline directory
 
+# Option 1 - prepare for specific city
+
+Final step -> 
+```
+python prepare.py CityName
+```
+Where CityName is a name of city from cities.json, ex. Poznań, Roma, Madrid
+
+This command is recommended.
+
+# Option 2 - prepare all cities
+Final step ->
+```
+sudo ./preapre_all_cities.sh
+```
+This command takes long time, even half of an hour.
+
+
+### Application
+
+Command to run application:
 ```
 docker-compose up --build
 ```
 
 This will build whole project, including postgres database.
+Application is ready on 0.0.0.0:8000
+
+If no route is found, change date into future (+- 2/3 days into future). 
 
 ## Benchmarks
 
