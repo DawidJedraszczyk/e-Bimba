@@ -127,7 +127,7 @@ class TransitDb(Db):
 
     return Trips(
       routes.to_numpy(),
-      shapes.to_numpy(),
+      shapes.fill_null(-1).to_numpy(),
       headsigns.tolist(),
       first_departures.to_numpy(),
       last_departures.to_numpy(),
@@ -151,3 +151,19 @@ class TransitDb(Db):
     """, [trip, service, start_time]).one()
 
     return TripInstance(wa, id)
+
+
+  def process_delays(self, trip_updates: str) -> Delays:
+    res = self.script("process-delays", [trip_updates])
+
+    if res.count() == 0:
+      return Delays.empty()
+
+    trip_ids, services, start_times, delays = res.arrow().flatten()
+
+    return Delays(
+      trip_ids.to_numpy(),
+      services.to_numpy(),
+      start_times.to_numpy(),
+      delays.to_numpy(),
+    )

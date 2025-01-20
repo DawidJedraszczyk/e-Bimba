@@ -4,14 +4,14 @@ from itertools import combinations
 import numba as nb
 import numba.types as nbt
 import time
-from django.conf import settings
 from .data import Data
 from .discovered_stop import DiscoveredStop
 from .estimator import Estimate, Estimator, Instant
 from .plan import Plan, PlanTrip
+from .preferences import *
 from .utils import *
 from ebus.custom_settings.algorithm_settings import *
-from transit.data.misc import Coords, INF_TIME, Services
+from transit.data.misc import Coords, Delays, INF_TIME, Services
 from transit.data.stops import Stops
 from transit.data.trips import Trips
 from transit.prospector import Prospect
@@ -34,6 +34,7 @@ class AStarPlanner():
     walk_times: dict[int, int]
     estimates: dict[int, Estimate]
     pace: float
+    delays: Delays
 
     def __init__(
         self,
@@ -43,16 +44,17 @@ class AStarPlanner():
         date: datetime.date,
         start_time,
         estimator=None,
-        user: settings.AUTH_USER_MODEL = None,
+        preferences=Preferences(),
+        delays=Delays.empty(),
     ):
         start_init_time = time.time()
         self.prospect = data.prospector.prospect(
             start,
             destination,
-            start_radius=user.max_distance if user and user.is_authenticated else PROSPECTING_SETTINGS["START_RADIUS"],
-            start_min_count=PROSPECTING_SETTINGS["START_MIN_COUNT"],
-            destination_radius=user.max_distance if user and user.is_authenticated else PROSPECTING_SETTINGS["DESTINATION_RADIUS"],
-            destination_min_count=PROSPECTING_SETTINGS["DESTINATION_MIN_COUNT"],
+            start_radius=preferences.start_radius,
+            start_min_count=preferences.start_min_count,
+            destination_radius=preferences.destination_radius,
+            destination_min_count=preferences.destination_min_count,
         )
         prospecting_time = time.time() - start_init_time
 
@@ -71,7 +73,8 @@ class AStarPlanner():
         self.discovered_stops = {}
         self.walk_times = {}
         self.estimates = {}
-        self.pace = user.pace if user and user.is_authenticated else WALKING_SETTINGS["PACE"]
+        self.pace = preferences.pace
+        self.delays = delays
 
         self.metrics = {
             'iterations': 0, #i
@@ -217,6 +220,7 @@ class AStarPlanner():
                 time = fastest_known_plan.current_time,
                 transfer_time = transfer_time,
                 pace = self.pace,
+                delays = self.delays,
             )
 
             end_time_get_trips = time.time()
@@ -267,15 +271,14 @@ class AStarPlanner():
         prev_plan = self.found_plans[-1]
         prev_time = prev_plan.current_time - prev_plan.start_time
         cur_time = plan.current_time - plan.start_time
-        settings = ALTERNATIVE_PLAN_SETTINGS
 
         if cur_time < self.shortest_time:
             self.shortest_time = cur_time
 
         acceptable_time = (
-            cur_time <= self.shortest_time * (1 + settings["ALLOWED_RELATIVE_DIFFERENCE"])
+            cur_time <= self.shortest_time * (1 + ALTERNATIVE_PLAN_SETTINGS["ALLOWED_RELATIVE_DIFFERENCE"])
             or
-            cur_time <= self.shortest_time + settings["ALLOWED_ABSOLUTE_DIFFERENCE"]
+            cur_time <= self.shortest_time + ALTERNATIVE_PLAN_SETTINGS["ALLOWED_ABSOLUTE_DIFFERENCE"]
         )
 
         if prev_plan.start_time >= plan.start_time and not acceptable_time:
@@ -309,20 +312,8 @@ class AStarPlanner():
 
 
 _NB_PLAN_TRIP_TYPE = nbt.NamedUniTuple(nb.int32, 7, PlanTrip)
-_COMPILATION_T0 = time.time()
 
-@nb.jit(
-    nbt.DictType(nb.int32, _NB_PLAN_TRIP_TYPE)
-    (
-        Stops.class_type.instance_type,
-        Trips.class_type.instance_type,
-        nb.int64,
-        Services.class_type.instance_type,
-        nb.int64,
-        nb.int64,
-        nb.float64,
-    ),
-)
+@nb.jit
 def get_next_trips(
     stops: Stops,
     trips: Trips,
@@ -331,6 +322,7 @@ def get_next_trips(
     time: int,
     transfer_time: int,
     pace: float,
+    delays: Delays,
 ) -> dict[int, PlanTrip]:
     fastest_ways = nb.typed.Dict.empty(nb.int32, _NB_PLAN_TRIP_TYPE)
     from_stop = nb.int32(from_stop)
@@ -356,8 +348,10 @@ def get_next_trips(
         if start.time == INF_TIME:
             continue
 
+        delay = delays[(trip_id, start.service, nb.int32(start.time - start.offset))]
+
         for to_stop, stop_arrival, _ in trips.get_stops_after(trip_id, from_seq):
-            arrival = start.time + stop_arrival
+            arrival = start.time + stop_arrival + delay
 
             if to_stop not in fastest_ways or fastest_ways[to_stop].arrival_time > arrival:
                 fastest_ways[to_stop] = PlanTrip(
@@ -371,6 +365,3 @@ def get_next_trips(
                 )
 
     return fastest_ways
-
-
-custom_print(f'(jit get_next_trips - {time.time() - _COMPILATION_T0:.4f}s)', 'SETUP_TIMES')

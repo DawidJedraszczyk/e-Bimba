@@ -11,6 +11,7 @@ CITY_REGEX = "|".join(
 
 app_name='route_search'
 urlpatterns = [
+    path('', ChooseCityView.as_view(), name='ChooseCity'),
     re_path(rf'^(?P<city>{CITY_REGEX})/$', BaseView.as_view(), name='BaseView'),
     path('algorithm/find-route/<str:city_id>', FindRouteView.as_view(), name='FindRoute'),
 ]

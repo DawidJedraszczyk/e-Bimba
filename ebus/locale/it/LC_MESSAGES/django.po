@@ -1,0 +1,1684 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-01-02 20:51+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: apps/feedback/models.py:9
+msgid "Rating"
+msgstr "Valutazione"
+
+#: apps/feedback/templates/feedback.html:59
+msgid "Make a review"
+msgstr "Fai una recensione"
+
+#: apps/feedback/templates/feedback.html:61
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:124
+msgid "Close"
+msgstr "Vicino"
+
+#: apps/feedback/templates/feedback.html:103
+msgid "Review"
+msgstr "Revisione"
+
+#: apps/feedback/templates/feedback.html:105
+msgid "Write Your review here."
+msgstr "Scrivi la tua recensione qui."
+
+#: apps/feedback/templates/feedback.html:108
+msgid "Send"
+msgstr "Inviare"
+
+#: apps/feedback/templates/feedback.html:111
+msgid "Thank You!"
+msgstr "Grazie!"
+
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:6
+#: apps/tickets/models.py:77
+msgid "Tickets"
+msgstr "Biglietti"
+
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:12
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:18
+#: apps/users/templates/users/user_detail.html:45
+msgid "Your Tickets"
+msgstr "I tuoi biglietti"
+
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:13
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:58
+msgid "Buy New Ticket"
+msgstr "Acquista un nuovo biglietto"
+
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:23
+#: apps/tickets/models.py:41 apps/tickets/models.py:69
+#: apps/tickets/templates/tickets/payment_page.html:14
+#: apps/users/templates/users/user_detail.html:53
+msgid "Ticket Type"
+msgstr "Tipo di biglietto"
+
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:24
+#: apps/tickets/models.py:32
+msgid "Zone"
+msgstr "Zona"
+
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:25
+#: apps/users/templates/users/user_detail.html:55
+msgid "Purchase Date"
+msgstr "Data di acquisto"
+
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:26
+#: apps/users/templates/users/user_detail.html:56
+msgid "Ending Date"
+msgstr "Data di fine"
+
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:27
+msgid "Action"
+msgstr "Azione"
+
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:42
+msgid "View Ticket for Inspection"
+msgstr "Visualizza il biglietto per l'ispezione"
+
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:46
+#: apps/tickets/templates/tickets/ticket_detail.html:60
+msgid "Use Ticket"
+msgstr "Usa il biglietto"
+
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:70
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:105
+#: apps/tickets/templates/tickets/ticket_detail.html:48
+msgid "Zone:"
+msgstr "Zona:"
+
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:72
+#: apps/tickets/templates/tickets/ticket_detail.html:49
+msgid "Price:"
+msgstr "Prezzo:"
+
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:75
+msgid "Buy Ticket"
+msgstr "Acquista il biglietto"
+
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:98
+#: apps/tickets/templates/tickets/ticket_detail.html:4
+#: apps/tickets/templates/tickets/ticket_detail.html:10
+msgid "Ticket Details"
+msgstr "Dettagli del biglietto"
+
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:104
+#: apps/tickets/templates/tickets/ticket_detail.html:50
+msgid "Ticket Type:"
+msgstr "Tipo di biglietto:"
+
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:106
+#: apps/tickets/templates/tickets/ticket_detail.html:27
+msgid "Purchase Date:"
+msgstr "Data di acquisto:"
+
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:107
+#: apps/tickets/templates/tickets/ticket_detail.html:41
+msgid "Ending Date:"
+msgstr "Data di fine:"
+
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:111
+msgid "Remaining Time:"
+msgstr "Tempo rimanente:"
+
+#: apps/route_search/templates/base_view/sections/buy_tickets.html:119
+#: apps/tickets/models.py:72
+#: apps/tickets/templates/tickets/ticket_detail.html:13
+#: apps/users/templates/users/user_detail.html:57
+msgid "QR Code"
+msgstr "Codice QR"
+
+#: apps/route_search/templates/base_view/sections/choose_city.html:4
+#: apps/route_search/templates/choose_city_view/index.html:4
+#: apps/route_search/templates/choose_city_view/index.html:8
+msgid "Choose a city"
+msgstr "Scegli una città"
+
+#: apps/route_search/templates/base_view/sections/choose_language.html:4
+#: templates/header.html:20
+msgid "Language"
+msgstr "Lingua"
+
+#: apps/route_search/templates/base_view/sections/map.html:88
+#: apps/route_search/templates/base_view/sections/search_modal.html:13
+#: apps/route_search/templates/base_view/sections/search_modal.html:121
+msgid "Start"
+msgstr "Inizio"
+
+#: apps/route_search/templates/base_view/sections/map.html:97
+#: apps/route_search/templates/base_view/sections/search_modal.html:23
+#: apps/route_search/templates/base_view/sections/search_modal.html:121
+msgid "Destination"
+msgstr "Destinazione"
+
+#: apps/route_search/templates/base_view/sections/results_modal.html:111
+msgid "Vehicle ID"
+msgstr "ID del veicolo"
+
+#: apps/route_search/templates/base_view/sections/results_modal.html:112
+msgid "Departure ID"
+msgstr "ID di partenza"
+
+#: apps/route_search/templates/base_view/sections/results_modal.html:113
+msgid "Date"
+msgstr "Data"
+
+#: apps/route_search/templates/base_view/sections/search_modal.html:4
+msgid "back"
+msgstr "Indietro"
+
+#: apps/route_search/templates/base_view/sections/search_modal.html:33
+msgid "Date and time of departure"
+msgstr "Data e ora di partenza"
+
+#: apps/route_search/templates/base_view/sections/search_modal.html:42
+msgid "Search"
+msgstr "Ricerca"
+
+#: apps/route_search/templates/base_view/sections/search_modal.html:52
+msgid "Processing ..."
+msgstr "Elaborazione in corso..."
+
+#: apps/route_search/templates/base_view/sections/search_modal.html:114
+msgid "Choose stop"
+msgstr "Scegli la fermata"
+
+#: apps/route_search/templates/base_view/sections/search_modal.html:144
+msgid "Unknown Location"
+msgstr "Posizione sconosciuta"
+
+#: apps/route_search/templates/base_view/sections/search_modal.html:154
+msgid "Unable to fetch location data. Please try again."
+msgstr "Impossibile recuperare i dati sulla posizione. Riprova."
+
+#: apps/route_search/templates/choose_city_view/index.html:16
+msgid "Realtime Available"
+msgstr "Disponibile in tempo reale"
+
+#: apps/route_search/templates/choose_city_view/index.html:19
+msgid "Tickets Available"
+msgstr "Biglietti disponibili"
+
+#: apps/route_search/views.py:55
+#, python-brace-format
+msgid "City '{city_full_name}' is not valid."
+msgstr "La città '{city_full_name}' non è valida."
+
+#: apps/route_search/views.py:61
+#, python-brace-format
+msgid "No data found for city: {city_full_name}"
+msgstr "Nessun dato trovato per la città: {city_full_name}"
+
+#: apps/route_search/views.py:98
+msgid "Invalid start or destination location data."
+msgstr "Dati di partenza o di destinazione non validi."
+
+#: apps/route_search/views.py:103
+msgid "Invalid date and time format."
+msgstr "Formato data e ora non valido."
+
+#: apps/tickets/models.py:18
+msgid "Active"
+msgstr "Attivo"
+
+#: apps/tickets/models.py:19
+msgid "Name"
+msgstr "Nome"
+
+#: apps/tickets/models.py:20
+msgid "City"
+msgstr "Città"
+
+#: apps/tickets/models.py:21
+msgid "Category"
+msgstr "Categoria"
+
+#: apps/tickets/models.py:22
+msgid "Duration"
+msgstr "Durata"
+
+#: apps/tickets/models.py:23
+msgid "Timestamp"
+msgstr "Marca temporale"
+
+#: apps/tickets/models.py:27
+msgid "Minutes"
+msgstr "Minuti"
+
+#: apps/tickets/models.py:28
+msgid "Days"
+msgstr "Giorni"
+
+#: apps/tickets/models.py:30
+msgid "Timestamp Type"
+msgstr "Tipo di timestamp"
+
+#: apps/tickets/models.py:33
+msgid "Price"
+msgstr "Prezzo"
+
+#: apps/tickets/models.py:34 apps/tickets/models.py:45
+#: apps/tickets/templates/tickets/ticket_detail.html:52
+msgid "Discounted"
+msgstr "Scontato"
+
+#: apps/tickets/models.py:35
+msgid "Currency"
+msgstr "Valuta"
+
+#: apps/tickets/models.py:42
+msgid "Ticket Types"
+msgstr "Tipi di biglietti"
+
+#: apps/tickets/models.py:45
+#: apps/tickets/templates/tickets/ticket_detail.html:54
+msgid "Regular"
+msgstr "Regolare"
+
+#: apps/tickets/models.py:57
+msgid "ID"
+msgstr "ID"
+
+#: apps/tickets/models.py:62
+msgid "User"
+msgstr "Utente"
+
+#: apps/tickets/models.py:64
+msgid "Created At"
+msgstr "Creato a"
+
+#: apps/tickets/models.py:71
+msgid "Ending Datetime"
+msgstr "Data/ora di fine"
+
+#: apps/tickets/models.py:76
+#: apps/tickets/templates/tickets/ticket_detail.html:24
+msgid "Ticket"
+msgstr "Biglietto"
+
+#: apps/tickets/models.py:80
+#, python-brace-format
+msgid "Ticket {ticket_type} for {user}"
+msgstr "Biglietto {ticket_type} per {user}"
+
+#: apps/tickets/models.py:99
+msgid "Unused"
+msgstr "Non utilizzato"
+
+#: apps/tickets/models.py:100
+msgid "In Use"
+msgstr "In uso"
+
+#: apps/tickets/models.py:101
+msgid "Ended"
+msgstr "Finito"
+
+#: apps/tickets/models.py:106
+msgid "Unknown"
+msgstr "Sconosciuto"
+
+#: apps/tickets/templates/tickets/payment_page.html:7
+msgid "Dummy Payment Gateway"
+msgstr "Gateway di pagamento fittizio"
+
+#: apps/tickets/templates/tickets/payment_page.html:12
+msgid "Payment for Ticket"
+msgstr "Pagamento del biglietto"
+
+#: apps/tickets/templates/tickets/payment_page.html:13
+msgid "Amount"
+msgstr "Quantità"
+
+#: apps/tickets/templates/tickets/payment_page.html:17
+msgid "Pay"
+msgstr "Paga"
+
+#: apps/tickets/templates/tickets/payment_success.html:3
+msgid "Purchase Success"
+msgstr "Acquisto riuscito"
+
+#: apps/tickets/templates/tickets/payment_success.html:8
+msgid "Purchase completed successfully!"
+msgstr "Acquisto completato con successo!"
+
+#: apps/tickets/templates/tickets/payment_success.html:9
+msgid "You have successfully purchased the ticket:"
+msgstr "Hai acquistato il biglietto con successo:"
+
+#: apps/tickets/templates/tickets/payment_success.html:11
+msgid "Go to My Tickets"
+msgstr "Vai a I miei biglietti"
+
+#: apps/tickets/templates/tickets/ticket_detail.html:11
+msgid "Information about the selected ticket"
+msgstr "Informazioni sul biglietto selezionato"
+
+#: apps/tickets/templates/tickets/ticket_detail.html:15
+msgid "QR Code has not been generated."
+msgstr "Il codice QR non è stato generato."
+
+#: apps/tickets/templates/tickets/ticket_detail.html:28
+msgid "Status:"
+msgstr "Stato:"
+
+#: apps/tickets/urls.py:9
+msgid "zakup-bilet/<str:ticket_type_id>/"
+msgstr "biglietto-pagamento/<str:ticket_type_id>/"
+
+#: apps/tickets/urls.py:12
+msgid "pomyślna-płatność/<int:ticket_type_id>/"
+msgstr "pomyślna-płatność/<int:ticket_type_id>/"
+
+#: apps/tickets/urls.py:15
+msgid "użyj-biletu/<uuid:id>/"
+msgstr "uso-di-biglietto/<uuid:id>/"
+
+#: apps/tickets/urls.py:18
+msgid "bilet/<uuid:pk>/"
+msgstr "bilet/<uuid:pk>/"
+
+#: apps/tickets/views.py:36
+#, python-brace-format
+msgid "Successfully purchased ticket: {ticket_type.name}"
+msgstr "Biglietto acquistato con successo: {ticket_type.name}"
+
+#: apps/tickets/views.py:52
+#, python-brace-format
+msgid ""
+"QR code successfully generated. The ticket will expire: "
+"{ticket.ending_datetime}"
+msgstr ""
+"Codice QR generato correttamente. Il biglietto scadrà: "
+"{ticket.ending_datetime}"
+
+#: apps/users/models.py:11
+msgid "Walking speed [m/s]"
+msgstr "Velocità di camminata [m/s]"
+
+#: apps/users/models.py:12
+msgid "Maximal walking distance [m]"
+msgstr "Distanza massima percorribile a piedi [m]"
+
+#: apps/users/templates/users/user_detail.html:3
+#: apps/users/templates/users/user_detail.html:8
+msgid "User Profile"
+msgstr "Profilo utente"
+
+#: apps/users/templates/users/user_detail.html:9
+msgid "Details about your account"
+msgstr "Dettagli sul tuo account"
+
+#: apps/users/templates/users/user_detail.html:17
+msgid "User Settings"
+msgstr "Impostazioni utente"
+
+#: apps/users/templates/users/user_detail.html:20
+msgid "Email:"
+msgstr "E-mail:"
+
+#: apps/users/templates/users/user_detail.html:21
+msgid "Date Joined:"
+msgstr "Data di iscrizione:"
+
+#: apps/users/templates/users/user_detail.html:22
+#: templates/account/password_change.html:4
+#: templates/account/password_change.html:8
+#: templates/account/password_change.html:20
+#: templates/account/password_reset_from_key.html:5
+#: templates/account/password_reset_from_key.html:12
+#: templates/account/password_reset_from_key.html:30
+#: templates/account/password_reset_from_key_done.html:5
+#: templates/account/password_reset_from_key_done.html:9
+#: templates/allauth/layouts/base.html:37
+msgid "Change Password"
+msgstr "Cambiare la password"
+
+#: apps/users/templates/users/user_detail.html:30
+msgid "Other Settings"
+msgstr "Altre impostazioni"
+
+#: apps/users/templates/users/user_detail.html:33
+msgid "Walking Speed:"
+msgstr "Velocità di camminata:"
+
+#: apps/users/templates/users/user_detail.html:34
+msgid "Maximum Walking Distance:"
+msgstr "Distanza massima percorribile a piedi:"
+
+#: apps/users/templates/users/user_detail.html:35
+#: templates/mfa/webauthn/authenticator_list.html:56
+msgid "Edit"
+msgstr "Modificare"
+
+#: apps/users/templates/users/user_detail.html:54
+msgid "Status"
+msgstr "Stato"
+
+#: apps/users/templates/users/user_detail.html:82
+msgid "Generating a QR code will use the ticket."
+msgstr "La generazione di un codice QR utilizzerà il biglietto."
+
+#: apps/users/templates/users/user_detail.html:85
+msgid "Show for Inspection"
+msgstr "Mostra per ispezione"
+
+#: apps/users/templates/users/user_detail.html:87
+msgid "Ticket Ended"
+msgstr "Biglietto scaduto"
+
+#: apps/users/templates/users/user_detail.html:89
+msgid "Generate QR Code and Use Ticket"
+msgstr "Genera il codice QR e usa il biglietto"
+
+#: apps/users/templates/users/user_detail.html:100
+msgid "You don't have any tickets yet."
+msgstr "Non hai ancora nessun biglietto."
+
+#: apps/users/templates/users/user_metrics_form.html:10
+msgid "User Form"
+msgstr "Modulo utente"
+
+#: apps/users/templates/users/user_metrics_form.html:29
+msgid "Submit"
+msgstr "Invia"
+
+#: apps/users/urls.py:12
+msgid "adjust-parameters/"
+msgstr "regola-parametri/"
+
+#: ebus/urls.py:14
+msgid "signup/"
+msgstr "iscrizione/"
+
+#: ebus/urls.py:15
+msgid "login/"
+msgstr "login/"
+
+#: ebus/urls.py:16
+msgid "logout/"
+msgstr "esci/"
+
+#: ebus/urls.py:17
+msgid "change-password/"
+msgstr "cambiare la password/"
+
+#: ebus/urls.py:18
+msgid "reset-password/"
+msgstr "reimposta-password/"
+
+#: ebus/urls.py:21
+msgid "accounts/"
+msgstr "conti/"
+
+#: ebus/urls.py:22
+msgid "user/"
+msgstr "utente/"
+
+#: ebus/urls.py:25
+msgid "tickets/"
+msgstr "biglietti/"
+
+#: templates/account/account_inactive.html:5
+#: templates/account/account_inactive.html:9
+msgid "Account Inactive"
+msgstr "Account inattivo"
+
+#: templates/account/account_inactive.html:12
+msgid "This account is inactive."
+msgstr "Questo account è inattivo."
+
+#: templates/account/base_reauthenticate.html:5
+#: templates/account/base_reauthenticate.html:9
+msgid "Confirm Access"
+msgstr "Conferma accesso"
+
+#: templates/account/base_reauthenticate.html:12
+msgid "Please reauthenticate to safeguard your account."
+msgstr ""
+"Ti preghiamo di effettuare nuovamente l'autenticazione per proteggere il tuo"
+" account."
+
+#: templates/account/base_reauthenticate.html:19
+#: templates/mfa/authenticate.html:37
+msgid "Alternative options"
+msgstr "Opzioni alternative"
+
+#: templates/account/confirm_email_verification_code.html:5
+msgid "Email Verification"
+msgstr "Verifica e-mail"
+
+#: templates/account/confirm_email_verification_code.html:9
+msgid "Enter Email Verification Code"
+msgstr "Inserisci il codice di verifica e-mail"
+
+#: templates/account/confirm_email_verification_code.html:15
+#: templates/account/confirm_login_code.html:15
+#, python-format
+msgid ""
+"We’ve sent a code to %(email_link)s. The code expires shortly, so please "
+"enter it soon."
+msgstr ""
+"Abbiamo inviato un codice a %(email_link)s. Il codice scade a breve, quindi "
+"inseriscilo presto."
+
+#: templates/account/confirm_email_verification_code.html:27
+#: templates/account/email_confirm.html:29
+#: templates/account/reauthenticate.html:18
+#: templates/mfa/reauthenticate.html:18
+msgid "Confirm"
+msgstr "Confermare"
+
+#: templates/account/confirm_email_verification_code.html:31
+#: templates/account/confirm_email_verification_code.html:35
+#: templates/account/confirm_login_code.html:32
+#: templates/mfa/authenticate.html:28 templates/mfa/authenticate.html:44
+#: templates/mfa/webauthn/signup_form.html:26
+msgid "Cancel"
+msgstr "Cancellare"
+
+#: templates/account/confirm_login_code.html:5
+#: templates/account/confirm_login_code.html:27 templates/account/login.html:4
+#: templates/account/login.html:10 templates/account/login.html:32
+#: templates/account/request_login_code.html:5
+#: templates/allauth/layouts/base.html:68 templates/mfa/authenticate.html:6
+#: templates/mfa/authenticate.html:24 templates/openid/login.html:5
+#: templates/openid/login.html:9 templates/openid/login.html:20
+#: templates/socialaccount/login.html:5
+#: templates/socialaccount/login_redirect.html:5
+msgid "Sign In"
+msgstr "Registrazione"
+
+#: templates/account/confirm_login_code.html:9
+msgid "Enter Sign-In Code"
+msgstr "Inserisci il codice di accesso"
+
+#: templates/account/email.html:4 templates/account/email.html:8
+msgid "Email Addresses"
+msgstr "Indirizzi e-mail"
+
+#: templates/account/email.html:12
+msgid "The following email addresses are associated with your account:"
+msgstr "I seguenti indirizzi email sono associati al tuo account:"
+
+#: templates/account/email.html:25
+msgid "Verified"
+msgstr "Verificato"
+
+#: templates/account/email.html:29
+msgid "Unverified"
+msgstr "Non verificato"
+
+#: templates/account/email.html:34
+msgid "Primary"
+msgstr "Primario"
+
+#: templates/account/email.html:44
+msgid "Make Primary"
+msgstr "Rendi primario"
+
+#: templates/account/email.html:47 templates/account/email_change.html:37
+msgid "Re-send Verification"
+msgstr "Reinvia verifica"
+
+#: templates/account/email.html:50
+#: templates/mfa/webauthn/authenticator_confirm_delete.html:16
+#: templates/mfa/webauthn/authenticator_list.html:60
+#: templates/socialaccount/connections.html:40
+msgid "Remove"
+msgstr "Rimuovere"
+
+#: templates/account/email.html:59
+msgid "Add Email Address"
+msgstr "Aggiungi indirizzo email"
+
+#: templates/account/email.html:70
+msgid "Add Email"
+msgstr "Aggiungi e-mail"
+
+#: templates/account/email.html:79
+msgid "Do you really want to remove the selected email address?"
+msgstr "Vuoi davvero rimuovere l'indirizzo email selezionato?"
+
+#: templates/account/email/account_already_exists_message.txt:4
+#, python-format
+msgid ""
+"You are receiving this email because you or someone else tried to signup for an\n"
+"account using email address:\n"
+"\n"
+"%(email)s\n"
+"\n"
+"However, an account using that email address already exists.  In case you have\n"
+"forgotten about this, please use the password forgotten procedure to recover\n"
+"your account:\n"
+"\n"
+"%(password_reset_url)s"
+msgstr ""
+"Stai ricevendo questa e-mail perché tu o qualcun altro ha provato a registrarsi per un\n"
+"account utilizzando l'indirizzo e-mail:\n"
+"\n"
+"%(email)s\n"
+"\n"
+"Tuttavia, esiste già un account che utilizza quell'indirizzo e-mail. Nel caso in cui te ne fossi\n"
+"dimenticato, utilizza la procedura di password dimenticata per recuperare\n"
+"il tuo account:\n"
+"\n"
+"%(password_reset_url)s"
+
+#: templates/account/email/account_already_exists_subject.txt:3
+msgid "Account Already Exists"
+msgstr "L'account esiste già"
+
+#: templates/account/email/base_message.txt:1
+#, python-format
+msgid "Hello from %(site_name)s!"
+msgstr "Ciao da %(site_name)s!"
+
+#: templates/account/email/base_message.txt:5
+#, python-format
+msgid ""
+"Thank you for using %(site_name)s!\n"
+"%(site_domain)s"
+msgstr ""
+"Grazie per aver utilizzato %(site_name)s!\n"
+"%(site_domain)s"
+
+#: templates/account/email/base_notification.txt:5
+msgid ""
+"You are receiving this mail because the following change was made to your "
+"account:"
+msgstr ""
+"Stai ricevendo questa e-mail perché è stata apportata la seguente modifica "
+"al tuo account:"
+
+#: templates/account/email/base_notification.txt:10
+#, python-format
+msgid ""
+"If you do not recognize this change then please take proper security precautions immediately. The change to your account originates from:\n"
+"\n"
+"- IP address: %(ip)s\n"
+"- Browser: %(user_agent)s\n"
+"- Date: %(timestamp)s"
+msgstr ""
+"Se non riconosci questa modifica, prendi immediatamente le dovute precauzioni di sicurezza. La modifica al tuo account ha origine da:\n"
+"\n"
+"- Indirizzo IP: %(ip)s\n"
+"- Browser: %(user_agent)s\n"
+"- Data: %(timestamp)s"
+
+#: templates/account/email/email_changed_message.txt:4
+#, python-format
+msgid "Your email has been changed from %(from_email)s to %(to_email)s."
+msgstr ""
+"Il tuo indirizzo email è stato modificato da %(from_email)s a %(to_email)s."
+
+#: templates/account/email/email_changed_subject.txt:3
+msgid "Email Changed"
+msgstr "E-mail modificata"
+
+#: templates/account/email/email_confirm_message.txt:4
+msgid "Your email has been confirmed."
+msgstr "La tua email è stata confermata."
+
+#: templates/account/email/email_confirm_subject.txt:3
+msgid "Email Confirmation"
+msgstr "Conferma e-mail"
+
+#: templates/account/email/email_confirmation_message.txt:5
+#, python-format
+msgid ""
+"You're receiving this email because user %(user_display)s has given your "
+"email address to register an account on %(site_domain)s."
+msgstr ""
+"Hai ricevuto questa email perché l'utente %(user_display)s ha fornito il tuo"
+" indirizzo email per registrare un account su %(site_domain)s."
+
+#: templates/account/email/email_confirmation_message.txt:7
+msgid ""
+"Your email verification code is listed below. Please enter it in your open "
+"browser window."
+msgstr ""
+"Il codice di verifica della tua email è elencato di seguito. Inseriscilo "
+"nella finestra aperta del browser."
+
+#: templates/account/email/email_confirmation_message.txt:9
+#, python-format
+msgid "To confirm this is correct, go to %(activate_url)s"
+msgstr "Per confermare che sia corretto, vai su %(activate_url)s"
+
+#: templates/account/email/email_confirmation_subject.txt:3
+msgid "Please Confirm Your Email Address"
+msgstr "Si prega di confermare il tuo indirizzo e-mail"
+
+#: templates/account/email/email_deleted_message.txt:4
+#, python-format
+msgid "Email address %(deleted_email)s has been removed from your account."
+msgstr "L'indirizzo email %(deleted_email)s è stato rimosso dal tuo account."
+
+#: templates/account/email/email_deleted_subject.txt:3
+msgid "Email Removed"
+msgstr "Email rimossa"
+
+#: templates/account/email/login_code_message.txt:5
+msgid ""
+"Your sign-in code is listed below. Please enter it in your open browser "
+"window."
+msgstr ""
+"Il tuo codice di accesso è elencato di seguito. Inseriscilo nella finestra "
+"aperta del browser."
+
+#: templates/account/email/login_code_message.txt:9
+#: templates/account/email/unknown_account_message.txt:6
+msgid "This mail can be safely ignored if you did not initiate this action."
+msgstr ""
+"Questa e-mail può essere tranquillamente ignorata se non sei stato tu a "
+"intraprendere questa azione."
+
+#: templates/account/email/login_code_subject.txt:3
+msgid "Sign-In Code"
+msgstr "Codice di accesso"
+
+#: templates/account/email/password_changed_message.txt:4
+msgid "Your password has been changed."
+msgstr "La tua password è stata modificata."
+
+#: templates/account/email/password_changed_subject.txt:3
+msgid "Password Changed"
+msgstr "Password modificata"
+
+#: templates/account/email/password_reset_key_message.txt:4
+msgid ""
+"You're receiving this email because you or someone else has requested a password reset for your user account.\n"
+"It can be safely ignored if you did not request a password reset. Click the link below to reset your password."
+msgstr ""
+"Stai ricevendo questa e-mail perché tu o qualcun altro ha richiesto una reimpostazione della password per il tuo account utente.\n"
+"Puoi tranquillamente ignorarla se non hai richiesto una reimpostazione della password. Fai clic sul collegamento sottostante per reimpostare la password."
+
+#: templates/account/email/password_reset_key_message.txt:9
+#, python-format
+msgid "In case you forgot, your username is %(username)s."
+msgstr "Nel caso te ne fossi dimenticato, il tuo nome utente è %(username)s."
+
+#: templates/account/email/password_reset_key_subject.txt:3
+msgid "Password Reset Email"
+msgstr "Email di reimpostazione della password"
+
+#: templates/account/email/password_reset_message.txt:4
+msgid "Your password has been reset."
+msgstr "La tua password è stata reimpostata."
+
+#: templates/account/email/password_reset_subject.txt:3
+#: templates/account/password_reset.html:4
+#: templates/account/password_reset.html:8
+#: templates/account/password_reset_done.html:6
+#: templates/account/password_reset_done.html:10
+msgid "Password Reset"
+msgstr "Reimposta password"
+
+#: templates/account/email/password_set_message.txt:4
+msgid "Your password has been set."
+msgstr "La tua password è stata impostata."
+
+#: templates/account/email/password_set_subject.txt:3
+msgid "Password Set"
+msgstr "Password impostata"
+
+#: templates/account/email/unknown_account_message.txt:4
+#, python-format
+msgid ""
+"You are receiving this email because you, or someone else, tried to access "
+"an account with email %(email)s. However, we do not have any record of such "
+"an account in our database."
+msgstr ""
+"Stai ricevendo questa email perché tu, o qualcun altro, ha provato ad "
+"accedere a un account con email %(email)s. Tuttavia, non abbiamo alcuna "
+"traccia di tale account nel nostro database."
+
+#: templates/account/email/unknown_account_message.txt:8
+msgid "If it was you, you can sign up for an account using the link below."
+msgstr "Se sei tu, puoi creare un account tramite il link sottostante."
+
+#: templates/account/email/unknown_account_subject.txt:3
+msgid "Unknown Account"
+msgstr "Account sconosciuto"
+
+#: templates/account/email_change.html:5 templates/account/email_change.html:9
+msgid "Email Address"
+msgstr "Indirizzo e-mail"
+
+#: templates/account/email_change.html:21
+#: templates/account/email_change.html:29
+msgid "Current email"
+msgstr "E-mail corrente"
+
+#: templates/account/email_change.html:31
+msgid "Changing to"
+msgstr "Cambiare in"
+
+#: templates/account/email_change.html:35
+msgid "Your email address is still pending verification."
+msgstr "Il tuo indirizzo email è ancora in attesa di verifica."
+
+#: templates/account/email_change.html:41
+msgid "Cancel Change"
+msgstr "Annulla modifica"
+
+#: templates/account/email_change.html:49
+msgid "Change to"
+msgstr "Cambia in"
+
+#: templates/account/email_change.html:55
+#: templates/allauth/layouts/base.html:31
+msgid "Change Email"
+msgstr "Cambia email"
+
+#: templates/account/email_confirm.html:4
+#: templates/account/email_confirm.html:8
+msgid "Confirm Email Address"
+msgstr "Conferma l'indirizzo e-mail"
+
+#: templates/account/email_confirm.html:14
+msgid "Please confirm that"
+msgstr "Si prega di confermare che"
+
+#: templates/account/email_confirm.html:16
+msgid "is an email address for user"
+msgstr "è un indirizzo email per l'utente"
+
+#: templates/account/email_confirm.html:34
+#, python-format
+msgid ""
+"\n"
+"                    Unable to confirm %(email)s because it is already confirmed by a different account.\n"
+"                "
+msgstr ""
+"\n"
+"                    Impossibile confermare %(email)s perché è già stato confermato da un altro account.\n"
+"                "
+
+#: templates/account/email_confirm.html:42
+#, python-format
+msgid ""
+"\n"
+"                This email confirmation link expired or is invalid. Please <a href=\"%(email_url)s\">issue a new email confirmation request</a>.\n"
+"            "
+msgstr ""
+"\n"
+"                Questo link di conferma e-mail è scaduto o non è valido. Si prega di <a href=\"%(email_url)s\">inviare una nuova richiesta di conferma e-mail</a>.\n"
+"            "
+
+#: templates/account/login.html:15
+msgid "If you have not created an account yet, then please"
+msgstr "Se non hai ancora creato un account, per favore"
+
+#: templates/account/login.html:16
+msgid "sign up"
+msgstr "iscrizione"
+
+#: templates/account/login.html:17
+msgid "first"
+msgstr "Primo"
+
+#: templates/account/login.html:41
+msgid "Sign in with a passkey"
+msgstr "Accedi con una passkey"
+
+#: templates/account/login.html:44 templates/account/request_login_code.html:9
+msgid "Mail me a sign-in code"
+msgstr "Inviami un codice di accesso"
+
+#: templates/account/logout.html:4 templates/account/logout.html:8
+#: templates/account/logout.html:21 templates/allauth/layouts/base.html:61
+#: templates/usersessions/usersession_list.html:64
+msgid "Sign Out"
+msgstr "Disconnessione"
+
+#: templates/account/logout.html:11
+msgid "Are you sure you want to sign out?"
+msgstr "Sei sicuro di voler uscire?"
+
+#: templates/account/messages/cannot_delete_primary_email.txt:2
+#, python-format
+msgid "You cannot remove your primary email address (%(email)s)."
+msgstr "Non puoi rimuovere il tuo indirizzo email principale (%(email)s)."
+
+#: templates/account/messages/email_confirmation_failed.txt:2
+#, python-format
+msgid ""
+"Unable to confirm %(email)s because it is already confirmed by a different "
+"account."
+msgstr ""
+"Impossibile confermare %(email)s perché è già stato confermato da un altro "
+"account."
+
+#: templates/account/messages/email_confirmation_sent.txt:2
+#, python-format
+msgid "Confirmation email sent to %(email)s."
+msgstr "Email di conferma inviata a %(email)s."
+
+#: templates/account/messages/email_confirmed.txt:2
+#, python-format
+msgid "You have confirmed %(email)s."
+msgstr "Hai confermato %(email)s."
+
+#: templates/account/messages/email_deleted.txt:2
+#, python-format
+msgid "Removed email address %(email)s."
+msgstr "Rimosso l'indirizzo email %(email)s."
+
+#: templates/account/messages/logged_in.txt:4
+#, python-format
+msgid "Successfully signed in as %(name)s."
+msgstr "Accesso effettuato con successo come %(name)s."
+
+#: templates/account/messages/logged_out.txt:2
+msgid "You have signed out."
+msgstr "Hai effettuato la disconnessione."
+
+#: templates/account/messages/login_code_sent.txt:2
+#, python-format
+msgid "A sign-in code has been mailed to %(email)s."
+msgstr "Un codice di accesso è stato inviato a %(email)s."
+
+#: templates/account/messages/password_changed.txt:2
+msgid "Password successfully changed."
+msgstr "Password modificata con successo."
+
+#: templates/account/messages/password_set.txt:2
+msgid "Password successfully set."
+msgstr "Password impostata correttamente."
+
+#: templates/account/messages/primary_email_set.txt:2
+msgid "Primary email address set."
+msgstr "Impostato l'indirizzo email principale."
+
+#: templates/account/messages/unverified_primary_email.txt:2
+msgid "Your primary email address must be verified."
+msgstr "Il tuo indirizzo email principale deve essere verificato."
+
+#: templates/account/password_change.html:22
+msgid "Forgot Password?"
+msgstr "Ha dimenticato la password?"
+
+#: templates/account/password_reset.html:14
+msgid ""
+"Forgotten your password? Enter your email address below, and we'll send you "
+"an email allowing you to reset it."
+msgstr ""
+"Hai dimenticato la password? Inserisci il tuo indirizzo email qui sotto e ti"
+" invieremo un'email che ti consentirà di reimpostarla."
+
+#: templates/account/password_reset.html:25
+msgid "Reset My Password"
+msgstr "Reimposta la mia password"
+
+#: templates/account/password_reset.html:30
+msgid "Please contact us if you have any trouble resetting your password."
+msgstr "Contattaci se riscontri problemi nel reimpostare la password."
+
+#: templates/account/password_reset_done.html:16
+msgid ""
+"We have sent you an email. If you have not received it please check your "
+"spam folder. Otherwise contact us if you do not receive it in a few minutes."
+msgstr ""
+"Ti abbiamo inviato un'email. Se non l'hai ricevuta, controlla la tua "
+"cartella spam. Altrimenti, contattaci se non la ricevi entro pochi minuti."
+
+#: templates/account/password_reset_from_key.html:10
+msgid "Bad Token"
+msgstr "Gettone non valido"
+
+#: templates/account/password_reset_from_key.html:18
+#, python-format
+msgid ""
+"The password reset link was invalid, possibly because it has already been "
+"used.  Please request a <a href=\"%(passwd_reset_url)s\">new password "
+"reset</a>."
+msgstr ""
+"Il link per la reimpostazione della password non è valido, probabilmente "
+"perché è già stato utilizzato. Richiedi una <a "
+"href=\"%(passwd_reset_url)s\">nuova reimpostazione della password</a>."
+
+#: templates/account/password_reset_from_key_done.html:12
+msgid "Your password is now changed."
+msgstr "La tua password è stata modificata."
+
+#: templates/account/password_set.html:5 templates/account/password_set.html:9
+#: templates/account/password_set.html:21
+msgid "Set Password"
+msgstr "Imposta password"
+
+#: templates/account/reauthenticate.html:6
+msgid "Enter your password:"
+msgstr "Inserisci la tua password:"
+
+#: templates/account/request_login_code.html:12
+msgid ""
+"You will receive an email containing a special code for a password-free "
+"sign-in."
+msgstr ""
+"Riceverai un'e-mail contenente un codice speciale per accedere senza "
+"password."
+
+#: templates/account/request_login_code.html:24
+msgid "Request Code"
+msgstr "Richiedi codice"
+
+#: templates/account/request_login_code.html:30
+msgid "Other sign-in options"
+msgstr "Altre opzioni di accesso"
+
+#: templates/account/signup.html:4 templates/account/signup.html:9
+#: templates/account/signup.html:14
+#: templates/account/signup_by_passkey.html:29
+#: templates/allauth/layouts/base.html:74 templates/header.html:15
+#: templates/socialaccount/signup.html:9
+#: templates/socialaccount/signup.html:25
+msgid "Sign Up"
+msgstr "Iscrizione"
+
+#: templates/account/signup.html:18
+msgid "Already have an account? Log In!"
+msgstr "Hai già un account? Accedi!"
+
+#: templates/account/signup_by_passkey.html:4
+#: templates/socialaccount/signup.html:5
+msgid "Signup"
+msgstr "Iscrizione"
+
+#: templates/account/signup_by_passkey.html:8
+msgid "Passkey Sign Up"
+msgstr "Registrazione Passkey"
+
+#: templates/account/signup_by_passkey.html:17
+#, python-format
+msgid "Already have an account? Then please %(link)ssign in%(end_link)s."
+msgstr "Hai già un account? Allora %(link)saccedi%(end_link)s."
+
+#: templates/account/signup_by_passkey.html:36
+msgid "Other options"
+msgstr "Altre opzioni"
+
+#: templates/account/signup_closed.html:5
+#: templates/account/signup_closed.html:9
+msgid "Sign Up Closed"
+msgstr "Iscrizione chiusa"
+
+#: templates/account/signup_closed.html:12
+msgid "We are sorry, but the sign up is currently closed."
+msgstr "Siamo spiacenti, ma al momento le iscrizioni sono chiuse."
+
+#: templates/account/snippets/already_logged_in.html:7
+msgid "Note"
+msgstr "Nota"
+
+#: templates/account/snippets/already_logged_in.html:7
+#, python-format
+msgid "You are already logged in as %(user_display)s."
+msgstr "Hai già effettuato l'accesso come %(user_display)s."
+
+#: templates/account/snippets/warn_no_email.html:3
+msgid "Warning:"
+msgstr "Avvertimento:"
+
+#: templates/account/snippets/warn_no_email.html:3
+msgid ""
+"You currently do not have any email address set up. You should really add an"
+" email address so you can receive notifications, reset your password, etc."
+msgstr ""
+"Al momento non hai impostato alcun indirizzo email. Dovresti davvero "
+"aggiungerne uno in modo da poter ricevere notifiche, reimpostare la "
+"password, ecc."
+
+#: templates/account/verification_sent.html:5
+#: templates/account/verification_sent.html:9
+#: templates/account/verified_email_required.html:5
+#: templates/account/verified_email_required.html:9
+msgid "Verify Your Email Address"
+msgstr "Verifica il tuo indirizzo email"
+
+#: templates/account/verification_sent.html:12
+msgid ""
+"We have sent an email to you for verification. Follow the link provided to "
+"finalize the signup process. If you do not see the verification email in "
+"your main inbox, check your spam folder. Please contact us if you do not "
+"receive the verification email within a few minutes."
+msgstr ""
+"Ti abbiamo inviato un'email per la verifica. Segui il link fornito per "
+"finalizzare il processo di registrazione. Se non vedi l'email di verifica "
+"nella tua posta in arrivo principale, controlla la cartella spam. Contattaci"
+" se non ricevi l'email di verifica entro pochi minuti."
+
+#: templates/account/verified_email_required.html:13
+msgid ""
+"This part of the site requires us to verify that\n"
+"you are who you claim to be. For this purpose, we require that you\n"
+"verify ownership of your email address. "
+msgstr ""
+"Questa parte del sito richiede che verifichiamo che\n"
+"tu sia chi dichiari di essere. A questo scopo, ti chiediamo di\n"
+"verificare la titolarità del tuo indirizzo email."
+
+#: templates/account/verified_email_required.html:18
+msgid ""
+"We have sent an email to you for\n"
+"verification. Please click on the link inside that email. If you do not see the verification email in your main inbox, check your spam folder. Otherwise\n"
+"contact us if you do not receive it within a few minutes."
+msgstr ""
+"Ti abbiamo inviato un'e-mail per la\n"
+"verifica. Clicca sul link all'interno dell'e-mail. Se non vedi l'e-mail di verifica nella tua posta in arrivo principale, controlla la cartella spam. Altrimenti\n"
+"contattaci se non la ricevi entro pochi minuti."
+
+#: templates/account/verified_email_required.html:23
+#, python-format
+msgid ""
+"<strong>Note:</strong> you can still <a href=\"%(email_url)s\">change your "
+"email address</a>."
+msgstr ""
+"<strong>Nota:</strong> puoi comunque <a href=\"%(email_url)s\">modificare il"
+" tuo indirizzo email</a>."
+
+#: templates/allauth/layouts/base.html:18
+msgid "Messages:"
+msgstr "Messaggi:"
+
+#: templates/allauth/layouts/base.html:25
+msgid "Menu:"
+msgstr "Menu:"
+
+#: templates/allauth/layouts/base.html:43
+#: templates/socialaccount/connections.html:5
+#: templates/socialaccount/connections.html:9
+msgid "Account Connections"
+msgstr "Connessioni dell'account"
+
+#: templates/allauth/layouts/base.html:49 templates/mfa/authenticate.html:10
+#: templates/mfa/index.html:5 templates/mfa/index.html:9
+msgid "Two-Factor Authentication"
+msgstr "Autenticazione a due fattori"
+
+#: templates/allauth/layouts/base.html:55
+#: templates/usersessions/usersession_list.html:6
+#: templates/usersessions/usersession_list.html:10
+msgid "Sessions"
+msgstr "Sessioni"
+
+#: templates/header.html:11
+msgid "Profile"
+msgstr "Profilo"
+
+#: templates/header.html:12
+msgid "Logout"
+msgstr "Esci"
+
+#: templates/header.html:14
+msgid "Login"
+msgstr "Login"
+
+#: templates/mfa/authenticate.html:13
+msgid ""
+"Your account is protected by two-factor authentication. Please enter an "
+"authenticator code:"
+msgstr ""
+"Il tuo account è protetto dall'autenticazione a due fattori. Inserisci un "
+"codice di autenticazione:"
+
+#: templates/mfa/authenticate.html:41
+#: templates/mfa/webauthn/reauthenticate.html:15
+msgid "Use a security key"
+msgstr "Utilizzare una chiave di sicurezza"
+
+#: templates/mfa/email/recovery_codes_generated_message.txt:4
+msgid ""
+"A new set of Two-Factor Authentication recovery codes has been generated."
+msgstr ""
+"È stato generato un nuovo set di codici di recupero per l'autenticazione a "
+"due fattori."
+
+#: templates/mfa/email/recovery_codes_generated_subject.txt:3
+msgid "New Recovery Codes Generated"
+msgstr "Nuovi codici di recupero generati"
+
+#: templates/mfa/email/totp_activated_message.txt:4
+#: templates/mfa/messages/totp_activated.txt:2
+msgid "Authenticator app activated."
+msgstr "App di autenticazione attivata."
+
+#: templates/mfa/email/totp_activated_subject.txt:3
+msgid "Authenticator App Activated"
+msgstr "App di autenticazione attivata"
+
+#: templates/mfa/email/totp_deactivated_message.txt:4
+#: templates/mfa/messages/totp_deactivated.txt:2
+msgid "Authenticator app deactivated."
+msgstr "App di autenticazione disattivata."
+
+#: templates/mfa/email/totp_deactivated_subject.txt:3
+msgid "Authenticator App Deactivated"
+msgstr "App Authenticator disattivata"
+
+#: templates/mfa/email/webauthn_added_message.txt:4
+msgid "A new security key has been added."
+msgstr "È stata aggiunta una nuova chiave di sicurezza."
+
+#: templates/mfa/email/webauthn_added_subject.txt:3
+msgid "Security Key Added"
+msgstr "Chiave di sicurezza aggiunta"
+
+#: templates/mfa/email/webauthn_removed_message.txt:4
+msgid "A security key has been removed."
+msgstr "Una chiave di sicurezza è stata rimossa."
+
+#: templates/mfa/email/webauthn_removed_subject.txt:3
+msgid "Security Key Removed"
+msgstr "Chiave di sicurezza rimossa"
+
+#: templates/mfa/index.html:14 templates/mfa/totp/base.html:4
+msgid "Authenticator App"
+msgstr "App di autenticazione"
+
+#: templates/mfa/index.html:19
+msgid "Authentication using an authenticator app is active."
+msgstr "L'autenticazione tramite un'app di autenticazione è attiva."
+
+#: templates/mfa/index.html:23
+msgid "An authenticator app is not active."
+msgstr "Un'app di autenticazione non è attiva."
+
+#: templates/mfa/index.html:32 templates/mfa/totp/deactivate_form.html:24
+msgid "Deactivate"
+msgstr "Disattivare"
+
+#: templates/mfa/index.html:36 templates/mfa/totp/activate_form.html:32
+msgid "Activate"
+msgstr "Attivare"
+
+#: templates/mfa/index.html:45
+#: templates/mfa/webauthn/authenticator_list.html:8
+#: templates/mfa/webauthn/base.html:4
+msgid "Security Keys"
+msgstr "Chiavi di sicurezza"
+
+#: templates/mfa/index.html:50
+#, python-format
+msgid "You have added %(count)s security key."
+msgid_plural "You have added %(count)s security keys."
+msgstr[0] ""
+msgstr[1] ""
+
+#: templates/mfa/index.html:54
+#: templates/mfa/webauthn/authenticator_list.html:12
+msgid "No security keys have been added."
+msgstr "Non sono state aggiunte chiavi di sicurezza."
+
+#: templates/mfa/index.html:62
+msgid "Manage"
+msgstr "Maneggio"
+
+#: templates/mfa/index.html:67 templates/mfa/webauthn/add_form.html:18
+#: templates/mfa/webauthn/authenticator_list.html:70
+msgid "Add"
+msgstr "Aggiungere"
+
+#: templates/mfa/index.html:77 templates/mfa/recovery_codes/base.html:4
+#: templates/mfa/recovery_codes/generate.html:6
+#: templates/mfa/recovery_codes/index.html:6
+msgid "Recovery Codes"
+msgstr "Codici di recupero"
+
+#: templates/mfa/index.html:82 templates/mfa/recovery_codes/index.html:9
+#, python-format
+msgid ""
+"There is %(unused_count)s out of %(total_count)s recovery codes available."
+msgid_plural ""
+"There are %(unused_count)s out of %(total_count)s recovery codes available."
+msgstr[0] ""
+msgstr[1] ""
+
+#: templates/mfa/index.html:86
+msgid "No recovery codes set up."
+msgstr "Nessun codice di ripristino impostato."
+
+#: templates/mfa/index.html:96
+msgid "View"
+msgstr "Visualizzazione"
+
+#: templates/mfa/index.html:102
+msgid "Download"
+msgstr "Scaricamento"
+
+#: templates/mfa/index.html:110 templates/mfa/recovery_codes/generate.html:29
+msgid "Generate"
+msgstr "Generare"
+
+#: templates/mfa/messages/recovery_codes_generated.txt:2
+msgid "A new set of recovery codes has been generated."
+msgstr "È stato generato un nuovo set di codici di recupero."
+
+#: templates/mfa/messages/webauthn_added.txt:2
+msgid "Security key added."
+msgstr "Chiave di sicurezza aggiunta."
+
+#: templates/mfa/messages/webauthn_removed.txt:2
+msgid "Security key removed."
+msgstr "Chiave di sicurezza rimossa."
+
+#: templates/mfa/reauthenticate.html:6
+msgid "Enter an authenticator code:"
+msgstr "Inserisci un codice di autenticazione:"
+
+#: templates/mfa/recovery_codes/generate.html:9
+msgid ""
+"You are about to generate a new set of recovery codes for your account."
+msgstr ""
+"Stai per generare un nuovo set di codici di recupero per il tuo account."
+
+#: templates/mfa/recovery_codes/generate.html:11
+msgid "This action will invalidate your existing codes."
+msgstr "Questa azione invaliderà i codici esistenti."
+
+#: templates/mfa/recovery_codes/generate.html:13
+msgid "Are you sure?"
+msgstr "Sei sicuro?"
+
+#: templates/mfa/recovery_codes/index.html:13
+msgid "Unused codes"
+msgstr "Codici non utilizzati"
+
+#: templates/mfa/recovery_codes/index.html:25
+msgid "Download codes"
+msgstr "Scarica i codici"
+
+#: templates/mfa/recovery_codes/index.html:30
+msgid "Generate new codes"
+msgstr "Genera nuovi codici"
+
+#: templates/mfa/totp/activate_form.html:4
+#: templates/mfa/totp/activate_form.html:8
+msgid "Activate Authenticator App"
+msgstr "Attiva l'app Authenticator"
+
+#: templates/mfa/totp/activate_form.html:11
+msgid ""
+"To protect your account with two-factor authentication, scan the QR code "
+"below with your authenticator app. Then, input the verification code "
+"generated by the app below."
+msgstr ""
+"Per proteggere il tuo account con l'autenticazione a due fattori, scansiona "
+"il codice QR qui sotto con la tua app di autenticazione. Quindi, inserisci "
+"il codice di verifica generato dall'app qui sotto."
+
+#: templates/mfa/totp/activate_form.html:21
+msgid "Authenticator secret"
+msgstr "Segreto dell'autenticatore"
+
+#: templates/mfa/totp/activate_form.html:24
+msgid ""
+"You can store this secret and use it to reinstall your authenticator app at "
+"a later time."
+msgstr ""
+"Puoi memorizzare questo segreto e utilizzarlo per reinstallare l'app di "
+"autenticazione in un secondo momento."
+
+#: templates/mfa/totp/deactivate_form.html:5
+#: templates/mfa/totp/deactivate_form.html:9
+msgid "Deactivate Authenticator App"
+msgstr "Disattiva l'app Authenticator"
+
+#: templates/mfa/totp/deactivate_form.html:12
+msgid ""
+"You are about to deactivate authenticator app based authentication. Are you "
+"sure?"
+msgstr ""
+"Stai per disattivare l'autenticazione basata sull'app di autenticazione. Sei"
+" sicuro?"
+
+#: templates/mfa/webauthn/add_form.html:7
+msgid "Add Security Key"
+msgstr "Aggiungi chiave di sicurezza"
+
+#: templates/mfa/webauthn/authenticator_confirm_delete.html:6
+msgid "Remove Security Key"
+msgstr "Rimuovi chiave di sicurezza"
+
+#: templates/mfa/webauthn/authenticator_confirm_delete.html:9
+msgid "Are you sure you want to remove this security key?"
+msgstr "Vuoi davvero rimuovere questa chiave di sicurezza?"
+
+#: templates/mfa/webauthn/authenticator_list.html:18
+msgid "Key"
+msgstr "Chiave"
+
+#: templates/mfa/webauthn/authenticator_list.html:21
+msgid "Usage"
+msgstr "Utilizzo"
+
+#: templates/mfa/webauthn/authenticator_list.html:33
+msgid "Passkey"
+msgstr "Chiave di accesso"
+
+#: templates/mfa/webauthn/authenticator_list.html:37
+msgid "Security key"
+msgstr "Chiave di sicurezza"
+
+#: templates/mfa/webauthn/authenticator_list.html:40
+msgid "This key does not indicate whether it is a passkey."
+msgstr "Questa chiave non indica se si tratta di una passkey."
+
+#: templates/mfa/webauthn/authenticator_list.html:41
+msgid "Unspecified"
+msgstr "Non specificato"
+
+#: templates/mfa/webauthn/authenticator_list.html:46
+#, python-format
+msgid "Added on %(created_at)s"
+msgstr "Aggiunto il %(created_at)s"
+
+#: templates/mfa/webauthn/authenticator_list.html:48
+#, python-format
+msgid "Last used %(last_used)s"
+msgstr "Ultimo utilizzo %(last_used)s"
+
+#: templates/mfa/webauthn/edit_form.html:7
+msgid "Edit Security Key"
+msgstr "Modifica chiave di sicurezza"
+
+#: templates/mfa/webauthn/edit_form.html:18
+msgid "Save"
+msgstr "Salva"
+
+#: templates/mfa/webauthn/signup_form.html:7
+msgid "Create Passkey"
+msgstr "Crea passkey"
+
+#: templates/mfa/webauthn/signup_form.html:10
+msgid ""
+"You are about to create a passkey for your account. As you can add "
+"additional keys later on, you can use a descriptive name to tell the keys "
+"apart."
+msgstr ""
+"Stai per creare una passkey per il tuo account. Poiché potrai aggiungere "
+"altre chiavi in ​​seguito, puoi usare un nome descrittivo per distinguere le"
+" chiavi."
+
+#: templates/mfa/webauthn/signup_form.html:21
+msgid "Create"
+msgstr "Creare"
+
+#: templates/mfa/webauthn/snippets/scripts.html:2
+msgid "This functionality requires JavaScript."
+msgstr "Questa funzionalità richiede JavaScript."
+
+#: templates/socialaccount/authentication_error.html:5
+#: templates/socialaccount/authentication_error.html:9
+msgid "Third-Party Login Failure"
+msgstr "Errore di accesso di terze parti"
+
+#: templates/socialaccount/authentication_error.html:12
+msgid ""
+"An error occurred while attempting to login via your third-party account."
+msgstr ""
+"Si è verificato un errore durante il tentativo di accesso tramite il tuo "
+"account di terze parti."
+
+#: templates/socialaccount/connections.html:13
+msgid ""
+"You can sign in to your account using any of the following third-party "
+"accounts:"
+msgstr ""
+"Puoi accedere al tuo account utilizzando uno qualsiasi dei seguenti account "
+"di terze parti:"
+
+#: templates/socialaccount/connections.html:46
+msgid "You currently have no third-party accounts connected to this account."
+msgstr "Al momento non hai account di terze parti collegati a questo account."
+
+#: templates/socialaccount/connections.html:50
+msgid "Add a Third-Party Account"
+msgstr "Aggiungi un account di terze parti"
+
+#: templates/socialaccount/email/account_connected_message.txt:4
+#, python-format
+msgid ""
+"A third-party account from %(provider)s has been connected to your account."
+msgstr ""
+"Un account di terze parti di %(provider)s è stato collegato al tuo account."
+
+#: templates/socialaccount/email/account_connected_subject.txt:3
+msgid "Third-Party Account Connected"
+msgstr "Account di terze parti connesso"
+
+#: templates/socialaccount/email/account_disconnected_message.txt:4
+#, python-format
+msgid ""
+"A third-party account from %(provider)s has been disconnected from your "
+"account."
+msgstr ""
+"Un account di terze parti di %(provider)s è stato disconnesso dal tuo "
+"account."
+
+#: templates/socialaccount/email/account_disconnected_subject.txt:3
+msgid "Third-Party Account Disconnected"
+msgstr "Account di terze parti disconnesso"
+
+#: templates/socialaccount/login.html:10
+#, python-format
+msgid "Connect %(provider)s"
+msgstr "Connetti %(provider)s"
+
+#: templates/socialaccount/login.html:13
+#, python-format
+msgid "You are about to connect a new third-party account from %(provider)s."
+msgstr "Stai per connettere un nuovo account di terze parti da %(provider)s."
+
+#: templates/socialaccount/login.html:17
+#, python-format
+msgid "Sign In Via %(provider)s"
+msgstr "Accedi tramite %(provider)s"
+
+#: templates/socialaccount/login.html:20
+#, python-format
+msgid ""
+"You are about to sign in using a third-party account from %(provider)s."
+msgstr ""
+"Stai per effettuare l'accesso utilizzando un account di terze parti da "
+"%(provider)s."
+
+#: templates/socialaccount/login.html:27
+#: templates/socialaccount/login_redirect.html:10
+msgid "Continue"
+msgstr "Continuare"
+
+#: templates/socialaccount/login_cancelled.html:5
+#: templates/socialaccount/login_cancelled.html:9
+msgid "Login Cancelled"
+msgstr "Accesso annullato"
+
+#: templates/socialaccount/login_cancelled.html:13
+#, python-format
+msgid ""
+"You decided to cancel logging in to our site using one of your existing "
+"accounts. If this was a mistake, please proceed to <a "
+"href=\"%(login_url)s\">sign in</a>."
+msgstr ""
+"Hai deciso di annullare l'accesso al nostro sito utilizzando uno dei tuoi "
+"account esistenti. Se si è trattato di un errore, procedi ad <a "
+"href=\"%(login_url)s\">accedi</a>."
+
+#: templates/socialaccount/messages/account_connected.txt:2
+msgid "The third-party account has been connected."
+msgstr "L'account di terze parti è stato collegato."
+
+#: templates/socialaccount/messages/account_connected_other.txt:2
+msgid "The third-party account is already connected to a different account."
+msgstr "L'account di terze parti è già collegato a un altro account."
+
+#: templates/socialaccount/messages/account_disconnected.txt:2
+msgid "The third-party account has been disconnected."
+msgstr "L'account di terze parti è stato disconnesso."
+
+#: templates/socialaccount/signup.html:12
+#, python-format
+msgid ""
+"You are about to use your %(provider_name)s account to login to\n"
+"%(site_name)s. As a final step, please complete the following form:"
+msgstr ""
+"Stai per usare il tuo account %(provider_name)s per accedere a\n"
+"%(site_name)s. Come passaggio finale, compila il seguente modulo:"
+
+#: templates/socialaccount/snippets/login.html:10
+msgid "Or use a third-party"
+msgstr "Oppure utilizzare una terza parte"
+
+#: templates/usersessions/messages/sessions_logged_out.txt:2
+msgid "Signed out of all other sessions."
+msgstr "Disconnessi da tutte le altre sessioni."
+
+#: templates/usersessions/usersession_list.html:23
+msgid "Started At"
+msgstr "Iniziato a"
+
+#: templates/usersessions/usersession_list.html:24
+msgid "IP Address"
+msgstr "Indirizzo IP"
+
+#: templates/usersessions/usersession_list.html:25
+msgid "Browser"
+msgstr "Navigatore"
+
+#: templates/usersessions/usersession_list.html:27
+msgid "Last seen at"
+msgstr "Ultimo accesso alle"
+
+#: templates/usersessions/usersession_list.html:47
+msgid "Current"
+msgstr "Attuale"
+
+#: templates/usersessions/usersession_list.html:60
+msgid "Sign Out Other Sessions"
+msgstr "Esci da altre sessioni"
+
+#~ msgid "First stop"
+#~ msgstr "Prima tappa"
+
+#~ msgid "Last stop"
+#~ msgstr "Ultima fermata"
+
+#~ msgid "Destintion"
+#~ msgstr "Destinazione"

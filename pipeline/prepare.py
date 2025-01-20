@@ -98,7 +98,7 @@ async def calculate_stop_walks(tdb, osrm: OsrmClient):
     from_ids = np.repeat(from_id, len(to_ids))
 
     tdb.sql(
-      "insert into stop_walk from result",
+      "insert into stop_walk from result where distance <= 30000",
       views = {
         "result": pyarrow.table(
           [from_ids, to_ids, distances],
@@ -111,13 +111,50 @@ async def calculate_stop_walks(tdb, osrm: OsrmClient):
   print(f"Time: {_t(t1, t0)}")
 
 
+def get_osm(dc: docker.DockerClient, link_or_links: str|list[str], target):
+  assert target.name.endswith(".osm.pbf")
+
+  if isinstance(link_or_links, str):
+    link = link_or_links
+    download_if_missing(link, target)
+    return
+
+  if target.exists():
+    return
+
+  links = link_or_links
+  target_dir = target.parent
+
+  subregions = [
+    (link, target_dir / target.name.replace(".osm.pbf", f"{i}.osm.pbf"))
+    for i, link in enumerate(link_or_links)
+  ]
+
+  for link, subregion in subregions:
+    download_if_missing(link, subregion)
+
+  print("Building osmium image")
+  img = dc.images.build(path = str(PIPELINE / "osmium"))[0]
+
+  cmd = f"osmium merge {' '.join(sr.name for _, sr in subregions)} -o {target.name}"
+  print(f"Running '{cmd}' in osmium container")
+
+  dc.containers.run(
+    image=img.id,
+    command=cmd,
+    working_dir="/data",
+    volumes={str(target_dir.absolute()): {"bind": "/data", "mode": "rw"}},
+    remove=True,
+  )
+
+
 def osrm_data(region: str):
   if (DATA_REGIONS / region / "map.osrm.mldgr").exists():
     return
 
-  osm_file = TMP_REGIONS / region / "map.osm.pbf"
-  download_if_missing(REGIONS[region], osm_file)
   dc = docker.from_env()
+  osm_file = TMP_REGIONS / region / "map.osm.pbf"
+  get_osm(dc, REGIONS[region], osm_file)
 
   def osrm_backend(cmd):
     print(f"Running '{cmd}' in OSRM containter")
@@ -136,7 +173,7 @@ def osrm_data(region: str):
   (DATA_REGIONS / region).mkdir(parents=True, exist_ok=True)
 
   for file in (TMP_REGIONS / region).iterdir():
-    if file.name != "map.osm.pbf":
+    if not file.name.endswith(".osm.pbf"):
       file.rename(DATA_REGIONS / region / file.name)
 
 
@@ -157,8 +194,12 @@ def prepare_city(city):
     print(f"Database {fpath(target)} exists, skipping")
     return
 
+  gtfs_zips = []
+
   for k, url in city["gtfs"].items():
-    download_if_missing(url, tmp_dir / f"{k}.zip")
+    gtfs_zip = tmp_dir / f"{k}.zip"
+    download_if_missing(url, gtfs_zip)
+    gtfs_zips.append(gtfs_zip)
 
   try:
     with TransitDb(tmp, write=True) as tdb:
@@ -167,11 +208,17 @@ def prepare_city(city):
       tdb.set_variable("REGION", city["region"])
       tdb.script("init")
 
-      for gtfs in city["gtfs"].keys():
-        gtfs_zip = tmp_dir / f"{gtfs}.zip"
-        gtfs_dir = gtfs_zip.parent / gtfs_zip.name.replace(".zip", "")
+      while gtfs_zips:
+        gtfs_zip = gtfs_zips.pop()
+        name = "_".join(gtfs_zip.relative_to(tmp_dir).parts).replace(".zip", "")
+        gtfs_dir = tmp_dir / name
         unzip(gtfs_zip, gtfs_dir)
-        import_gtfs(tdb, gtfs, gtfs_dir)
+
+        if (gtfs_dir / "agency.txt").exists():
+          import_gtfs(tdb, name, gtfs_dir)
+        else:
+          for nested in gtfs_dir.rglob('*.zip'):
+            gtfs_zips.append(nested)
 
       tdb.script("project-stop-coords")
       clustering = cluster_stops(tdb)
@@ -183,8 +230,7 @@ def prepare_city(city):
 
       t0 = time.time()
       print("Finalizing")
-      realtime = np.array(city.get("realtime", []), dtype=str)
-      tdb.script("finalize", views={"city_realtime": realtime, "clustering": clustering})
+      tdb.script("finalize", views={"clustering": clustering})
 
       t1 = time.time()
       print(f"Time: {_t(t1, t0)}")
@@ -220,7 +266,6 @@ def main():
 
   for city in CITIES:
     print(f"  {city['name']} | {city['id']}")
-
 
 
 def _t(t_to, t_from):

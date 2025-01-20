@@ -7,18 +7,12 @@
     "gtfs": {
       "ztm": "https://www.ztm.poznan.pl/pl/dla-deweloperow/getGTFSFile"
     },
-    "realtime": [
-      "https://www.ztm.poznan.pl/pl/dla-deweloperow/getGtfsRtFile?file=trip_updates.pb"
-    ]
-  },
-  {
-    "id": "poz-w",
-    "name": "Poznań (wrzesień)",
-    "region": "pl_wielkopolskie",
-    "projection": "EPSG:2180",
-    "gtfs": {
-      "ztm": "https://www.ztm.poznan.pl/pl/dla-deweloperow/getGTFSFile/?file=20240905_20240930.zip"
-    }
+    "realtime": {
+      "trip_updates": "https://www.ztm.poznan.pl/pl/dla-deweloperow/getGtfsRtFile?file=trip_updates.pb",
+      "vehicle_updates": "https://www.ztm.poznan.pl/pl/dla-deweloperow/getGtfsRtFile?file=vehicle_positions.pb"
+    },
+    "tickets": true,
+    "available_on_website": true
   },
   {
     "id": "waw",
@@ -29,6 +23,167 @@
       "ztm": "https://mkuran.pl/gtfs/warsaw.zip",
       "metro": "https://mkuran.pl/gtfs/warsaw/metro.zip",
       "wkd": "https://mkuran.pl/gtfs/wkd.zip"
-    }
+    },
+    "tickets": false,
+    "available_on_website": true
+  },
+  {
+    "id": "mdr",
+    "name": "Madrid",
+    "region": "es_madrid",
+    "projection": "EPSG:3857",
+    "gtfs": {
+      "mpk": "https://servicios.emtmadrid.es:8443/gtfs/transitemt.zip"
+    },
+    "tickets": false,
+    "available_on_website": true
+  },
+  {
+    "id": "mnt",
+    "name": "Montreal",
+    "region": "na_canada_quebec",
+    "projection": "EPSG:3857",
+    "gtfs": {
+      "stm": "https://www.stm.info/sites/default/files/gtfs/gtfs_stm.zip"
+    },
+    "tickets": false,
+    "available_on_website": true
+  },
+  {
+    "id": "tor",
+    "name": "Toronto",
+    "region": "na_canada_ontario",
+    "projection": "EPSG:3857",
+    "gtfs": {
+      "ttc": "https://ckan0.cf.opendata.inter.prod-toronto.ca/dataset/bd4809dd-e289-4de8-bbde-c5c00dafbf4f/resource/28514055-d011-4ed7-8bb0-97961dfe2b66/download/SurfaceGTFS.zip"
+    },
+    "tickets": false,
+    "available_on_website": true
+  },
+  {
+    "id": "nyc",
+    "name": "New York City",
+    "region": "na_new_york",
+    "projection": "EPSG:3857",
+    "gtfs": {
+      "mpk": "http://web.mta.info/developers/files/google_transit_supplemented.zip"
+    },
+    "tickets": false,
+    "available_on_website": true
+  },
+  {
+    "id": "tri",
+    "name": "Trójmiasto",
+    "region": "pl_pomorskie",
+    "projection": "EPSG:2180",
+    "gtfs": {
+      "ztm": "https://ckan.multimediagdansk.pl/dataset/c24aa637-3619-4dc2-a171-a23eec8f2172/resource/30e783e4-2bec-4a7d-bb22-ee3e3b26ca96/download/gtfsgoogle.zip",
+      "skm": "https://transitfeeds.com/p/pkp-szybka-kolej-miejska-w-trojmie-cie/1116/latest/download"
+    },
+    "tickets": false,
+    "available_on_website": true
+  },
+  {
+    "id": "poz-w",
+    "name": "Poznań (wrzesień)",
+    "region": "pl_wielkopolskie",
+    "projection": "EPSG:2180",
+    "gtfs": {
+      "ztm": "https://www.ztm.poznan.pl/pl/dla-deweloperow/getGTFSFile/?file=20240905_20240930.zip"
+    },
+    "available_on_website": false
+  },
+  {
+    "id": "krk",
+    "name": "Kraków",
+    "region": "pl_malopolskie",
+    "projection": "EPSG:2180",
+    "gtfs": {
+      "bus": "https://gtfs.ztp.krakow.pl/GTFS_KRK_A.zip",
+      "tram": "https://gtfs.ztp.krakow.pl/GTFS_KRK_T.zip"
+    },
+    "tickets": false,
+    "available_on_website": true
+  },
+  {
+    "id": "wro",
+    "name": "Wrocław",
+    "region": "pl_dolnoslaskie",
+    "projection": "EPSG:2180",
+    "gtfs": {
+      "mpk": "https://www.wroclaw.pl/open-data/87b09b32-f076-4475-8ec9-6020ed1f9ac0/OtwartyWroclaw_rozklad_jazdy_GTFS.zip"
+    },
+    "tickets": false,
+    "available_on_website": true
+  },
+  {
+    "id": "bar",
+    "name": "Barcelona",
+    "region": "es_cataluna",
+    "projection": "EPSG:3857",
+    "gtfs": {
+      "mpk": "http://www.ambmobilitat.cat/OpenData/google_transit.zip"
+    },
+    "tickets": false,
+    "available_on_website": true
+  },
+  {
+    "id": "rom",
+    "name": "Roma",
+    "region": "it_centro",
+    "projection": "EPSG:3857",
+    "gtfs": {
+      "mpk": "https://romamobilita.it/sites/default/files/rome_static_gtfs.zip"
+    },
+    "realtime": {
+      "vehicle_updates": "https://romamobilita.it/sites/default/files/rome_rtgtfs_vehicle_positions_feed.pb",
+      "trip_updates": "https://romamobilita.it/sites/default/files/rome_rtgtfs_trip_updates_feed.pb"
+    },
+    "tickets": false,
+    "available_on_website": true
+  },
+  {
+    "id": "mel",
+    "name": "Melbourne",
+    "region": "ao_australia",
+    "projection": "EPSG:3857",
+    "gtfs": {
+      "ptv": "http://data.ptv.vic.gov.au/downloads/gtfs.zip"
+    },
+    "tickets": false,
+    "available_on_website": false
+  },
+  {
+    "id": "saop",
+    "name": "São Paulo",
+    "region": "sa_brazil",
+    "projection": "EPSG:3857",
+    "gtfs": {
+      "mpk": "https://www.sptrans.com.br/umbraco/Surface/PerfilDesenvolvedor/BaixarGTFS?memberName=sptrans"
+    },
+    "tickets": false,
+    "available_on_website": true
+  },
+  {
+    "id": "benair",
+    "name": "Buenos Aires",
+    "region": "sa_argentina",
+    "projection": "EPSG:3857",
+    "gtfs": {
+      "mpk": "https://cdn.buenosaires.gob.ar/datosabiertos/datasets/trenes-gtfs/trenes-gtfs.zip"
+    },
+    "tickets": false,
+    "available_on_website": true
+  },
+  {
+    "id": "phil",
+    "name": "Philadelphia",
+    "region": "usa_pennsylvania_new_jersey_delaware",
+    "projection": "EPSG:3857",
+    "gtfs": {
+      "septa": "https://www3.septa.org/developer/gtfs_public.zip"
+    },
+    "tickets": false,
+    "available_on_website": true
   }
 ]

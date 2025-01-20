@@ -19,11 +19,65 @@ services:
     volumes:
       - ./data/regions/pl_mazowieckie:/data:ro
 
+  osrm_pl_pomorskie:
+    image: ghcr.io/project-osrm/osrm-backend
+    command: osrm-routed --algorithm mld /data/map.osrm
+    volumes:
+      - ./data/regions/pl_pomorskie:/data:ro
+
   osrm_pl_wielkopolskie:
     image: ghcr.io/project-osrm/osrm-backend
     command: osrm-routed --algorithm mld /data/map.osrm
     volumes:
       - ./data/regions/pl_wielkopolskie:/data:ro
+
+  osrm_pl_dolnoslaskie:
+    image: ghcr.io/project-osrm/osrm-backend
+    command: osrm-routed --algorithm mld /data/map.osrm
+    volumes:
+      - ./data/regions/pl_dolnoslaskie:/data:ro
+
+  osrm_es_madrid:
+    image: ghcr.io/project-osrm/osrm-backend
+    command: osrm-routed --algorithm mld /data/map.osrm
+    volumes:
+      - ./data/regions/es_madrid:/data:ro
+
+  osrm_es_cataluna:
+    image: ghcr.io/project-osrm/osrm-backend
+    command: osrm-routed --algorithm mld /data/map.osrm
+    volumes:
+      - ./data/regions/es_cataluna:/data:ro
+
+  osrm_na_canada_ontario:
+    image: ghcr.io/project-osrm/osrm-backend
+    command: osrm-routed --algorithm mld /data/map.osrm
+    volumes:
+      - ./data/regions/na_canada_ontario:/data:ro
+
+  osrm_na_new_york:
+    image: ghcr.io/project-osrm/osrm-backend
+    command: osrm-routed --algorithm mld /data/map.osrm
+    volumes:
+      - ./data/regions/na_new_york:/data:ro
+
+  osrm_na_canada_quebec:
+    image: ghcr.io/project-osrm/osrm-backend
+    command: osrm-routed --algorithm mld /data/map.osrm
+    volumes:
+      - ./data/regions/na_canada_quebec:/data:ro
+
+  osrm_it_centro:
+    image: ghcr.io/project-osrm/osrm-backend
+    command: osrm-routed --algorithm mld /data/map.osrm
+    volumes:
+      - ./data/regions/it_centro:/data:ro
+
+  osrm_sa_argentina:
+    image: ghcr.io/project-osrm/osrm-backend
+    command: osrm-routed --algorithm mld /data/map.osrm
+    volumes:
+      - ./data/regions/sa_argentina:/data:ro
 
   django:
     build:
@@ -31,6 +85,7 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ./data:/data:ro
+      - ./cities.json:/ebus/cities.json:ro
     ports:
       - "8000:8000"
     depends_on:
@@ -38,9 +93,6 @@ services:
       - redis
     env_file:
       - .env
-    environment:
-      OSRM_URL_pl_mazowieckie: "http://osrm_pl_mazowieckie:5000"
-      OSRM_URL_pl_wielkopolskie: "http://osrm_pl_wielkopolskie:5000"
 
 volumes:
   postgres_data:

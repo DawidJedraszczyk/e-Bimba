@@ -3,12 +3,13 @@ from django.utils.text import slugify
 from django.db import models
 from django.conf import settings
 from django.utils.timezone import now
+from django.utils.translation import gettext_lazy as _
 
 
 class User(AbstractUser):
     slug = models.SlugField(unique=True, blank=True, db_index=True, max_length=200)
-    pace = models.FloatField(verbose_name="Prędkość chodzenia [m/s]", default=settings.WALKING_SETTINGS['PACE'])
-    max_distance = models.IntegerField(verbose_name="Maksymalna odległość pieszo [m]", default=settings.PROSPECTING_SETTINGS['START_RADIUS'])
+    pace = models.FloatField(verbose_name=_("Walking speed [m/s]"), default=settings.WALKING_SETTINGS['PACE'])
+    max_distance = models.IntegerField(verbose_name=_("Maximal walking distance [m]"), default=settings.PROSPECTING_SETTINGS['START_RADIUS'])
 
     def __str__(self):
         return self.username
@@ -29,6 +30,6 @@ class User(AbstractUser):
 
 
     @property
-    def avaible_tickets(self):
+    def available_tickets(self):
         date = now()
         return self.tickets.exclude(ending_datetime__lte=date)

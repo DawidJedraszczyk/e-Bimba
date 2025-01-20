@@ -9,8 +9,6 @@ https://docs.djangoproject.com/en/5.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
-from .custom_settings.algorithm_settings import *
-
 from pathlib import Path
 import os
 import sys
@@ -18,8 +16,11 @@ from enum import Enum
 from dotenv import load_dotenv
 import json
 
+from apps import feedback
 from .custom_settings.user_settings import *
 from .custom_settings.email_settings import *
+from .custom_settings.feedback_settings import *
+from .custom_settings.algorithm_settings import *
 
 load_dotenv()
 
@@ -27,7 +28,8 @@ load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 sys.path.insert(0, os.path.join(BASE_DIR, 'apps'))
-CITIES_JSON_PATH = os.path.join(BASE_DIR, '..', 'cities.json')
+CITIES_JSON_PATH = os.path.join(BASE_DIR, "cities.json")
+MAPBOX_ACCESS_TOKEN = os.getenv('MAPBOX_ACCESS_TOKEN', '')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
@@ -35,10 +37,14 @@ CITIES_JSON_PATH = os.path.join(BASE_DIR, '..', 'cities.json')
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-shs(*a59%j9zr1r%$+84v0fl)b0scs9en*mg=$kwwm(cfu6d5l'
 
+
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
+
+SITE_ID = 1
 
 # Application definition
 
@@ -51,20 +57,24 @@ INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
+    'django.contrib.sites',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'crispy_forms',
     "crispy_bootstrap5",
+    "django_deep_translator",
     "users",
     'route_search',
     'gtfs_realtime',
     'tickets',
+    'feedback'
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -83,10 +93,12 @@ TEMPLATES = [
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
+                'django.template.context_processors.i18n',
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'feedback.context_processors.feedback_on',
             ],
         },
     },
@@ -117,7 +129,7 @@ DATABASES = {
         'NAME': os.getenv('POSTGRES_DB', 'example_name'),
         'USER': os.getenv('POSTGRES_USER', 'user'),
         'PASSWORD': os.getenv('POSTGRES_PASSWORD', 'password'),
-        'HOST': os.getenv('POSTGRES_HOST', 'localhost'),
+        'HOST': os.getenv('POSTGRES_HOST', 'postgres'),
         'PORT': os.getenv('POSTGRES_PORT', 5432),
     }
 }
@@ -144,17 +156,31 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
+LANGUAGE_CODE = 'en'
 
-SITE_ID = 1
-
-LANGUAGE_CODE = 'en-us'
-
-TIME_ZONE = 'Europe/Warsaw'
+TIME_ZONE = 'UTC'
 
 USE_I18N = True
-USE_ASCI=True
+USE_L10N = True
+
 USE_TZ = True
-USE_UNICODE_SLUGS = True
+
+LOCALE_PATHS = [
+    BASE_DIR / 'locale',
+]
+
+LANGUAGES = [
+    ('en', 'English'),
+    ('pl', 'Polish'),
+    ('es', 'Spanish'),
+    ('fr', 'French'),
+    ('de', 'German'),
+    ('pt', 'Portuguese'),
+    ('it', 'Italian'),
+    ('nl', 'Dutch'),
+    ('tr', 'Turkish'),
+    ('sv', 'Swedish'),
+]
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
@@ -201,3 +227,54 @@ def generate_city_enum():
     return {city["name"]: city["name"].lower() for city in cities_json}
 
 CITY_ENUM = Enum('CITY_ENUM', generate_city_enum())
+
+
+# settings.py
+
+import os
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,  # Keeps the default Django loggers
+    'formatters': {
+        'verbose': {
+            'format': '[{asctime}] {levelname} [{name}:{lineno}] {message}',
+            'style': '{',
+        },
+        'simple': {
+            'format': '{levelname}: {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple',  # You can switch to 'verbose' if needed
+        },
+        'file': {
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR, 'django_logs.log'),
+            'formatter': 'verbose',
+        },
+    },
+    'loggers': {
+        # Root logger
+        '': {
+            'handlers': ['console', 'file'],
+            'level': 'INFO',  # Set to 'DEBUG' for more verbosity
+            'propagate': True,
+        },
+        # Specific logger for your management command
+        'your_app.management.commands.your_command': {
+            'handlers': ['console', 'file'],
+            'level': 'DEBUG',  # Adjust as necessary
+            'propagate': False,
+        },
+        # Django's default logger
+        'django': {
+            'handlers': ['console', 'file'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+    },
+}

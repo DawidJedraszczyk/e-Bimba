@@ -64,5 +64,35 @@ class Services:
     )
 
 
+@jitclass([
+  ("dict", nbt.DictType(nbt.UniTuple(nb.int32, 3), nb.int32)),
+])
+class Delays:
+  def __init__(self, trip_ids, services, start_times, delays):
+    self.dict = dict(
+      zip(
+        zip(trip_ids, services, start_times),
+        delays,
+      )
+    )
+
+  def __getitem__(self, trip_triple):
+    delay = self.dict.get(trip_triple)
+
+    if delay is None:
+      return nb.int32(0)
+    else:
+      return delay
+
+  @staticmethod
+  def empty():
+    return Delays(
+      np.empty(0, np.int32),
+      np.empty(0, np.int32),
+      np.empty(0, np.int32),
+      np.empty(0, np.int32),
+    )
+
+
 NbtPoint = nbt.NamedUniTuple(nb.float32, 2, Point)
 NbtCoords = nbt.NamedUniTuple(nb.float32, 2, Coords)

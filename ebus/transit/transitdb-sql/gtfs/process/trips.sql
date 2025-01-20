@@ -2,7 +2,7 @@ create temp table pt_agg_stops as with
   raw as (
     select
       t.trip_id as id,
-      (select id from gtfs_routes r where r.route_id = first(t.route_id)) as route,
+      (select id from gtfs_routes r where r.route_id = trim(first(t.route_id))) as route,
       (select id from service_map s where s.service_id = first(t.service_id)) as service,
       (select id from shape_map s where s.shape_id = first(t.shape_id)) as shape,
       first(trip_headsign) as headsign,

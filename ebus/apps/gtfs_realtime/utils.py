@@ -28,8 +28,14 @@ def fetch_gtfs_realtime_data(feed_url):
         raise Exception(f"Failed to fetch data: {response.status_code}")
 
 
-def save_vehicle_positions(feed):
-    vehicle_positions = []
+def save_vehicle_positions(feed, city):
+    current_data = redis_client.get(REDIS_VEHICLE_POSITIONS_KEY)
+    if current_data:
+        vehicle_positions = json.loads(current_data)
+    else:
+        vehicle_positions = {}
+
+    vehicle_positions[city] = []
     for entity in feed.entity:
         vehicle_data = entity.vehicle
 
@@ -41,17 +47,21 @@ def save_vehicle_positions(feed):
             "longitude": vehicle_data.position.longitude,
             "timestamp": vehicle_data.timestamp,
         }
-        vehicle_positions.append(vehicle_position)
+        vehicle_positions[city].append(vehicle_position)
 
     redis_client.set(REDIS_VEHICLE_POSITIONS_KEY, json.dumps(vehicle_positions))
 
 
-def save_trip_updates(feed):
-    from .models import TripUpdate
-    trip_updates = []
+def save_trip_updates(feed, city):
+    current_data = redis_client.get(REDIS_TRIP_UPDATES_KEY)
+    if current_data:
+        trip_updates = json.loads(current_data)
+    else:
+        trip_updates = {}
+
+    trip_updates[city] = []
     for entity in feed.entity:
         trip_update_data = entity.trip_update
-
 
         for stop_time_update in trip_update_data.stop_time_update:
             trip_update = {
@@ -61,6 +71,6 @@ def save_trip_updates(feed):
                 "stop_sequence": stop_time_update.stop_sequence,
                 "delay": stop_time_update.arrival.delay,
             }
-            trip_updates.append(trip_update)
+            trip_updates[city].append(trip_update)
 
     redis_client.set(REDIS_TRIP_UPDATES_KEY, json.dumps(trip_updates))

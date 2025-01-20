@@ -1,20 +1,20 @@
 # JakDojadeClone
 
-This is a project that aims to reproduce the [jakdojade](https://jakdojade.pl) website with AI support. Ultimately, we want to serve large cities, e.g. Tokyo
+This is a project that aims to reproduce the [jakdojade](https://jakdojade.pl) website with AI support. Ultimately, we want to serve large cities, e.g. Madrid
 
-## Installation
+Running instructions below the images.
 
-### Preparing data
+### Example usage images
 
-To prepare data for route planning go into the `pipeline` directory and run
+![city_list.png](usage_examples/city_list.png)
+![poznan_realtime.png](usage_examples/poznan_realtime.png)
+![roma_realtime.png](usage_examples/roma_realtime.png)
+![tickets.png](usage_examples/tickets.png)
+![ticket_detail_es_sm.png](usage_examples/ticket_detail_es_sm.png)
+![signup_sm.png](usage_examples/signup_sm.png)
+![profile_detail.png](usage_examples/profile_detail.png)
 
-```bash
-./prepare.py Poznań
-```
-
-where `Poznań` can be replaced with any city defined in `pipeline/cities.json`.
-
-### Running the app
+### First steps
 
 As first step You have to install [docker compose](https://docs.docker.com/compose/install/).
 
@@ -27,16 +27,46 @@ POSTGRES_HOST=postgres
 POSTGRES_PORT=5432
 REDIS_HOST=localhost
 REDIS_PORT=6379
+EMAIL_HOST_USER=            GMAIL HOST ACCOUNT
+EMAIL_HOST_PASSWORD=        YOUR PASSWORD
+MAPBOX_ACCESS_TOKEN=        GENERATE TOKEN
 ```
 
+## Preparing GTFS for cities
 
-After that run this command:
+Step 1 -> create venv 
 
+Step 2 -> move into pipeline directory
+
+Step 3 -> install requirements from pipeline directory
+
+
+# Option 1 - prepare for specific city
+```
+python prepare.py CityName
+```
+Where CityName is a name of city from cities.json, ex. Poznań, Roma, Madrid
+
+This command is recommended.
+
+# Option 2 - prepare all cities
+```
+sudo ./preapre_all_cities.sh
+```
+This command takes long time, even half of an hour.
+
+
+### Application
+
+Command to run application:
 ```
 docker-compose up --build
 ```
 
 This will build whole project, including postgres database.
+Application is ready on 0.0.0.0:8000
+
+If no route is found, change date into future (+- 2/3 days into future). 
 
 ## Benchmarks
 

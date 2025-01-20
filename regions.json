@@ -1,4 +1,21 @@
 {
   "pl_mazowieckie": "http://download.geofabrik.de/europe/poland/mazowieckie-latest.osm.pbf",
-  "pl_wielkopolskie": "http://download.geofabrik.de/europe/poland/wielkopolskie-latest.osm.pbf"
+  "pl_wielkopolskie": "http://download.geofabrik.de/europe/poland/wielkopolskie-latest.osm.pbf",
+  "pl_malopolskie": "http://download.geofabrik.de/europe/poland/malopolskie-latest.osm.pbf",
+  "pl_dolnoslaskie": "http://download.geofabrik.de/europe/poland/dolnoslaskie-latest.osm.pbf",
+  "pl_pomorskie": "http://download.geofabrik.de/europe/poland/pomorskie-latest.osm.pbf",
+  "es_cataluna": "http://download.geofabrik.de/europe/spain/cataluna-latest.osm.pbf",
+  "es_madrid": "http://download.geofabrik.de/europe/spain/madrid-latest.osm.pbf",
+  "na_new_york": "http://download.geofabrik.de/north-america/us/new-york-latest.osm.pbf",
+  "na_canada_quebec": "http://download.geofabrik.de/north-america/canada/quebec-latest.osm.pbf",
+  "na_canada_ontario": "http://download.geofabrik.de/north-america/canada/ontario-latest.osm.pbf",
+  "it_centro": "http://download.geofabrik.de/europe/italy/centro-latest.osm.pbf",
+  "ao_australia": "https://download.geofabrik.de/australia-oceania/australia-latest.osm.pbf",
+  "sa_argentina": "https://download.geofabrik.de/south-america/argentina-latest.osm.pbf",
+  "sa_brazil": "https://download.geofabrik.de/south-america/brazil-latest.osm.pbf",
+  "usa_pennsylvania_new_jersey_delaware": [
+    "https://download.geofabrik.de/north-america/us/pennsylvania-latest.osm.pbf",
+    "https://download.geofabrik.de/north-america/us/new-jersey-latest.osm.pbf",
+    "https://download.geofabrik.de/north-america/us/delaware-latest.osm.pbf"
+  ]
 }
