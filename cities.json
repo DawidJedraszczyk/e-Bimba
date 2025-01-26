@@ -31,7 +31,7 @@
     "id": "mdr",
     "name": "Madrid",
     "region": "es_madrid",
-    "projection": "EPSG:3857",
+    "projection": "EPSG:2062",
     "gtfs": {
       "mpk": "https://servicios.emtmadrid.es:8443/gtfs/transitemt.zip"
     },
@@ -120,7 +120,7 @@
     "id": "bar",
     "name": "Barcelona",
     "region": "es_cataluna",
-    "projection": "EPSG:3857",
+    "projection": "EPSG:2062",
     "gtfs": {
       "mpk": "http://www.ambmobilitat.cat/OpenData/google_transit.zip"
     },
@@ -131,7 +131,7 @@
     "id": "rom",
     "name": "Roma",
     "region": "it_centro",
-    "projection": "EPSG:3857",
+    "projection": "EPSG:6875",
     "gtfs": {
       "mpk": "https://romamobilita.it/sites/default/files/rome_static_gtfs.zip"
     },
@@ -179,7 +179,7 @@
     "id": "phil",
     "name": "Philadelphia",
     "region": "usa_pennsylvania_new_jersey_delaware",
-    "projection": "EPSG:3857",
+    "projection": "EPSG:26718",
     "gtfs": {
       "septa": "https://www3.septa.org/developer/gtfs_public.zip"
     },
