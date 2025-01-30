@@ -174,5 +174,16 @@
     },
     "tickets": false,
     "available_on_website": true
+  },
+  {
+    "id": "kla",
+    "name": "Klagenfurt",
+    "region": "as_klagenfurt",
+    "projection": "EPSG:3857",
+    "gtfs": {
+      "ztm_kla": "https://"
+    },
+    "tickets": false,
+    "available_on_website": true
   }
 ]

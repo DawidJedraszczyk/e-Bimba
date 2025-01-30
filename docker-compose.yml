@@ -79,6 +79,12 @@ services:
     volumes:
       - ./data/regions/sa_argentina:/data:ro
 
+  osrm_as_klagenfurt:
+    image: ghcr.io/project-osrm/osrm-backend
+    command: osrm-routed --algorithm mld /data/map.osrm
+    volumes:
+      - ./data/regions/as_klagenfurt:/data:ro
+
   django:
     build:
       context: ./ebus

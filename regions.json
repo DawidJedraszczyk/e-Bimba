@@ -11,5 +11,6 @@
   "it_centro": "http://download.geofabrik.de/europe/italy/centro-latest.osm.pbf",
   "ao_australia": "https://download.geofabrik.de/australia-oceania/australia-latest.osm.pbf",
   "sa_argentina": "https://download.geofabrik.de/south-america/argentina-latest.osm.pbf",
-  "sa_brazil": "https://download.geofabrik.de/south-america/brazil-latest.osm.pbf"
+  "sa_brazil": "https://download.geofabrik.de/south-america/brazil-latest.osm.pbf",
+  "as_klagenfurt": "https://download.geofabrik.de/europe/austria-latest.osm.pbf"
 }
