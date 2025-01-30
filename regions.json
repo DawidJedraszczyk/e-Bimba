@@ -8,9 +8,15 @@
   "es_madrid": "http://download.geofabrik.de/europe/spain/madrid-latest.osm.pbf",
   "na_new_york": "http://download.geofabrik.de/north-america/us/new-york-latest.osm.pbf",
   "na_canada_quebec": "http://download.geofabrik.de/north-america/canada/quebec-latest.osm.pbf",
+  "na_canada_ontario": "http://download.geofabrik.de/north-america/canada/ontario-latest.osm.pbf",
   "it_centro": "http://download.geofabrik.de/europe/italy/centro-latest.osm.pbf",
   "ao_australia": "https://download.geofabrik.de/australia-oceania/australia-latest.osm.pbf",
   "sa_argentina": "https://download.geofabrik.de/south-america/argentina-latest.osm.pbf",
   "sa_brazil": "https://download.geofabrik.de/south-america/brazil-latest.osm.pbf",
+  "usa_pennsylvania_new_jersey_delaware": [
+    "https://download.geofabrik.de/north-america/us/pennsylvania-latest.osm.pbf",
+    "https://download.geofabrik.de/north-america/us/new-jersey-latest.osm.pbf",
+    "https://download.geofabrik.de/north-america/us/delaware-latest.osm.pbf"
+  ],
   "as_klagenfurt": "https://download.geofabrik.de/europe/austria-latest.osm.pbf"
 }

@@ -69,18 +69,38 @@ class Plan:
         )
 
     def extend(self, plan_trip: PlanTrip):
-        if plan_trip.trip_id == -1 and not self.plan_trips:
-            return Plan.initial(
-                plan_trip.to_stop,
-                self.current_time - self.initial_walk,
-                plan_trip.arrival_time - plan_trip.departure_time + self.initial_walk,
-            )
-
         inconvenience = self.inconvenience
 
         if plan_trip.trip_id == -1:
-            walk_time = plan_trip.arrival_time - plan_trip.departure_time
-            inconvenience += int(walk_time * INCONVENIENCE_SETTINGS["WALK_TIME_PENALTY"])
+            if not self.plan_trips:
+                return Plan.initial(
+                    plan_trip.to_stop,
+                    self.current_time - self.initial_walk,
+                    plan_trip.arrival_time - plan_trip.departure_time + self.initial_walk,
+                )
+            else:
+                walk_time = plan_trip.arrival_time - plan_trip.departure_time
+                inconvenience += int(walk_time * INCONVENIENCE_SETTINGS["WALK_TIME_PENALTY"])
+
+                if self.plan_trips and self.plan_trips[-1].trip_id == -1:
+                    trips = self.plan_trips.copy()
+                    from_stop, departure_time, *_ = trips[-1]
+
+                    trips[-1] = PlanTrip(
+                        from_stop,
+                        departure_time,
+                        plan_trip.to_stop,
+                        plan_trip.arrival_time
+                    )
+
+                    return Plan(
+                        plan_trip.to_stop,
+                        plan_trip.arrival_time,
+                        inconvenience,
+                        self.initial_walk,
+                        trips,
+                        self.generation,
+                    )
         elif self.plan_trips:
             inconvenience += INCONVENIENCE_SETTINGS["TRANSFER_PENALTY"]
             wait_time = plan_trip.departure_time - self.plan_trips[-1].arrival_time

@@ -2,6 +2,7 @@ import aiohttp
 import asyncio
 import contextlib
 from itertools import chain
+import math
 import numpy as np
 from numpy.typing import NDArray
 import random
@@ -95,7 +96,7 @@ class OsrmClient:
     count = len(destinations)
 
     return np.fromiter(
-      (from_snap + dst[i] + destinations[i]["distance"] for i in range(0, count)),
+      (from_snap + (dst[i] or math.inf) + destinations[i]["distance"] for i in range(0, count)),
       np.float32,
       count,
     )

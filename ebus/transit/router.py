@@ -198,6 +198,9 @@ class RouterTask:
 
 
   def estimate(self, stop_id: int, walk_time: int) -> int:
+    if self.exhaustive:
+      return 0
+
     pos = self.stops[stop_id].position
     result = walk_time
 

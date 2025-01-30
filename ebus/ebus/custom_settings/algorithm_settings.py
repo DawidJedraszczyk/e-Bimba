@@ -23,7 +23,7 @@ HEURISTIC_SETTINGS = {
     # and I didn't want to make algorithm to work slower after all
     # BTW, even though it is not admissable heurisitc,
     # in most cases results are otimal compared to jakdojade and google
-    'TRANSFER_TIME': 180,
+    'TRANSFER_TIME': 60,
 }
 
 INCONVENIENCE_SETTINGS = {

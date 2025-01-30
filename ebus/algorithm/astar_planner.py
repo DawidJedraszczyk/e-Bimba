@@ -33,7 +33,7 @@ class AStarPlanner():
     discovered_stops: dict[int, DiscoveredStop]
     walk_times: dict[int, int]
     estimates: dict[int, Estimate]
-    pace: float
+    preferences: Preferences
     delays: Delays
 
     def __init__(
@@ -73,7 +73,7 @@ class AStarPlanner():
         self.discovered_stops = {}
         self.walk_times = {}
         self.estimates = {}
-        self.pace = preferences.pace
+        self.preferences = preferences
         self.delays = delays
 
         self.metrics = {
@@ -95,10 +95,10 @@ class AStarPlanner():
         }
 
         for near in self.prospect.near_destination:
-            self.walk_times[near.id] = int(near.walk_distance / self.pace)
+            self.walk_times[near.id] = int(near.walk_distance / preferences.pace)
 
         for near in self.prospect.near_start:
-            walk_time = int(near.walk_distance / self.pace)
+            walk_time = int(near.walk_distance / preferences.pace)
             dstop = self.discover_stop(near.id)
             plan = Plan.initial(near.id, start_time, walk_time)
             plan.walk_time = self.get_walk_time(near.id)
@@ -126,7 +126,7 @@ class AStarPlanner():
 
         if wt is None:
             distance = self.data.stops[stop_id].position.distance(self.prospect.destination)
-            wt = int(distance * WALKING_SETTINGS["DISTANCE_MULTIPLIER"] / self.pace)
+            wt = int(distance * WALKING_SETTINGS["DISTANCE_MULTIPLIER"] / self.preferences.pace)
             self.walk_times[stop_id] = wt
 
         return wt
@@ -207,10 +207,15 @@ class AStarPlanner():
             start_time_get_trips = time.time()
 
             transfer_time = HEURISTIC_SETTINGS["TRANSFER_TIME"]
+            walk_limit = self.preferences.max_stop_walk
 
             if not fastest_known_plan.plan_trips:
                 # Don't add transfer time before first trip
                 transfer_time = 0
+            elif fastest_known_plan.plan_trips[-1].trip_id == -1:
+                trip = fastest_known_plan.plan_trips[-1]
+                walk_time = trip.arrival_time - trip.departure_time
+                walk_limit -= int(walk_time * self.preferences.pace)
 
             fastest_ways = get_next_trips(
                 stops = self.data.stops,
@@ -219,8 +224,9 @@ class AStarPlanner():
                 services = self.services,
                 time = fastest_known_plan.current_time,
                 transfer_time = transfer_time,
-                pace = self.pace,
+                pace = self.preferences.pace,
                 delays = self.delays,
+                walk_limit = int(walk_limit),
             )
 
             end_time_get_trips = time.time()
@@ -323,12 +329,16 @@ def get_next_trips(
     transfer_time: int,
     pace: float,
     delays: Delays,
+    walk_limit: int,
 ) -> dict[int, PlanTrip]:
     fastest_ways = nb.typed.Dict.empty(nb.int32, _NB_PLAN_TRIP_TYPE)
     from_stop = nb.int32(from_stop)
     time = nb.int32(time)
 
     for to_stop, distance in stops.get_stop_walks(from_stop):
+        if distance > walk_limit:
+            continue
+
         time_at_stop = time + nb.int32(distance / pace)
 
         fastest_ways[to_stop] = PlanTrip(

@@ -46,8 +46,14 @@ def nn_estimator(file: Path, stops: Stops) -> Estimator:
 
     interpreter.set_tensor(in_idx, inputs)
     interpreter.invoke()
-    output = interpreter.get_tensor(out_idx)
-    return int(output[0, 0])
+    output = interpreter.get_tensor(out_idx)[0, 0]
+
+    if output < 0 or math.isnan(output):
+      return 0
+    elif math.isinf(output):
+      return INF_TIME
+    else:
+      return int(output)
 
   return Estimator(estimate, 0)
 
