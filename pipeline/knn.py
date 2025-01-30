@@ -44,7 +44,7 @@ X = np.stack(
 
 Y = dataset["time"].to_numpy()
 
-knnr = KNeighborsRegressor(N)
+knnr = KNeighborsRegressor(N, algorithm="kd_tree")
 knnr.fit(X, Y)
 
 
